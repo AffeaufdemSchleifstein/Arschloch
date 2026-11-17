@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9EM0D3qJUE2mWhyBAbApaA5lm0kPqK68xyUpjtssyZc=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-/JLznQ/+vDmSKrCMQqYBrZbDnVALdQtKJZrSwvf/kFo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -1090,7 +1090,8 @@ function sfx(k){
     case 'pass':tone(320,t,.14,'sine',.07,230);break;
     case 'deal':for(let i=0;i<7;i++)noise(t+i*.055,.05,.25,'bandpass',2600);break;
     case 'turn':tone(660,t,.16,'sine',.14);tone(880,t+.12,.22,'sine',.14);break;
-    case 'tick':tone(1250,t,.035,'square',.045);break;
+    case 'tick':tone(880,t,.12,'square',.11);tone(880,t,.12,'sine',.14);break;
+    case 'tick2':tone(1320,t,.16,'square',.14);tone(1320,t,.16,'sine',.16);break;
     case 'win':[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.12,.3,'triangle',.17));tone(1047,t+.5,.7,'triangle',.14);tone(1319,t+.5,.7,'triangle',.08);break;
     case 'lose':[392,370,349,311].forEach((f,i)=>tone(f,t+i*.3,i===3?.7:.32,'sawtooth',.06,f*.96));break;
     case 'mid':tone(523,t,.15,'triangle',.11);tone(659,t+.12,.22,'triangle',.11);break;
@@ -1336,7 +1337,8 @@ function tick(){
   const TURN=turnSecs();
   if(!TURN){if(hg)hg.classList.remove('on');const t=$('#tm');if(t)t.textContent='';return}
   const me_=mySeat(),el=(Date.now()-turnStart)/1000,left=Math.max(0,Math.ceil(TURN-el)),mine=G.turn===me_;
-  if(mine&&left<=5&&left>0&&left!==seen.tickS){seen.tickS=left;sfx('tick')}
+  // Warnton in den letzten 5 Sekunden, die letzten 2 hoeher; dazu ein kurzes Vibrieren
+  if(mine&&left<=5&&left>0&&left!==seen.tickS){seen.tickS=left;sfx(left<=2?'tick2':'tick');if(SET.vib)try{navigator.vibrate&&navigator.vibrate(left<=2?60:30)}catch(e){}}
   const t=$('#tm');if(t){t.textContent=el<0?'':left+' s';t.classList.toggle('hot',left<=5)}
   if(hg){
     const hs=TURN/2;
