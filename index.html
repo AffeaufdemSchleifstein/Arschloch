@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-kMCpTJnclJcFFFDx+Bpw2I/PWIp7SrqMA5wJ26BxR2E=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LukDl8wjd59LiYWe/LCEVvBGYXw/dovL++RAdPmT0Gg=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -174,6 +174,9 @@
   .hand{display:flex;flex-wrap:wrap;justify-content:center;padding:14px 14px 4px 30px;row-gap:10px;min-height:100px}
   .hand .card{margin-left:-16px;cursor:pointer}
   .hand.deal .card{animation:dealIn .4s cubic-bezier(.2,.8,.3,1.1) backwards;animation-delay:calc(var(--i,0)*45ms)}
+  /* Wenn man dran ist: legbare Karten leuchten gruen, der Rest wird abgedunkelt */
+  .hand .card.ok{box-shadow:0 0 0 2px #5fe08a,0 0 12px rgba(95,224,138,.75)}
+  .hand .card.no{filter:brightness(.55) saturate(.6)}
   .hand .card.sel{transform:translateY(-14px);box-shadow:0 0 0 3px var(--gold),0 8px 14px rgba(0,0,0,.4)}
   .hand .card.fresh::after{content:"neu";position:absolute;top:-8px;right:-4px;background:var(--gold);color:var(--onGold);font-size:10px;font-weight:700;border-radius:99px;padding:1px 6px}
   .mebar{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:var(--mute);margin-top:4px}
@@ -1877,7 +1880,10 @@ function drawGame(app){
   if(me_>=0){
     const fr=G.fresh[me_]||[],frs=fr.join(',');
     dealAnim=G.round!==seen.round||(frs&&frs!==seen.fresh);seen.fresh=frs;
-    hand=G.hands[me_].map((c,i)=>cardHtml(c,(sel.has(c)?'sel':'')+(fr.includes(c)?' fresh':''),(G.phase==='wish'||G.phase==='end'?'':'data-a="card" ')+'data-v="'+c+'" style="--i:'+i+'"')).join('');
+    // Legbare Karten markieren (nur wenn man dran ist und ein Stich zu schlagen ist)
+    const canMark=G.phase==='play'&&G.turn===me_&&!G.paused&&!isFree(G);
+    const okR=canMark?new Set(legalMoves(G,me_).map(m=>rk(m[0]))):null;
+    hand=G.hands[me_].map((c,i)=>cardHtml(c,(sel.has(c)?'sel':'')+(fr.includes(c)?' fresh':'')+(okR?(okR.has(rk(c))?' ok':' no'):''),(G.phase==='wish'||G.phase==='end'?'':'data-a="card" ')+'data-v="'+c+'" style="--i:'+i+'"')).join('');
     if(!G.hands[me_].length)hand=(G.losers||[]).includes(me_)?'<p class="note">Mit Ass beendet – du landest automatisch ganz hinten. 😬</p>':'<p class="note">Du bist fertig – Platz '+(G.finished.indexOf(me_)+1)+'. 🎉</p>';
   }else hand='<p class="note">Du schaust nur zu.</p>';
   seen.round=G.round;
