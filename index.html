@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-mJbSjsAgD9WwAmlc1zjDkJ+vuylgzSdpsAZq676gCtQ=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hPk1fUGqovdqz+pHCBoKbii2ymOiOKK8re1RiBtYrDM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -887,8 +887,8 @@ let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0;
 const EMOTES=['😂','💣','😡','😎','😭','🤡','👑','💩'];
 const EKEY={'😂':'laugh','💣':'bomb','😡':'angry','😎':'cool','😭':'cry','🤡':'clown','👑':'crown','💩':'poop'};
 // Spezial-Emotes: [Praesident-Anzahl, Emoji, Name, Tisch-Freischaltung]
-const SPECIAL=[[30,'🌟','Goldstern'],[50,'🔥','Feuerkrone','gold'],[100,'💎','Diamant'],[200,'⚡','Donnergott','throne'],
-  [350,'🐉','Drache'],[500,'🚀','Feuerwerk','lava'],[750,'🌋','Vulkan'],[1000,'🏆','Legende','diamond']];
+const SPECIAL=[[10,'🌟','Goldstern'],[20,'🔥','Feuerkrone','gold'],[40,'💎','Diamant'],[70,'⚡','Donnergott','throne'],
+  [100,'🐉','Drache'],[150,'🚀','Feuerwerk','lava'],[200,'🌋','Vulkan'],[300,'🏆','Legende','diamond']];
 let presCount=0;
 let online=new Set();
 const turnSecs=()=>G?R(G).turn:20;
@@ -978,7 +978,7 @@ const AV_EMO=['🦊','🐼','🦁','🐯','🐸','🐵','🐶','🐱','🐻','�
 const AV_COL=['#c0392b','#e67e22','#f1c40f','#27ae60','#16a085','#2980b9','#8e44ad','#d35400','#2c3e50','#7f8c8d','#e84393','#00b894'];
 let avMap={};
 function hashCol(t){let h=0;for(const ch of String(t||'?'))h=(h*31+ch.charCodeAt(0))|0;return AV_COL[Math.abs(h)%AV_COL.length]}
-function frameOf(w){return w>=1000?'fr4':w>=350?'fr3':w>=100?'fr2':w>=30?'fr1':''}
+function frameOf(w){return w>=300?'fr4':w>=100?'fr3':w>=40?'fr2':w>=10?'fr1':''}
 function avatar(av,name,wins,size,extra){
   av=av||{};size=size||32;const fr=frameOf(wins||0),st='width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*.58)+'px;';
   let inner;
@@ -1166,11 +1166,11 @@ function achHtml(st){
 
 /* ---------- Design ---------- */
 const SURF=[['felt','Filz','🟩'],['desk','Schreibtisch','🗄️'],['wood','Holzplatte','🪵'],['grass','Rasen','🌱'],['marble','Marmor','🏛️'],['space','Weltraum','🌌'],
-  ['gold','Goldfilz','🥇',50],['throne','Thron','👑',200],['lava','Lava','🌋',500],['diamond','Diamant','💎',1000]];
+  ['gold','Goldfilz','🥇',20],['throne','Thron','👑',70],['lava','Lava','🌋',150],['diamond','Diamant','💎',300]];
 const FELT={green:['Grün','#2c8a55','#17603a','#0c3d22'],blue:['Blau','#2f6fb0','#1b4a80','#0e2a4d'],red:['Rot','#b0413b','#7d2622','#4a1311'],
   purple:['Lila','#7a4bb0','#53307f','#2e1a4a'],teal:['Türkis','#24a098','#147068','#0a403b'],black:['Schwarz','#4a4a4a','#2a2a2a','#111']};
-const FRONTS=[['classic','Klassisch'],['dark','Dunkel'],['vintage','Vintage'],['gold','Gold',100],['neon','Neon',350],['diamond','Diamant',1000]];
-const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',50],['flame','Flammen','bob'],['legend','Legende',750]];
+const FRONTS=[['classic','Klassisch'],['dark','Dunkel'],['vintage','Vintage'],['gold','Gold',40],['neon','Neon',100],['diamond','Diamant',300]];
+const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',20],['flame','Flammen','bob'],['legend','Legende',200]];
 function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return presCount>=req;return !!(myStats&&myStats[req]>=1)}
 function reqText(req){return typeof req==='number'?'🔒 '+req+'× Präsident':'🔒 Erfolg „Bombe auf Bombe“'}
 const BGS=[['bar','Bar','#5a3820'],['night','Nacht','#1a2550'],['living','Wohnzimmer','#6b5442'],['neon','Neon','#5a1a6d'],['concrete','Beton','#4a4d52']];
@@ -1746,7 +1746,7 @@ function drawAccount(){
   let h=backBtn+'<h2>Konto</h2>';
   if(!store||!store.online)return h+'<p class="note">Gerade keine Verbindung.</p>';
   if(me){const av=me.avatar||{};
-    h+='<div class="panel avedit"><div class="avbig">'+avatar(av,me.display,presCount,88)+'<div><b>'+esc(me.display)+'</b><span class="note">'+(frameOf(presCount)?'Rahmen durch '+presCount+'× Präsident':'Ab 30× Präsident bekommst du einen Rahmen')+'</span></div></div>'+
+    h+='<div class="panel avedit"><div class="avbig">'+avatar(av,me.display,presCount,88)+'<div><b>'+esc(me.display)+'</b><span class="note">'+(frameOf(presCount)?'Rahmen durch '+presCount+'× Präsident':'Ab 10× Präsident bekommst du einen Rahmen')+'</span></div></div>'+
       '<h3 style="margin-top:14px">Avatar</h3><div class="avgrid">'+AV_EMO.map(e=>'<button class="'+(av.e===e&&!av.img?'on':'')+'" data-a="av-e" data-v="'+e+'">'+e+'</button>').join('')+'</div>'+
       '<h3 style="margin-top:14px">Farbe</h3><div class="avcols">'+AV_COL.map(c=>'<button style="background:'+c+'" class="'+(av.c===c&&!av.img?'on':'')+'" data-a="av-c" data-v="'+c+'"></button>').join('')+'</div>'+
       '<div class="row" style="margin-top:14px"><button class="ghost" data-a="av-photo">📷 Eigenes Foto</button>'+(av.img||av.e?'<button class="ghost" data-a="av-clear">Zurücksetzen</button>':'')+'</div></div>';
