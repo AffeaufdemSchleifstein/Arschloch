@@ -1059,7 +1059,7 @@ function act(a,v,el){
     case 'newmatch':if(G.phase==='over'&&s>=0){startMatch(g);deal(g);commit(g)}return;
     case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name};commit(g)}return;
     case 'unpause':if(G.paused&&s>=0){g.paused=null;commit(g)}return;
-    case 'lv-pause':closeModal();if(s>=0&&(running()||G.phase==='end')){if(!G.paused){g.paused={by:G.players[s].name};commit(g)}}return leave();
+    case 'lv-pause':closeModal();if(s>=0&&(running()||G.phase==='end')&&!G.paused){g.paused={by:G.players[s].name};commit(g).then(()=>leave());return}return leave();
     case 'lv-end':closeModal();if(s>=0){g.phase='over';g.paused=null;commit(g)}return;
     case 'wish':if(g.phase==='wish'&&g.turn===s){wish(g,s,wishSel.slice());wishSel=[];commit(g)}return;
     case 'do':{
