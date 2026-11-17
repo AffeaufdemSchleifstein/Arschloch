@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LukDl8wjd59LiYWe/LCEVvBGYXw/dovL++RAdPmT0Gg=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PvQCgdHhGfAUqMWB4JCfppMVq8xB5iwJObYwS7+2+gw=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -547,7 +547,7 @@ function cardsTxt(cs){return (cs.length>1?cs.length+'× ':'')+RANKS[rk(cs[0])]}
 function activeSeats(g){return g.players.map((_,i)=>i).filter(i=>g.hands[i].length>0)}
 function nextActive(g,from,excl){const n=g.players.length;for(let i=1;i<=n;i++){const s=(from+i)%n;if(g.hands[s].length&&!(excl&&excl(s)))return s}return -1}
 function isFree(g){return !g.pile||g.pile.closed}
-const DEFAULT_RULES={turn:20,bombs:true,stock:true,aceRule:true,target:0};
+const DEFAULT_RULES={turn:20,bombs:true,stock:true,aceRule:true,target:0,solo:true};
 function R(g){return Object.assign({},DEFAULT_RULES,g.rules||{})}
 
 // Neue Partie: Statistik pro Platz zuruecksetzen
@@ -566,7 +566,7 @@ function deal(g){
   for(let i=0;i<n;i++){hands[i]=[];fresh[i]=[]}
   deck.forEach((c,i)=>hands[(start+i)%n].push(c));
   for(let i=0;i<n;i++)hands[i].sort(asc);
-  g.prevRoles={};g.hands=hands;g.fresh=fresh;g.pile=null;g.passed=[];g.last=-1;g.finished=[];g.swaps=[];g.wishQ=[];
+  g.solo=false;g.prevRoles={};g.hands=hands;g.fresh=fresh;g.pile=null;g.passed=[];g.last=-1;g.finished=[];g.swaps=[];g.wishQ=[];
   g.round=(g.round||0)+1;g.roles={};
   if(prev){
     prev.forEach((s,i)=>g.roles[s]=i);g.prevRoles=Object.assign({},g.roles);
@@ -649,7 +649,7 @@ function play(g,seat,cards){
   g.hands[seat]=g.hands[seat].filter(c=>!cards.includes(c));
   g.fresh[seat]=[];
   const wasBomb=!isFree(g)&&g.pile.cards.length===4;
-  if(isFree(g))g.passed=[];
+  if(isFree(g)){g.passed=[];g.solo=false}
   g.pile={cards:cards.slice().sort(asc),by:seat,closed:false};g.last=seat;
   if(cards.length===4){g.rs.bombs[seat]=(g.rs.bombs[seat]||0)+1;if(wasBomb)g.rs.bob[seat]=(g.rs.bob[seat]||0)+1}
   g.msg=nm(g,seat)+(cards.length===4?' legt eine Bombe: ':' legt ')+cardsTxt(cards)+'.';
@@ -662,16 +662,21 @@ function play(g,seat,cards){
   if(act.length<=1){if(act.length)g.finished.push(act[0]);endRound(g);return}
   const top=rk(cards[0])===7&&cards.length===4,nx=nextActive(g,seat,s=>g.passed.includes(s));
   if(top||nx<0||nx===seat){
-    g.pile.closed=true;g.passed=[];g.turn=g.hands[seat].length?seat:nextActive(g,seat);
+    // Hausregel Weiterlegen: alle anderen haben gepasst -> allein immer hoeher weiterlegen
+    if(!top&&g.hands[seat].length&&R(g).solo&&legalMoves(g,seat).length){g.solo=true;g.turn=seat;g.msg+=' Alle anderen haben gepasst – '+nm(g,seat)+' darf allein weiterlegen.';return}
+    g.pile.closed=true;g.passed=[];g.solo=false;g.turn=g.hands[seat].length?seat:nextActive(g,seat);
     g.msg+=(top?' Höher geht nicht – ':' Alle anderen haben gepasst – ')+nm(g,g.turn)+' kommt raus.';
   }else g.turn=nx;
 }
 function canPass(g,seat){return g.phase==='play'&&g.turn===seat&&!isFree(g)}
 function pass(g,seat){
-  g.passed.push(seat);g.fresh[seat]=[];
+  g.fresh[seat]=[];
+  if(g.solo&&seat===g.last){g.pile.closed=true;g.passed=[];g.solo=false;g.turn=seat;g.msg=nm(g,seat)+' hört auf und kommt neu raus.';return}
+  g.passed.push(seat);
   const nx=nextActive(g,seat,s=>g.passed.includes(s));
   if(nx<0||nx===g.last){
-    g.pile.closed=true;g.passed=[];
+    if(g.hands[g.last].length&&R(g).solo&&legalMoves(g,g.last).length){g.solo=true;g.turn=g.last;g.msg='Alle passen – '+nm(g,g.last)+' darf allein weiterlegen (immer höher) oder neu rauskommen.';return}
+    g.pile.closed=true;g.passed=[];g.solo=false;
     g.turn=g.hands[g.last].length?g.last:nextActive(g,g.last);
     g.msg='Alle passen – '+nm(g,g.turn)+' kommt raus.';
   }else{g.turn=nx;g.msg=nm(g,seat)+' passt und ist für diesen Stich raus.'}
@@ -783,12 +788,13 @@ function cleanGame(g){
   if('botLevel' in g&&!LV.includes(g.botLevel))g.botLevel='normal';
   if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={};
     for(const k in DEFAULT_RULES)if(k in r)g.rules[k]=typeof DEFAULT_RULES[k]==='boolean'?!!r[k]:[0,10,20,30].includes(r[k])?r[k]:DEFAULT_RULES[k]}
-  if('paused' in g)g.paused=O(g.paused)?{by:S(g.paused.by,16)}:null;
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
   if('created' in g&&typeof g.created!=='number')g.created=0;
   if('match' in g)g.match=I(g.match,0,1e6)?g.match:0;
   if('round' in g)g.round=I(g.round,0,1e5)?g.round:0;
   if('msg' in g)g.msg=S(g.msg,400);
   if('final' in g)g.final=!!g.final;
+  if('solo' in g)g.solo=!!g.solo;
   const playing=g.phase!=='lobby'&&g.phase!=='closed';
   if(!Array.isArray(g.players)||g.players.length<3||g.players.length>5||!g.players.every(O)){if(playing)return null;delete g.players;return g}
   g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,16)||'Spieler';if('bot' in p)p.bot=!!p.bot;if('level' in p&&!LV.includes(p.level))p.level='normal'});
@@ -1531,9 +1537,9 @@ function act(a,v,el){
     case 'next':if(G.phase==='end'&&s>=0&&!G.final){deal(g);commit(g)}return;
     case 'endmatch':if(G.phase==='end'&&s>=0){g.phase='over';commit(g)}return;
     case 'newmatch':if(G.phase==='over'&&s>=0){startMatch(g);deal(g);commit(g)}return;
-    case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name};commit(g)}return;
-    case 'unpause':if(G.paused&&s>=0){g.paused=null;commit(g)}return;
-    case 'lv-pause':closeModal();if(s>=0&&(running()||G.phase==='end')&&!G.paused){g.paused={by:G.players[s].name};commit(g).then(()=>leave());return}return leave();
+    case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name,uid:myId};commit(g)}return;
+    case 'unpause':if(G.paused&&s>=0){if(G.paused.uid&&G.paused.uid!==myId){toast('Nur '+G.paused.by+' kann die Partie fortsetzen.');return}g.paused=null;commit(g)}return;
+    case 'lv-pause':closeModal();if(s>=0&&(running()||G.phase==='end')&&!G.paused){g.paused={by:G.players[s].name,uid:myId};commit(g).then(()=>leave());return}return leave();
 
     case 'lv-close':closeModal();if(G.host===myId&&G.phase==='lobby'){g.phase='closed';commit(g).then(()=>{if(code){const c=code;leave();store.hide(c).then(loadMyGames).catch(()=>{})}})}return;
     case 'lv-end':closeModal();if(s>=0){g.phase='over';g.paused=null;commit(g)}return;
@@ -1588,7 +1594,7 @@ function cardHtml(c,cls,attrs){
   return '<div class="card'+(red?' red':'')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="k">'+RANKS[rk(c)]+'</span><span class="s">'+SUITS[su(c)]+'</span><span class="big">'+SUITS[su(c)]+'</span></div>';
 }
 function roleOf(g,s){const n=g.players.length;return g.roles&&g.roles[s]!=null&&ROLES[n]?ROLES[n][g.roles[s]]:''}
-const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, kommt derjenige raus, der zuletzt gelegt hat. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Punkteziel).</details>';
+const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, darf derjenige, der zuletzt gelegt hat, allein weiter immer höher legen (gleich viele Karten) – hört er auf, kommt er neu raus. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel).</details>';
 const HG='<div class="hgw" id="hg"><svg viewBox="0 0 100 140"><defs><clipPath id="hgc"><path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z"/></clipPath></defs>'+
   '<path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z" fill="rgba(0,0,0,.35)" stroke="#f4e4c0" stroke-width="4"/>'+
   '<g clip-path="url(#hgc)" fill="#f2c14e"><rect id="hgTop" x="0" y="20" width="100" height="50"/><rect id="hgBot" x="0" y="126" width="100" height="0"/><line class="stream" id="hgS" x1="50" y1="68" x2="50" y2="126" stroke="#f2c14e" stroke-width="3"/></g>'+
@@ -1757,7 +1763,7 @@ function drawAch(){
   return h+achHtml(profileData)+'<p class="note">Erfolge zählen ab jetzt über alle Partien mit Konto.</p>';
 }
 function rulesText(r){
-  return (r.turn?r.turn+' s pro Zug':'ohne Zeitlimit')+' · Bomben '+(r.bombs?'an':'aus')+' · Stock '+(r.stock?'an':'aus')+' · Ass-Ende = Arschloch '+(r.aceRule?'an':'aus')+(r.target?' · bis '+r.target+' Punkte':'');
+  return (r.turn?r.turn+' s pro Zug':'ohne Zeitlimit')+' · Bomben '+(r.bombs?'an':'aus')+' · Stock '+(r.stock?'an':'aus')+' · Ass-Ende = Arschloch '+(r.aceRule?'an':'aus')+' · Weiterlegen '+(r.solo?'an':'aus')+(r.target?' · bis '+r.target+' Punkte':'');
 }
 function topBar(){
   const s=mySeat(),canPause=running()&&s>=0&&store.online&&!G.paused;
@@ -1786,6 +1792,7 @@ function drawGame(app){
         '<div class="rl"><span>Bomben<small>Vier gleiche Karten schlagen alles</small></span>'+seg('bombs',[[true,'an'],[false,'aus']])+'</div>'+
         '<div class="rl"><span>Stock<small>Bei 3 & 5 Spielern liegen 2 Karten verdeckt, der Bauer darf tauschen</small></span>'+seg('stock',[[true,'an'],[false,'aus']])+'</div>'+
         '<div class="rl"><span>Ass-Ende = Arschloch<small>Mit einem Ass als letzter Karte fertig werden ist erlaubt – man landet dann aber automatisch auf dem letzten Platz</small></span>'+seg('aceRule',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Weiterlegen<small>Haben alle gepasst, darf der Letzte allein weiter immer höher legen (gleich viele Karten) und kommt danach neu raus</small></span>'+seg('solo',[[true,'an'],[false,'aus']])+'</div>'+
         '<div class="rl"><span>Partie endet bei</span>'+seg('target',[[0,'offen'],[10,'10 P'],[20,'20 P'],[30,'30 P']])+'</div>'+
         ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span><div class="seg">'+[['easy','leicht'],['normal','normal'],['hard','schwer']].map(([v,l])=>'<button class="'+((G.botLevel||'normal')===v?'on':'')+'" data-a="botlvl" data-v="'+v+'">'+l+'</button>').join('')+'</div></div>':'')+'</div>'
       :'<div class="panel"><h3>Hausregeln</h3><p class="note" style="margin:0">'+esc(rulesText(r))+((G.bots||0)?' · Computer '+LV[G.botLevel||'normal']:'')+'</p></div>';
@@ -1868,11 +1875,12 @@ function drawGame(app){
   }else if(G.turn===me_){
     mine=true;
     if(isFree(G))status='Du kommst raus – leg eine oder mehrere gleiche Karten.';
-    else{const k=G.pile.cards.length;status='Du bist dran: '+(k>1?k+' gleiche Karten':'eine Karte')+' höher als '+RANKS[rk(G.pile.cards[0])]+(k<4?', eine Bombe':'')+' – oder passen.'}
+    else{const k=G.pile.cards.length,need=(k>1?k+' gleiche Karten':'eine Karte')+' höher als '+RANKS[rk(G.pile.cards[0])];
+      status=G.solo?'Alle haben gepasst – du darfst allein weiterlegen: '+need+'. Oder aufhören und neu rauskommen.':'Du bist dran: '+need+(k<4?', eine Bombe':'')+' – oder passen.'}
     if(G.hands[me_].every(c=>rk(c)===7))status+=' Achtung: Mit Ass aufhören heißt automatisch Letzter!';
     status+='<span id="tm" class="tm"></span>';
     goOk=canPlay(G,me_,cs);passOk=canPass(G,me_);
-  }else status=esc(nm(G,G.turn))+' ist dran …';
+  }else status=esc(nm(G,G.turn))+(G.solo&&G.phase==='play'?' legt allein weiter …':' ist dran …');
   if(G.paused){mine=false;status='Pausiert'}
   const tk=G.turn+'|'+G.phase+'|'+pk,stNew=mine&&tk!==seen.turn;seen.turn=tk;
   const msgNew=G.msg!==seen.msg;seen.msg=G.msg;
@@ -1887,11 +1895,11 @@ function drawGame(app){
     if(!G.hands[me_].length)hand=(G.losers||[]).includes(me_)?'<p class="note">Mit Ass beendet – du landest automatisch ganz hinten. 😬</p>':'<p class="note">Du bist fertig – Platz '+(G.finished.indexOf(me_)+1)+'. 🎉</p>';
   }else hand='<p class="note">Du schaust nur zu.</p>';
   seen.round=G.round;
-  const pauseBox=G.paused?'<div class="pausebox"><b>⏸ Pausiert</b><span>von '+esc(G.paused.by)+'</span>'+(me_>=0?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  const pauseBox=G.paused?'<div class="pausebox"><b>⏸ Pausiert</b><span>von '+esc(G.paused.by)+'</span>'+(me_>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':me_>=0?'<span class="note">Nur '+esc(G.paused.by)+' kann fortsetzen.</span>':'')+'</div>':'';
   const stHtml='<div class="status'+(mine?' me':'')+(stNew?' new':'')+'">'+status+'</div>';
   const meHtml=me_>=0?'<div class="mebar"><span>'+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
   const handHtml='<div class="hand'+(dealAnim?' deal':'')+(wishUi?' mini':'')+'">'+hand+'</div>';
-  const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="ghost" data-a="pass" '+(passOk?'':'disabled')+'>Passen</button>';
+  const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="ghost" data-a="pass" '+(passOk?'':'disabled')+'>'+(G.solo&&G.turn===me_?'Aufhören':'Passen')+'</button>';
   const showHg=G.phase==='play'&&G.turn===me_&&!G.paused;
   app.innerHTML=top+'<div class="opps">'+opps+'</div>'+
     '<div class="table'+(wishUi?' small':'')+'"><div class="pile'+pcls+'">'+pile+'</div><div class="msg'+(msgNew?' new':'')+'">'+esc(G.msg||'')+'</div>'+(showHg?HG:'')+pauseBox+'</div>'+

@@ -20,12 +20,13 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 - Pausieren und später unter „Meine Partien“ weiterspielen
 - Eigenes Design: Tische, Filzfarben, Hintergründe, Kartenvorder- und -rückseiten, Avatare oder eigenes Foto
 - Sounds und Hintergrundmusik (Pop, Ruhig, Lounge) mit getrennter Lautstärke
-- Hausregeln in der Lobby: Zeit pro Zug, Bomben, Stock, Ass-Regel, Punkteziel
+- Hausregeln in der Lobby: Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel
 
 ## Regeln
 
 - 32 Karten (7 bis Ass). Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch.
 - Gleich viele, aber höhere Karten legen – oder passen. Wer passt, ist für den Stich raus.
+- **Weiterlegen:** Haben alle anderen gepasst, darf der Letzte allein weiter immer höher legen; hört er auf, kommt er neu raus (Hausregel, abschaltbar).
 - **Bombe:** Vier gleiche Karten schlagen alles, nur eine höhere Bombe kommt drüber. *Mi Bombo!*
 - Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch (fehlt eine, gibt es die beste) und gibt 2 beliebige zurück. Bei 4+ Spielern tauscht der Vize-Präsident 1 Karte mit dem Vize-Arschloch.
 - Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer nimmt beide oder keine.
