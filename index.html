@@ -173,11 +173,11 @@
   @media (prefers-reduced-motion:reduce){body.rumble #app{animation:none}#boom.on .bomb{animation:none;opacity:0}#parts,#boom .ring,#boom .fire,#boom .flash{display:none}#boom.on .bang{animation:none;opacity:1;transform:translate(-50%,-50%) scale(1.6)}#boom .txt b{animation:none}}
   .tm{font-variant-numeric:tabular-nums;font-weight:800;color:var(--gold);margin-left:8px;white-space:nowrap}
   .tm.hot{color:#ff6b57}
-  #hg{position:fixed;display:none;z-index:6;pointer-events:none;background:#1a0f08;border:3px solid var(--gold);border-radius:18px;
+  #hg{position:fixed;display:none;z-index:6;pointer-events:none;background:rgba(26,15,8,.82);border:3px solid var(--gold);border-radius:18px;
     box-shadow:0 10px 30px rgba(0,0,0,.7);align-items:center;justify-content:center;gap:10px;overflow:hidden;transition:left .26s linear,top .26s linear,width .26s linear,height .26s linear}
   #hg.on{display:flex;animation:hg-in .75s cubic-bezier(.2,.8,.3,1.15) backwards}
   #hg svg{height:86%;max-height:260px;width:auto;flex:none}
-  #hg b{font-size:34px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums}
+  #hg b{font-size:28px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums}
   #hg .stream{stroke-dasharray:4 5;animation:hg-s .35s linear infinite}
   @keyframes hg-in{from{transform:translate(110vw,-45vh) rotate(600deg) scale(.4)}to{transform:none}}
   @keyframes hg-s{to{stroke-dashoffset:-9}}
@@ -552,7 +552,7 @@ function tick(){
   const hand=document.querySelector('.hand');
   if(mine&&hand&&el>=10&&el<TURN+1){
     const r=hand.getBoundingClientRect(),p=Math.min(1,(el-10)/8),q=Math.min(1,(el-10)/10);
-    const w=96+(r.width+20-96)*p,h=120+(Math.max(r.height+20,120)-120)*p;
+    const W=Math.min(r.width*.5,180),H=Math.min(Math.max(r.height*.7,96),150),w=72+(W-72)*p,h=84+(H-84)*p;
     hg.style.left=(r.left+r.width/2-w/2)+'px';hg.style.top=(r.top+r.height/2-h/2)+'px';hg.style.width=w+'px';hg.style.height=h+'px';
     const y=20+50*q;$('#hgTop').setAttribute('y',y);$('#hgTop').setAttribute('height',70-y);
     $('#hgBot').setAttribute('y',126-46*q);$('#hgBot').setAttribute('height',46*q);$('#hgS').style.display=q>=1?'none':'';
