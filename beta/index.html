@@ -506,6 +506,15 @@
   .rkn{display:inline-flex;align-items:center;gap:7px}
   .phead{display:flex;justify-content:center;margin:6px 0 2px}
   #ts{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:50}
+
+  .rl>span{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .rl small{font-size:11.5px;color:var(--mute);line-height:1.3}
+  .vol{padding:8px 0;border-top:1px solid var(--line)}
+  .vol:first-of-type{border-top:0}
+  .vol b{display:block;font-size:16px}
+  .vrow{display:flex;align-items:center;gap:10px;margin-top:6px}
+  .vrow input{flex:1;height:30px;padding:0;background:none;border:0;accent-color:var(--gold)}
+  .vv{width:30px;text-align:right;font-variant-numeric:tabular-nums;color:var(--mute);font-size:13px}
 </style>
 </head>
 <body>
@@ -836,6 +845,7 @@ async function sbStore(){
       stop(){stopped=true;clearInterval(iv);document.removeEventListener('visibilitychange',vis);window.removeEventListener('online',vis);sb.removeChannel(ch)}};
   };
   S.kick=(c,u)=>rpc('kick_member',{p_code:c,p_uid:u});
+  S.hide=c=>rpc('hide_game',{p_code:c});
   S.listenUser=(onInv,onFr)=>{sb.channel('user:'+S.uid,{config:{private:true}})
     .on('broadcast',{event:'invite'},m=>onInv(m.payload)).on('broadcast',{event:'friends'},()=>onFr()).subscribe()};
   S.register=async(u,pw)=>{
@@ -860,7 +870,7 @@ function localStore(){
     async join(){return null},
     subGame(c,f,onM,onChat){this._chat=onChat;if(st)setTimeout(()=>f(clone(st)));onM(members);return{local:d=>{st=clone(d);f(clone(d))},refetch(){},stop(){}}},
     async sendChat(c,kind,body){this._chat&&this._chat({uid:'me',name:myName,kind,body,at:new Date().toISOString()})},async chatHistory(){return[]},
-    async commit(){return true},async recordRound(){}};
+    async commit(){return true},async recordRound(){},async hide(){}};
 }
 
 /* ---------- Avatare ---------- */
@@ -896,22 +906,90 @@ function pickPhoto(){
 }
 
 /* ---------- Einstellungen ---------- */
-let SET={snd:true,vib:true,push:false};
+let SET={snd:true,vib:true,push:false,sfxVol:.8,musVol:.35,music:'chill'};
 try{Object.assign(SET,JSON.parse(ls.get('al_set')||'{}'))}catch(e){}
 function saveSet(){ls.set('al_set',JSON.stringify(SET))}
 
 /* ---------- Sound (wird direkt im Browser erzeugt, keine Dateien) ---------- */
-let AC=null;
-function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==='suspended')AC.resume().catch(()=>{});return AC}
-document.addEventListener('pointerdown',()=>{if(SET.snd)ac()},true);
-function tone(f,t0,dur,type,vol,f2){const a=AC,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);
-  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+dur+.05)}
+let AC=null,SFXG=null,MUSG=null;
+function ac(){
+  if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}
+    SFXG=AC.createGain();SFXG.gain.value=SET.sfxVol;SFXG.connect(AC.destination);
+    MUSG=AC.createGain();MUSG.gain.value=SET.musVol*.6;MUSG.connect(AC.destination)}
+  if(AC.state==='suspended')AC.resume().catch(()=>{});return AC}
+document.addEventListener('pointerdown',()=>{ac();setTimeout(musicStart,60)},true);
+function tone(f,t0,dur,type,vol,f2,dest){const a=AC,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(dest||SFXG);o.start(t0);o.stop(t0+dur+.05)}
 const NB={};
-function noise(t0,dur,vol,type,freq){const a=AC,k=Math.round(dur*100);let b=NB[k];
+function noise(t0,dur,vol,type,freq,dest){const a=AC,k=Math.round(dur*100);let b=NB[k];
   if(!b){b=NB[k]=a.createBuffer(1,Math.max(1,a.sampleRate*dur|0),a.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2)}
-  const s_=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s_.buffer=b;f.type=type||'lowpass';f.frequency.value=freq||2000;g.gain.value=vol||.3;s_.connect(f).connect(g).connect(a.destination);s_.start(t0)}
+  const s_=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s_.buffer=b;f.type=type||'lowpass';f.frequency.value=freq||2000;g.gain.value=vol||.3;s_.connect(f).connect(g).connect(dest||SFXG);s_.start(t0)}
+
+/* ---------- Hintergrundmusik: wird live erzeugt (Schlagzeug, Bass, Akkorde, Melodie) ---------- */
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function mKick(t,v){const a=AC,o=a.createOscillator(),g=a.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(42,t+.13);
+  g.gain.setValueAtTime(v||.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.32);o.connect(g).connect(MUSG);o.start(t);o.stop(t+.35)}
+const mSnare=(t,v)=>{noise(t,.14,v||.28,'bandpass',1900,MUSG);tone(190,t,.07,'triangle',(v||.28)*.5,120,MUSG)};
+const mHat=(t,v)=>noise(t,.035,v||.1,'highpass',7500,MUSG);
+const mRide=(t,v)=>noise(t,.18,v||.06,'highpass',5200,MUSG);
+function mVoice(m,t,dur,type,vol,cut,att,dest){const a=AC,o=a.createOscillator(),f=a.createBiquadFilter(),g=a.createGain();
+  o.type=type;o.frequency.value=mtof(m);f.type='lowpass';f.frequency.value=cut||1200;
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+(att||.01));g.gain.setTargetAtTime(.0001,t+Math.max(att||.01,dur*.6),dur*.25);
+  o.connect(f).connect(g).connect(dest||MUSG);o.start(t);o.stop(t+dur+.6)}
+function mKeys(m,t,dur,vol){mVoice(m,t,dur,'sine',vol||.12,3000,.005);mVoice(m+12,t,dur*.5,'sine',(vol||.12)*.25,4000,.005)}
+// Einmal pro Stil eine zufaellige Melodie erzeugen, die sich dann wiederholt
+function mel(scale,len,prob,seed){let x=seed||7;const r=()=>(x=(x*9301+49297)%233280)/233280;return Array.from({length:len},()=>r()<prob?scale[Math.floor(r()*scale.length)]:null)}
+const STY={
+  pop:{bpm:112,swing:0,bars:4,
+    ch:[[60,64,67],[55,59,62],[57,60,64],[53,57,60]],root:[48,43,45,41],
+    mel:mel([72,74,76,79,81,84],64,.42,11),
+    play(s,b,t,d){const c=this.ch[b],r=this.root[b];
+      if(s===0||s===8||(s===10&&b===3))mKick(t,.85);
+      if(s===4||s===12)mSnare(t,.26);
+      if(s%2===0)mHat(t,s%4===0?.09:.05);
+      if([0,3,6,8,11,14].includes(s))mVoice(r-(s===6||s===14?-12:0),t,d*2,'triangle',.22,700);
+      if(s===2||s===10)c.forEach(m=>mVoice(m+12,t,d*3,'sawtooth',.035,1600,.01));
+      const n=this.mel[b*16+s];if(n&&s%2===0)mVoice(n,t,d*2,'square',.035,2400,.005);}},
+  chill:{bpm:74,swing:.12,bars:4,
+    ch:[[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]],root:[41,40,38,36],
+    mel:mel([72,74,76,79,81],64,.3,23),
+    play(s,b,t,d){const c=this.ch[b],r=this.root[b];
+      if(s===0)c.forEach(m=>mVoice(m,t,d*16,'triangle',.05,900,.6));
+      if(s===0||s===10)mKick(t,.45);
+      if(s===4||s===12)noise(t,.09,.06,'bandpass',2500,MUSG);
+      if(s%4===2)mHat(t,.035);
+      if(s===0||s===8)mVoice(r,t,d*6,'sine',.2,500,.02);
+      if(s%2===0){const n=c[(s/2)%c.length]+12;if((s*7+b)%3!==0)mKeys(n,t,d*3,.06)}
+      const n=this.mel[b*16+s];if(n&&s%4===0)mKeys(n,t,d*4,.07);}},
+  lounge:{bpm:96,swing:.2,bars:4,
+    ch:[[53,57,60,62],[53,55,59,62],[52,55,59,60],[49,52,55,57]],walk:[[38,41,45,47],[43,47,50,49],[36,40,43,44],[45,49,52,51]],
+    play(s,b,t,d){const c=this.ch[b];
+      if(s%4===0)mRide(t,.06);if(s%4===3)mRide(t,.035);
+      if(s===4||s===12)noise(t,.03,.05,'highpass',3000,MUSG);
+      if(s%4===0)mVoice(this.walk[b][s/4],t,d*3.5,'triangle',.24,600,.01);
+      if(s===2||s===7||s===11)c.forEach(m=>mKeys(m+12,t,d*(s===7?4:2),.045));}}
+};
+const MUS={timer:null,next:0,step:0,style:null};
+function musicStart(){
+  if(!SET.music||SET.music==='off'||SET.musVol<=0||document.hidden)return;
+  const a=AC;if(!a||a.state!=='running'){if(a)setTimeout(musicStart,300);return}
+  if(MUS.timer&&MUS.style===SET.music)return;
+  musicStop();MUS.style=SET.music;MUS.next=a.currentTime+.15;MUS.step=0;
+  MUSG.gain.cancelScheduledValues(a.currentTime);MUSG.gain.setValueAtTime(.0001,a.currentTime);MUSG.gain.linearRampToValueAtTime(SET.musVol*.6,a.currentTime+1.5);
+  MUS.timer=setInterval(()=>{const st=STY[MUS.style];if(!st||!AC)return;const d=60/st.bpm/4;
+    while(MUS.next<AC.currentTime+.15){const s=MUS.step%16,b=Math.floor(MUS.step/16)%st.bars;
+      try{st.play(s,b,MUS.next,d)}catch(e){}
+      MUS.next+=d*(st.swing?(s%2?1-st.swing:1+st.swing):1);MUS.step++}},30);
+}
+function musicStop(){if(MUS.timer){clearInterval(MUS.timer);MUS.timer=null}MUS.style=null}
+function setVol(k,v){SET[k]=v;saveSet();if(!AC)return;const t=AC.currentTime;
+  if(k==='sfxVol')SFXG.gain.setTargetAtTime(v,t,.05);
+  if(k==='musVol'){MUSG.gain.setTargetAtTime(v*.6,t,.05);if(v>0)musicStart();else musicStop()}}
+function duck(ms){if(!AC||!MUS.timer)return;const t=AC.currentTime,v=SET.musVol*.6;MUSG.gain.cancelScheduledValues(t);MUSG.gain.setTargetAtTime(v*.2,t,.1);MUSG.gain.setTargetAtTime(v,t+ms/1000,.6)}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)musicStop();else setTimeout(musicStart,200)});
+
 function sfx(k){
-  if(!SET.snd||document.hidden)return;const a=ac();if(!a||a.state!=='running')return;const t=a.currentTime+.01;
+  if(SET.sfxVol<=0||document.hidden)return;const a=ac();if(!a||a.state!=='running')return;const t=a.currentTime+.01;
   switch(k){
     case 'card':noise(t,.09,.55,'bandpass',1800);tone(170,t,.07,'sine',.14,90);break;
     case 'pass':tone(320,t,.14,'sine',.07,230);break;
@@ -1107,11 +1185,12 @@ function boom(t){
   el.classList.remove('on');document.body.classList.remove('rumble');parts.innerHTML=h;void el.offsetWidth;
   el.classList.add('on');document.body.classList.add('rumble');boomUntil=Date.now()+5200;
   clearTimeout(boomT);boomT=setTimeout(()=>{el.classList.remove('on');document.body.classList.remove('rumble');parts.innerHTML=''},5300);
-  sfx('fuse');setTimeout(()=>{sfx('boom');if(SET.vib)try{navigator.vibrate&&navigator.vibrate([250,60,400])}catch(e){}},2600);
+  duck(5200);sfx('fuse');setTimeout(()=>{sfx('boom');if(SET.vib)try{navigator.vibrate&&navigator.vibrate([250,60,400])}catch(e){}},2600);
 }
 const pileKey=g=>g&&g.pile?g.pile.cards.join('-')+'@'+g.round:'';
 function onGame(g){
   if(G&&g.v<G.v)return;
+  if(g.phase==='closed'){if(code){const h=g.host===myId;if(!h)toast('Der Host hat den Raum geschlossen.');const c=code;leave();store.hide&&store.hide(c).then(loadMyGames).catch(()=>{})}return}
   const prev=G;
   if(prev&&g.pile&&g.pile.cards.length===4&&pileKey(g)!==pileKey(prev))boom(nm(g,g.pile.by)+' legt 4× '+RANKS[rk(g.pile.cards[0])]);
   else if(prev&&g.pile&&pileKey(g)!==pileKey(prev))sfx('card');
@@ -1315,6 +1394,9 @@ function act(a,v,el){
     case 'th':T[el.dataset.k]=v;saveTheme();sfx('pop');return render();
     case 'set':SET[v]=!SET[v];saveSet();if(v==='snd'&&SET.snd){ac();setTimeout(()=>sfx('turn'),60)}return render();
     case 'push-on':return enablePush();
+    case 'hide':store.hide(v).then(()=>{myGames=myGames.filter(x=>x.code!==v);render()}).catch(()=>toast('Hat nicht geklappt.'));return;
+    case 'lv-keep':closeModal();return leave();
+    case 'mus':SET.music=v;saveSet();ac();musicStop();if(v!=='off'){if(SET.musVol<=0)setVol('musVol',.35);setTimeout(musicStart,80)}return render();
     case 'av-e':if(me)saveAvatar({e:v,c:(me.avatar&&me.avatar.c)||AV_COL[5]});return;
     case 'av-c':if(me)saveAvatar(Object.assign({},me.avatar&&me.avatar.img?{e:'🃏'}:me.avatar||{e:'🃏'},{c:v}));return;
     case 'av-photo':return pickPhoto();
@@ -1365,6 +1447,8 @@ function act(a,v,el){
     case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name};commit(g)}return;
     case 'unpause':if(G.paused&&s>=0){g.paused=null;commit(g)}return;
     case 'lv-pause':closeModal();if(s>=0&&(running()||G.phase==='end')&&!G.paused){g.paused={by:G.players[s].name};commit(g).then(()=>leave());return}return leave();
+
+    case 'lv-close':closeModal();if(G.host===myId&&G.phase==='lobby'){g.phase='closed';commit(g).then(()=>{if(code){const c=code;leave();store.hide(c).then(loadMyGames).catch(()=>{})}})}return;
     case 'lv-end':closeModal();if(s>=0){g.phase='over';g.paused=null;commit(g)}return;
     case 'wish':if(g.phase==='wish'&&g.turn===s){wish(g,s,wishSel.slice());wishSel=[];commit(g)}return;
     case 'do':{
@@ -1380,6 +1464,14 @@ function act(a,v,el){
 }
 function leaveMenu(){
   const s=mySeat();
+  if(G&&G.phase==='lobby'&&store.online){
+    if(G.host===myId){openModal('<h2>Lobby verlassen?</h2><div class="stack">'+
+      '<button class="danger" data-a="lv-close">Raum für alle schließen</button>'+
+      '<button class="ghost" data-a="lv-keep">Nur verlassen (Raum bleibt offen)</button>'+
+      '<button class="ghost" data-a="modal-x">Abbrechen</button></div>'+
+      '<p class="note">Geschlossene Räume verschwinden bei allen aus „Meine Partien“.</p>');return}
+    const c=code;leave();store.hide(c).then(loadMyGames).catch(()=>{});return;
+  }
   if(G&&s>=0&&store.online&&(running()||G.phase==='end')){
     openModal('<h2>Partie verlassen?</h2><div class="stack">'+
       '<button data-a="lv-pause">⏸ Pausieren & später weiterspielen</button>'+
@@ -1393,7 +1485,10 @@ document.addEventListener('click',e=>{
   const m=$('#modal');if(e.target===m&&!m.dataset.sticky){closeModal();return}
   const b=e.target.closest('[data-a]');if(b&&!b.disabled)act(b.dataset.a,b.dataset.v,b);
 });
-document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(k)drafts[k]=e.target.value});
+let volPrev=0;
+document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)drafts[ds.k]=e.target.value;
+  if(ds.vol){const v=+e.target.value/100;ac();setVol(ds.vol,v);const o=document.getElementById('vv-'+ds.vol);if(o)o.textContent=Math.round(v*100);
+    if(ds.vol==='sfxVol'&&Date.now()-volPrev>180){volPrev=Date.now();sfx('card')}}});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
 function openModal(h,sticky){modalOpen=true;const m=$('#modal');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
@@ -1405,7 +1500,7 @@ function cardHtml(c,cls,attrs){
   return '<div class="card'+(red?' red':'')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="k">'+RANKS[rk(c)]+'</span><span class="s">'+SUITS[su(c)]+'</span><span class="big">'+SUITS[su(c)]+'</span></div>';
 }
 function roleOf(g,s){const n=g.players.length;return g.roles&&g.roles[s]!=null&&ROLES[n]?ROLES[n][g.roles[s]]:''}
-const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, kommt derjenige raus, der zuletzt gelegt hat. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletztem Zug aufzuhören ist verboten: Wer das tut, landet automatisch ganz hinten. Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Punkteziel).</details>';
+const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, kommt derjenige raus, der zuletzt gelegt hat. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Punkteziel).</details>';
 const HG='<div class="hgw" id="hg"><svg viewBox="0 0 100 140"><defs><clipPath id="hgc"><path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z"/></clipPath></defs>'+
   '<path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z" fill="rgba(0,0,0,.35)" stroke="#f4e4c0" stroke-width="4"/>'+
   '<g clip-path="url(#hgc)" fill="#f2c14e"><rect id="hgTop" x="0" y="20" width="100" height="50"/><rect id="hgBot" x="0" y="126" width="100" height="0"/><line class="stream" id="hgS" x1="50" y1="68" x2="50" y2="126" stroke="#f2c14e" stroke-width="3"/></g>'+
@@ -1440,7 +1535,7 @@ function drawHome(){
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
     if(myGames.length)h+='<div class="panel"><h3>Meine Partien</h3><ul class="plist">'+myGames.map((x,i)=>
       '<li style="--i:'+i+'"><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px">'+esc(x.players||x.code)+'</b><span class="note">'+
-      (x.phase==='lobby'?'Lobby':'Runde '+x.round)+(x.paused?' · ⏸ pausiert':'')+'</span></span><button class="small" data-a="resume" data-v="'+esc(x.code)+'">'+(x.paused?'Fortsetzen':'Öffnen')+'</button></li>').join('')+'</ul></div>';
+      (x.phase==='lobby'?'Lobby':'Runde '+x.round)+(x.paused?' · ⏸ pausiert':'')+'</span></span><span class="row" style="flex:0 0 auto;gap:6px"><button class="small" data-a="resume" data-v="'+esc(x.code)+'">'+(x.paused?'Fortsetzen':'Öffnen')+'</button><button class="small ghost" data-a="hide" data-v="'+esc(x.code)+'" title="Aus der Liste entfernen">✕</button></span></li>').join('')+'</ul></div>';
   }else h+='<div class="panel"><button data-a="create">Gegen Computer spielen</button><p class="note" style="margin:12px 0 0">Gerade keine Verbindung zum Spielserver – prüf dein Internet und lade neu. Gegen Computergegner kannst du trotzdem spielen.</p></div>';
   const ic=incomingCount();
   h+='<div class="nav">'+
@@ -1547,9 +1642,14 @@ function drawDesign(){
 
 function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
-  let h=backBtn+'<h2>Einstellungen</h2><div class="panel"><ul class="plist">'+
-    tg('snd','Soundeffekte','Karten, Mi Bombo, Sanduhr, Fanfare …')+
-    tg('vib','Vibration','Bei Bomben und Einladungen')+'</ul></div>';
+  const sl=(k,label,sub)=>'<div class="vol"><div><b>'+label+'</b><span class="note">'+sub+'</span></div><div class="vrow"><span>🔈</span><input type="range" min="0" max="100" step="1" data-vol="'+k+'" value="'+Math.round(SET[k]*100)+'" aria-label="'+label+'"><span class="vv" id="vv-'+k+'">'+Math.round(SET[k]*100)+'</span></div></div>';
+  const MUSICS=[['off','Aus'],['pop','Pop'],['chill','Ruhig'],['lounge','Lounge']];
+  let h=backBtn+'<h2>Einstellungen</h2>'+
+    '<div class="panel"><h3>Sound</h3>'+sl('sfxVol','Spiel-Sounds','Karten, Mi Bombo, Sanduhr, Fanfare …')+
+    '<div class="vol"><div><b>Hintergrundmusik</b><span class="note">Wird live auf dem Handy erzeugt</span></div><div class="seg" style="margin-top:8px">'+MUSICS.map(([v,l])=>'<button class="'+((SET.music||'off')===v?'on':'')+'" data-a="mus" data-v="'+v+'">'+l+'</button>').join('')+'</div></div>'+
+    (SET.music&&SET.music!=='off'?sl('musVol','Musik-Lautstärke',''):'')+
+    (IOS?'<p class="note" style="margin-bottom:0">iPhone: Ist der Stumm-Schalter an der Seite aktiv, bleibt das Spiel still.</p>':'')+'</div>'+
+    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+'</ul></div>';
   let push;
   if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
   else if(!pushSupported())push='<p class="note" style="margin:0">'+(IOS&&!STANDALONE?'Auf dem iPhone gehen Benachrichtigungen nur, wenn das Spiel als App auf dem Home-Bildschirm liegt: Safari → Teilen → „Zum Home-Bildschirm“, dann die App von dort öffnen.':'Dein Browser unterstützt keine Benachrichtigungen.')+'</p>';
@@ -1567,7 +1667,7 @@ function drawAch(){
   return h+achHtml(profileData)+'<p class="note">Erfolge zählen ab jetzt über alle Partien mit Konto.</p>';
 }
 function rulesText(r){
-  return (r.turn?r.turn+' s pro Zug':'ohne Zeitlimit')+' · Bomben '+(r.bombs?'an':'aus')+' · Stock '+(r.stock?'an':'aus')+' · Ass-Regel '+(r.aceRule?'an':'aus')+(r.target?' · bis '+r.target+' Punkte':'');
+  return (r.turn?r.turn+' s pro Zug':'ohne Zeitlimit')+' · Bomben '+(r.bombs?'an':'aus')+' · Stock '+(r.stock?'an':'aus')+' · Ass-Ende = Arschloch '+(r.aceRule?'an':'aus')+(r.target?' · bis '+r.target+' Punkte':'');
 }
 function topBar(){
   const s=mySeat(),canPause=running()&&s>=0&&store.online&&!G.paused;
@@ -1593,9 +1693,9 @@ function drawGame(app){
     for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[G.botLevel||'normal']+'</span></li>';
     const r=R(G),seg=(k,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[k])===String(v)?'on':'')+'" data-a="rule" data-k="'+k+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
     const rules=host?'<div class="panel"><h3>Hausregeln</h3><div class="rl"><span>Zeit pro Zug</span>'+seg('turn',[[10,'10 s'],[20,'20 s'],[30,'30 s'],[0,'aus']])+'</div>'+
-        '<div class="rl"><span>Bomben</span>'+seg('bombs',[[true,'an'],[false,'aus']])+'</div>'+
-        '<div class="rl"><span>Stock (3 & 5 Spieler)</span>'+seg('stock',[[true,'an'],[false,'aus']])+'</div>'+
-        '<div class="rl"><span>Mit Ass beenden verboten</span>'+seg('aceRule',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Bomben<small>Vier gleiche Karten schlagen alles</small></span>'+seg('bombs',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Stock<small>Bei 3 & 5 Spielern liegen 2 Karten verdeckt, der Bauer darf tauschen</small></span>'+seg('stock',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Ass-Ende = Arschloch<small>Mit einem Ass als letzter Karte fertig werden ist erlaubt – man landet dann aber automatisch auf dem letzten Platz</small></span>'+seg('aceRule',[[true,'an'],[false,'aus']])+'</div>'+
         '<div class="rl"><span>Partie endet bei</span>'+seg('target',[[0,'offen'],[10,'10 P'],[20,'20 P'],[30,'30 P']])+'</div>'+
         ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span><div class="seg">'+[['easy','leicht'],['normal','normal'],['hard','schwer']].map(([v,l])=>'<button class="'+((G.botLevel||'normal')===v?'on':'')+'" data-a="botlvl" data-v="'+v+'">'+l+'</button>').join('')+'</div></div>':'')+'</div>'
       :'<div class="panel"><h3>Hausregeln</h3><p class="note" style="margin:0">'+esc(rulesText(r))+((G.bots||0)?' · Computer '+LV[G.botLevel||'normal']:'')+'</p></div>';
