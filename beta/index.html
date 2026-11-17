@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PvQCgdHhGfAUqMWB4JCfppMVq8xB5iwJObYwS7+2+gw=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9EM0D3qJUE2mWhyBAbApaA5lm0kPqK68xyUpjtssyZc=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -524,6 +524,12 @@
   .vv{width:30px;text-align:right;font-variant-numeric:tabular-nums;color:var(--mute);font-size:13px}
 
 .seg.radio button{flex:1 1 30%;min-width:0;height:auto;min-height:32px;font-size:13px;padding:6px 4px}
+
+#chatui .vmsg{display:inline-flex;align-items:center;gap:6px;width:auto;height:32px;padding:0 12px;margin-top:2px;font-size:14px;border-radius:99px}
+#chatui .cin .mic{flex:0 0 auto;width:46px;height:46px;padding:0;font-size:20px;background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--line)}
+#chatui .cin.rec{align-items:center;gap:10px;min-height:46px}
+#chatui .recdot{width:12px;height:12px;border-radius:50%;background:#e74c3c;flex:0 0 auto;animation:recb 1s infinite}
+@keyframes recb{50%{opacity:.25}}
 </style>
 </head>
 <body>
@@ -1257,6 +1263,7 @@ function enter(c){
   render();
 }
 function leave(){
+  if(REC)micStop(true);
   if(sub)sub.stop();sub=null;clearTimeout(botTimer);botTimer=null;clearTimeout(loadTimer);
   code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
@@ -1353,7 +1360,7 @@ function onKicked(){toast('Du wurdest aus dem Raum entfernt.');leave()}
 function onChat(m){
   if(m.kind==='emote'){if(m.uid!==myId)showEmote(m.uid,m.body);return}
   chat.push(m);if(chat.length>80)chat.shift();
-  if(!chatOpen&&m.uid!==myId){chatUnread++;bubble(m.uid,m.body);sfx('msg');render()}
+  if(!chatOpen&&m.uid!==myId){chatUnread++;bubble(m.uid,m.kind==='voice'?'🎤 Sprachnachricht':m.body);sfx('msg');render()}
   renderChat();
 }
 function anchorFor(uid){
@@ -1429,12 +1436,67 @@ function renderChat(){
     '<div class="spstrip"><div class="sph">Spezial-Emotes · '+(me?'du warst '+presCount+'× Präsident':'nur mit Konto')+'</div><div class="spl">'+SPECIAL.map((x,i)=>{const ok=me&&specialUnlocked(i+1);
       return '<button class="spb'+(ok?'':' lock')+'" data-a="'+(ok?'emote':'splock')+'" data-v="sp'+(i+1)+'"><span>'+x[1]+'</span><small>'+(ok?esc(x[2]):'🔒 '+x[0]+'×')+'</small></button>'}).join('')+'</div></div></div>';
   if(chatOpen)h+='<div class="chat"><div class="chead"><b>Chat</b><button class="iconbtn" data-a="chat">✕</button></div><div class="clist" id="clist">'+
-    (chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+esc(m.body)+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+
-    '</div><div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div></div>';
+    (chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+
+    '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
+      '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>')+'</div>';
   const hadFocus=document.activeElement&&document.activeElement.id==='cmsg';
   box.innerHTML=h;
   const l=$('#clist');if(l)l.scrollTop=l.scrollHeight;
   if(hadFocus){const i=$('#cmsg');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}
+}
+
+/* ---------- Sprachnachrichten ---------- */
+let REC=null,vPlaying=null;const VCACHE={};
+const fmtS=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const vSecs=p=>+((/_(\d+)\./.exec(String(p))||[])[1]||0);
+function musicBack(){if(AC&&MUSG)MUSG.gain.setTargetAtTime(SET.musVol*.6,AC.currentTime,.3)}
+function recMime(){const M=window.MediaRecorder;if(!M)return null;
+  for(const t of ['audio/mp4;codecs=mp4a.40.2','audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'])if(M.isTypeSupported&&M.isTypeSupported(t))return t;return ''}
+async function micStart(){
+  if(REC||!code||!store.online)return;
+  const mt=recMime();
+  if(mt===null||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Dein Browser kann keine Sprachnachrichten aufnehmen.');return}
+  let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
+  catch(e){toast('Ohne Mikrofon-Erlaubnis geht das nicht – erlaube das Mikrofon für diese Seite bzw. App.');return}
+  let rec;try{rec=new MediaRecorder(stream,Object.assign({audioBitsPerSecond:32000},mt?{mimeType:mt}:{}))}catch(e){rec=new MediaRecorder(stream)}
+  REC={rec,stream,chunks:[],t0:Date.now(),cancel:false,code};
+  rec.ondataavailable=e=>{if(e.data&&e.data.size&&REC)REC.chunks.push(e.data)};
+  rec.onstop=()=>micDone();rec.start(250);
+  if(AC&&MUSG)MUSG.gain.setTargetAtTime(SET.musVol*.06,AC.currentTime,.1);
+  REC.timer=setInterval(()=>{if(!REC)return;const s=(Date.now()-REC.t0)/1000;if(s>=30)micStop(false);else{const el=$('#rect');if(el)el.textContent=fmtS(s)}},250);
+  renderChat();
+}
+function micStop(cancel){if(!REC)return;REC.cancel=cancel;clearInterval(REC.timer);try{if(REC.rec.state!=='inactive')REC.rec.stop();else micDone()}catch(e){micDone()}}
+async function micDone(){
+  const R=REC;REC=null;if(!R)return;
+  try{R.stream.getTracks().forEach(t=>t.stop())}catch(e){}
+  musicBack();renderChat();
+  if(R.cancel)return;
+  const secs=Math.min(30,Math.round((Date.now()-R.t0)/1000));
+  if(secs<1){toast('Zu kurz – tippe auf 🎤, sprich und dann auf Senden.');return}
+  const type=String(R.rec.mimeType||(R.chunks[0]&&R.chunks[0].type)||'audio/webm').split(';')[0];
+  const ext=type.includes('mp4')?'m4a':type.includes('ogg')?'ogg':'webm';
+  const blob=new Blob(R.chunks,{type});
+  if(blob.size>480000){toast('Die Sprachnachricht ist zu groß.');return}
+  const path=R.code+'/'+crypto.randomUUID()+'_'+secs+'.'+ext;
+  try{
+    const up=await store.sb.storage.from('voice').upload(path,blob,{contentType:type,upsert:false});if(up.error)throw up.error;
+    VCACHE[path]=URL.createObjectURL(blob);
+    await store.sendChat(R.code,'voice',path);
+  }catch(e){console.warn(e);toast(/slow down/.test(String(e&&e.message))?'Zu viele Sprachnachrichten – warte kurz.':'Sprachnachricht ging nicht raus.')}
+}
+async function vplay(path){
+  if(!store||!store.online||!/^[A-Z]{4}\/[0-9a-f-]{36}_[0-9]{1,2}\.(webm|m4a|ogg)$/.test(String(path)))return;
+  try{
+    let u=VCACHE[path];
+    if(!u){const {data,error}=await store.sb.storage.from('voice').download(path);if(error)throw error;u=VCACHE[path]=URL.createObjectURL(data)}
+    if(vPlaying)vPlaying.pause();
+    const a=new Audio(u);vPlaying=a;
+    if(AC&&MUSG)MUSG.gain.setTargetAtTime(SET.musVol*.12,AC.currentTime,.1);
+    a.onended=a.onpause=()=>{if(vPlaying===a){vPlaying=null;musicBack()}};
+    await a.play();
+  }catch(e){console.warn(e);musicBack();toast('Sprachnachricht konnte nicht abgespielt werden.')}
 }
 
 /* ---------- Konto ---------- */
@@ -1501,7 +1563,11 @@ function act(a,v,el){
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
     case 'splock':{const t=+v.slice(2),x=SPECIAL[t-1];toast(me?x[1]+' „'+x[2]+'“ gibt es ab '+x[0]+'× Präsident. Du hast '+presCount+'×.':'Spezial-Emotes gibt es nur mit Konto.');return}
-    case 'chat':chatOpen=!chatOpen;wheelOpen=false;if(chatOpen&&chatUnread){chatUnread=0;render()}renderChat();if(chatOpen&&!('ontouchstart' in window)){const i=$('#cmsg');i&&i.focus()}return;
+    case 'chat':if(REC)micStop(true);chatOpen=!chatOpen;wheelOpen=false;if(chatOpen&&chatUnread){chatUnread=0;render()}renderChat();if(chatOpen&&!('ontouchstart' in window)){const i=$('#cmsg');i&&i.focus()}return;
+    case 'mic':return micStart();
+    case 'micx':return micStop(true);
+    case 'micok':return micStop(false);
+    case 'vplay':return vplay(v);
     case 'csend':{const t=drafts.cmsg||'';drafts.cmsg='';const i=$('#cmsg');if(i)i.value='';send('msg',t);return}
   }
   if(!G)return;
