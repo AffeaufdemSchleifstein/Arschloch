@@ -505,6 +505,7 @@
   .avcols button.on{border-color:#fff}
   .rkn{display:inline-flex;align-items:center;gap:7px}
   .phead{display:flex;justify-content:center;margin:6px 0 2px}
+  #ts{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:50}
 </style>
 </head>
 <body>
@@ -784,12 +785,24 @@ let presCount=0;
 let online=new Set();
 const turnSecs=()=>G?R(G).turn:20;
 
+/* ---------- Captcha (Cloudflare Turnstile), aktiv sobald ein Site-Key eingetragen ist ---------- */
+const TS_KEY='';
+let tsLoad=null;
+function captchaToken(){
+  if(!TS_KEY)return Promise.resolve(undefined);
+  tsLoad=tsLoad||new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;sc.onload=res;sc.onerror=()=>{tsLoad=null;rej(new Error('captcha load'))};document.head.appendChild(sc)});
+  return tsLoad.then(()=>new Promise((res,rej)=>{
+    let box=document.getElementById('ts');if(!box){box=document.createElement('div');box.id='ts';document.body.appendChild(box)}
+    const id=turnstile.render(box,{sitekey:TS_KEY,appearance:'interaction-only',callback:t=>{res(t);setTimeout(()=>{try{turnstile.remove(id)}catch(e){}},50)},'error-callback':()=>rej(new Error('captcha'))});
+  }));
+}
+
 /* ---------- Speicher: Supabase (online) ---------- */
 async function sbStore(){
   if(typeof supabase==='undefined')throw new Error('lib');
   const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,storageKey:'al-auth'+SLOT}});
   let {data:{session}}=await sb.auth.getSession();
-  if(!session){const r=await sb.auth.signInAnonymously();if(r.error)throw r.error;session=r.data.session}
+  if(!session){const r=await sb.auth.signInAnonymously({options:{captchaToken:await captchaToken()}});if(r.error)throw r.error;session=r.data.session}
   const rpc=async(n,a)=>{const {data,error}=await sb.rpc(n,a||{});if(error)throw error;return data};
   const mail=u=>u.toLowerCase()+'@spieler.mibombo.app';
   const S={online:true,sb,rpc,uid:session.user.id};
@@ -829,12 +842,13 @@ async function sbStore(){
     if(!await rpc('username_free',{p_name:u}))throw new Error('taken');
     let r=await sb.auth.updateUser({email:mail(u),password:pw});
     if(r.error){
-      r=await sb.auth.signUp({email:mail(u),password:pw});if(r.error)throw r.error;
-      if(!r.data.session){const l=await sb.auth.signInWithPassword({email:mail(u),password:pw});if(l.error)throw l.error}
+      r=await sb.auth.signUp({email:mail(u),password:pw,options:{captchaToken:await captchaToken()}});if(r.error)throw r.error;
+      if(!r.data.session){const l=await sb.auth.signInWithPassword({email:mail(u),password:pw,options:{captchaToken:await captchaToken()}});if(l.error)throw l.error}
     }
     return rpc('claim_username',{p_display:u});
   };
-  S.login=async(u,pw)=>{const r=await sb.auth.signInWithPassword({email:mail(u),password:pw});if(r.error)throw r.error};
+  S.login=async(u,pw)=>{const r=await sb.auth.signInWithPassword({email:mail(u),password:pw,options:{captchaToken:await captchaToken()}});if(r.error)throw r.error};
+  S.deleteAccount=async()=>{await rpc('delete_my_account');await sb.auth.signOut()};
   S.logout=async()=>{await sb.auth.signOut()};
   return S;
 }
@@ -1286,6 +1300,9 @@ function act(a,v,el){
     case 'acct-tab':acctTab=v;acctErr='';return render();
     case 'acct-go':return acctSubmit(acctTab);
     case 'logout':openModal('<h2>Abmelden?</h2><p class="note">Auf diesem Gerät spielst du danach als Gast weiter. Mit Benutzername und Passwort kommst du jederzeit wieder rein.</p><div class="row"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="logout2">Abmelden</button></div>');return;
+    case 'del1':drafts.delc='';openModal('<h2>Konto wirklich löschen?</h2><p class="note">Das lässt sich nicht rückgängig machen. Tippe zur Bestätigung deinen Benutzernamen <b>'+esc(me.display)+'</b> ein.</p><input data-k="delc" autocomplete="off" autocapitalize="off" placeholder="'+esc(me.display)+'"><div class="row" style="margin-top:12px"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="del2">Endgültig löschen</button></div>');return;
+    case 'del2':if((drafts.delc||'').trim().toLowerCase()!==me.display.toLowerCase()){toast('Der Benutzername stimmt nicht.');return}
+      closeModal();toast('Konto wird gelöscht …');return store.deleteAccount().then(()=>{ls.set('al_theme','');location.hash='';location.reload()}).catch(()=>toast('Löschen hat nicht geklappt.'));
     case 'logout2':return store.logout().then(()=>{location.hash='';location.reload()});
     case 'fr-add':{const u=(drafts.fr||'').trim();if(!u)return;
       store.rpc('friend_request',{p_username:u}).then(r=>{
@@ -1447,7 +1464,8 @@ function drawAccount(){
       '<div class="row" style="margin-top:14px"><button class="ghost" data-a="av-photo">📷 Eigenes Foto</button>'+(av.img||av.e?'<button class="ghost" data-a="av-clear">Zurücksetzen</button>':'')+'</div></div>';
   }
   if(me)return h+'<div class="panel"><p style="margin-top:0">Angemeldet als <b>'+esc(me.display)+'</b>.</p><p class="note">Deine Freunde finden dich über diesen Benutzernamen.</p>'+
-    '<div class="stack"><button class="ghost" data-a="go" data-v="profile">📊 Meine Statistik</button><button class="ghost" data-a="logout">Abmelden</button></div></div>';
+    '<div class="stack"><button class="ghost" data-a="go" data-v="profile">📊 Meine Statistik</button><button class="ghost" data-a="logout">Abmelden</button></div></div>'+
+    '<div class="panel"><h3>Konto löschen</h3><p class="note" style="margin-top:0">Löscht dein Konto mit Statistik, Erfolgen, Freunden, Avatar und Benachrichtigungen endgültig. In alten Räumen stehst du danach als „Gelöschter Spieler“.</p><button class="danger" data-a="del1">Konto löschen</button></div>';
   const reg=acctTab==='register';
   h+='<div class="row" style="margin-bottom:12px"><button class="'+(reg?'':'ghost')+'" data-a="acct-tab" data-v="register">Konto erstellen</button><button class="'+(reg?'ghost':'')+'" data-a="acct-tab" data-v="login">Anmelden</button></div>';
   h+='<div class="panel"><label for="un">Benutzername</label><input id="un" data-k="un" maxlength="16" autocomplete="username" autocapitalize="off" placeholder="z. B. Mibombo_99" value="'+esc(drafts.un||'')+'">'+
