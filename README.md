@@ -25,4 +25,4 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 
 ## Technik
 
-Eine einzelne HTML-Seite ohne Server. Die Spielzüge laufen über die öffentlichen MQTT-Broker von HiveMQ und EMQX (MQTT.js, MIT-Lizenz, siehe `mqtt-LICENSE.md`). Die Räume sind nicht geheim – wer den Code kennt, kann mitlesen.
+Eine einzelne HTML-Seite auf GitHub Pages. Spielstände liegen in einer Supabase-Datenbank (Frankfurt) mit Zugriffsregeln: Jedes Gerät meldet sich unsichtbar anonym an, und nur wer einem Raum beigetreten ist, kann dessen Spielstand lesen oder Züge speichern. Bibliothek: supabase-js (MIT-Lizenz, siehe `supabase-LICENSE.md`).

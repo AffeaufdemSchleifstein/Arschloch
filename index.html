@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Arschloch">
-<script src="mqtt.min.js"></script>
+<script src="supabase.js"></script>
 <style>
   :root{
     --ink:#f6efe2; --mute:#cbb89b; --card:#fbf8ee;
@@ -342,49 +342,45 @@ function dbStore(db){
     subPlayers(c,cb,err){return gd(c).collection('players').onSnapshot(q=>cb(q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(a.t||0)-(b.t||0))),err)}
   };
 }
-const MQ_PREFIX='arschloch-kartenspiel-7k3/v1/';
-const MQ_BROKERS=window.AL_BROKERS||['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt'];
-function mqttStore(){
-  const games={},players={},gsubs={},psubs={},topics=new Set(),firstConn=[];let connCount=0;
-  const better=(a,b)=>!b||a.v>b.v||(a.v===b.v&&JSON.stringify(a)>JSON.stringify(b));
-  function onMsg(t,buf){
-    if(!t.startsWith(MQ_PREFIX)||!buf||!buf.length)return;
-    let d;try{d=JSON.parse(buf.toString())}catch(e){return}
-    if(!d||typeof d!=='object')return;
-    const p=t.slice(MQ_PREFIX.length).split('/'),c=p[0];
-    if(p[1]==='game'&&p.length===2){
-      if(typeof d.v!=='number'||!better(d,games[c]))return;
-      games[c]=d;(gsubs[c]||[]).forEach(f=>f(clone(d)));
-    }else if(p[1]==='p'&&p.length===3){
-      const pl=(players[c]=players[c]||{}),o=pl[p[2]];
-      if(o&&JSON.stringify(o)===JSON.stringify(d))return;
-      pl[p[2]]=d;(psubs[c]||[]).forEach(f=>f(list(c)));
-    }
-  }
-  const list=c=>{const g=games[c],min=g&&g.created?g.created-1000:0;
-    return Object.keys(players[c]||{}).map(id=>Object.assign({id},players[c][id])).filter(p=>(p.t||0)>=min).sort((a,b)=>(a.t||0)-(b.t||0))};
-  const clients=typeof mqtt==='undefined'?[]:MQ_BROKERS.map(u=>{
-    let c;try{c=mqtt.connect(u,{clientId:'al_'+Math.random().toString(16).slice(2,12),clean:true,reconnectPeriod:2500,connectTimeout:9000,keepalive:25})}catch(e){return null}
-    c.on('connect',()=>{connCount++;firstConn.splice(0).forEach(f=>f());if(topics.size)c.subscribe([...topics],{qos:1});upd()});
-    c.on('close',upd);c.on('offline',upd);c.on('error',()=>{});
-    c.on('message',onMsg);return c;
-  }).filter(Boolean);
-  function upd(){window.dispatchEvent(new Event('mqconn'))}
-  const connected=()=>clients.some(c=>c.connected);
-  function sub(t){if(topics.has(t))return;topics.add(t);clients.forEach(c=>c.connected&&c.subscribe(t,{qos:1}))}
-  function pub(t,d){const m=JSON.stringify(d);clients.forEach(c=>c.publish(t,m,{qos:1,retain:true}));onMsg(t,m)}
-  const waitConn=ms=>connected()?Promise.resolve(true):new Promise(r=>{const tm=setTimeout(()=>r(false),ms);firstConn.push(()=>{clearTimeout(tm);r(true)})});
-  return {online:true,clients,connected,waitConn,
-    async getGame(c){
-      sub(MQ_PREFIX+c+'/game');sub(MQ_PREFIX+c+'/p/+');
-      if(!await waitConn(9000))throw new Error('offline');
-      const t0=Date.now();while(!games[c]&&Date.now()-t0<3500)await new Promise(r=>setTimeout(r,150));
-      return games[c]?clone(games[c]):null;
+const SB_URL='https://xatfnfirvkvoxnitysmj.supabase.co';
+const SB_KEY='sb_publishable_JV8pQLw5a7tLFJXZ1yZZPg_V8XN7K_4';
+async function sbStore(){
+  if(typeof supabase==='undefined')throw new Error('lib');
+  const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,storageKey:'al-auth'+(new URLSearchParams(location.search).get('slot')||'')}});
+  let {data:{session}}=await sb.auth.getSession();
+  if(!session){const r=await sb.auth.signInAnonymously();if(r.error)throw r.error;session=r.data.session}
+  const uid=session.user.id,games={},refetchers=new Set(),local={};
+  const better=(a,b)=>!b||a.v>b.v;
+  const err=e=>{const x=new Error(e&&e.message||'db');x.code='db';return x};
+  function refreshAll(){refetchers.forEach(f=>f())}
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshAll()});
+  window.addEventListener('online',refreshAll);
+  setInterval(refreshAll,8000);
+  return {online:true,uid,sb,
+    async create(name,data){const {data:c,error}=await sb.rpc('create_room',{p_name:name,p_data:data});if(error)throw err(error);return c},
+    async join(c,name){const {data:d,error}=await sb.rpc('join_room',{p_code:c,p_name:name});if(error)throw err(error);return d},
+    async setGame(c,d){
+      const prev=games[c];games[c]=clone(d);
+      const {data:ok,error}=await sb.rpc('commit_game',{p_code:c,p_data:d});
+      if(error){games[c]=prev;throw err(error)}
+      if(!ok){games[c]=prev;refreshAll()}else{games[c]=prev;(local[c]||[]).forEach(f=>f(clone(d)))}
     },
-    async setGame(c,d){d.ts=Date.now();pub(MQ_PREFIX+c+'/game',d)},
-    subGame(c,cb){sub(MQ_PREFIX+c+'/game');(gsubs[c]=gsubs[c]||[]).push(cb);if(games[c])cb(clone(games[c]));return()=>{gsubs[c]=(gsubs[c]||[]).filter(f=>f!==cb)}},
-    async setPlayer(c,id,d){pub(MQ_PREFIX+c+'/p/'+id,d)},
-    subPlayers(c,cb){sub(MQ_PREFIX+c+'/p/+');(psubs[c]=psubs[c]||[]).push(cb);cb(list(c));return()=>{psubs[c]=(psubs[c]||[]).filter(f=>f!==cb)}}
+    subGame(c,cb){
+      const deliver=d=>{if(d&&typeof d.v==='number'&&better(d,games[c])){games[c]=d;cb(clone(d))}};
+      const fetch1=async()=>{const {data}=await sb.from('games').select('data').eq('code',c).maybeSingle();if(data)deliver(data.data)};
+      const ch=sb.channel('g-'+c).on('postgres_changes',{event:'UPDATE',schema:'public',table:'games',filter:'code=eq.'+c},pl=>deliver(pl.new&&pl.new.data))
+        .subscribe(st=>{if(st==='SUBSCRIBED')fetch1()});
+      refetchers.add(fetch1);fetch1();(local[c]=local[c]||[]).push(deliver);
+      return()=>{refetchers.delete(fetch1);sb.removeChannel(ch);delete games[c];local[c]=[]};
+    },
+    subPlayers(c,cb){
+      let last='';
+      const fetch1=async()=>{const {data}=await sb.from('members').select('uid,name,joined_at').eq('code',c).order('joined_at');
+        if(!data)return;const l=data.map(m=>({id:m.uid,name:m.name,t:Date.parse(m.joined_at)}));const k=JSON.stringify(l);if(k!==last){last=k;cb(l)}};
+      const ch=sb.channel('m-'+c).on('postgres_changes',{event:'*',schema:'public',table:'members',filter:'code=eq.'+c},()=>fetch1()).subscribe();
+      refetchers.add(fetch1);fetch1();
+      return()=>{refetchers.delete(fetch1);sb.removeChannel(ch)};
+    }
   };
 }
 function localStore(){
@@ -424,10 +420,9 @@ async function init(){
   myId=String(id).replace(/[^A-Za-z0-9_\-]/g,'_');
   if(db)store=dbStore(db);
   else{
-    const m=mqttStore();
-    if(m.clients.length&&await m.waitConn(9000))store=m;
-    else{store=localStore();offlineMode=true}
-    if(m.clients.length)window.addEventListener('mqconn',()=>{const was=netDown;netDown=store===m&&!m.connected();if(was!==netDown)render()});
+    try{store=await Promise.race([sbStore(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),12000))]);myId=store.uid}
+    catch(e){console.warn(e);store=localStore();offlineMode=true}
+    window.addEventListener('offline',()=>{netDown=true;render()});window.addEventListener('online',()=>{netDown=false;render()});
   }
   ready=true;
   const h=(location.hash||'').slice(1).toUpperCase();
@@ -441,15 +436,13 @@ function needName(){if(grabName())return true;toast('Gib erst deinen Namen ein.'
 async function createRoom(){
   if(!ready||busy)return;if(!needName())return;
   busy=true;
-  const A='ABCDEFGHJKLMNPQRSTUVWXYZ';let c='';
   try{
-    for(let k=0;k<4;k++){
-      c='';for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];
-      if(!store.online||!store.clients)break;
-      const old=await store.getGame(c);if(!old||Date.now()-(old.ts||0)>86400000)break;
+    const base={v:1,phase:'lobby',host:myId,bots:store.online?0:2,created:Date.now()};let c;
+    if(store.create)c=await store.create(myName,base);
+    else{
+      const A='ABCDEFGHJKLMNPQRSTUVWXYZ';c='';for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];
+      await store.setGame(c,base);await store.setPlayer(c,myId,{name:myName,t:Date.now()});
     }
-    await store.setGame(c,{v:1,phase:'lobby',host:myId,bots:store.online?0:2,created:Date.now()});
-    await store.setPlayer(c,myId,{name:myName,t:Date.now()});
     enter(c);
   }catch(e){writeErr(e)}
   busy=false;
@@ -460,8 +453,9 @@ async function joinRoom(pre){
   if(c.length!==4){toast('Der Raumcode hat 4 Buchstaben.');return}
   busy=true;
   try{
-    const g=await store.getGame(c);
+    const g=store.join?await store.join(c,myName):await store.getGame(c);
     if(!g){toast('Raum '+c+' nicht gefunden.')}
+    else if(store.join)enter(c);
     else{
       const inGame=g.players&&g.players.some(p=>p.id===myId);
       if(g.phase==='lobby'||inGame){
@@ -469,7 +463,7 @@ async function joinRoom(pre){
       }
       enter(c);
     }
-  }catch(e){toast('Keine Verbindung – Raum konnte nicht geladen werden.')}
+  }catch(e){toast(/room full/.test(e&&e.message)?'Der Raum ist voll.':'Keine Verbindung – Raum konnte nicht geladen werden.')}
   busy=false;
 }
 function enter(c){
@@ -640,7 +634,7 @@ function draw(){
     const t=total();
     let li=lobby.slice(0,5).map(p=>'<li><span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+(p.id===G.host?'<span class="tag gold">Host</span>':'')+'</li>').join('');
     for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+BOTS[i]+'</span><span class="tag">Computer</span></li>';
-    app.innerHTML=top+'<div class="panel"><label style="text-align:center">Raumcode für deine Freunde</label><div class="code">'+esc(code)+'</div>'+(store.online&&store.clients?'<button class="ghost" data-a="invite" style="margin-top:10px">Freunde einladen</button>':'')+'</div>'+
+    app.innerHTML=top+'<div class="panel"><label style="text-align:center">Raumcode für deine Freunde</label><div class="code">'+esc(code)+'</div>'+(store.online&&store.create?'<button class="ghost" data-a="invite" style="margin-top:10px">Freunde einladen</button>':'')+'</div>'+
       '<div class="panel"><label>Am Tisch ('+t+' von 3–5)</label><ul class="plist">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul></div>'+
       (host?
         '<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=5?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+(G.bots>0?'':'disabled')+'>− Computer</button></div>'+
