@@ -78,7 +78,7 @@
   .badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:99px;background:#e2463a;color:#fff;font-size:12px;font-weight:800;padding:0 6px;margin-left:6px}
   .head{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .acct{height:38px;width:auto;font-size:14.5px;padding:0 12px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--line);white-space:nowrap}
-  .nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+  .nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
   .nav button{height:64px;font-size:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;border-radius:14px}
   .nav button b{font-size:22px;line-height:1;position:relative}
   .nav .badge{position:absolute;top:-8px;right:-16px;margin:0}
@@ -431,6 +431,80 @@
   .tier .tl span{display:flex;flex-direction:column;align-items:center;font-size:22px;filter:grayscale(1);opacity:.35}
   .tier .tl span.on{filter:none;opacity:1}
   .tier .tl small{font-size:10px;color:var(--mute)}
+
+  /* ---------- Einstellungen, Hausregeln, Erfolge ---------- */
+  .sw2{width:54px;height:32px;padding:0;border-radius:99px;background:rgba(255,255,255,.15);position:relative;flex:none}
+  .sw2 i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .2s}
+  .sw2.on{background:var(--gold)}.sw2.on i{transform:translateX(22px)}
+  .rl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14.5px}
+  .rl:first-of-type{border-top:0}
+  .seg{display:flex;background:rgba(0,0,0,.3);border-radius:10px;padding:3px;gap:2px;flex:none}
+  .seg button{height:32px;width:auto;padding:0 10px;font-size:13px;border-radius:8px;background:transparent;color:var(--mute)}
+  .seg button.on{background:var(--gold);color:var(--onGold)}
+  .ach{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .ac{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.45}
+  .ac span{font-size:28px;filter:grayscale(1)}
+  .ac b{font-size:12.5px}.ac small{font-size:10.5px;color:var(--mute);line-height:1.25}
+  .ac.on{opacity:1;border-color:var(--gold);background:linear-gradient(160deg,rgba(242,193,78,.18),rgba(0,0,0,.25))}
+  .ac.on span{filter:none}
+  .mwin{display:flex;gap:12px;align-items:center;border-color:var(--gold)}
+  .mwin>span{font-size:34px}.mwin b{display:block;color:var(--gold)}.mwin div span{font-size:13.5px;color:var(--mute)}
+  .opp .n .dot{display:inline-block;width:8px;height:8px;margin-right:6px;vertical-align:1px}
+  .opp .n .dot.on{box-shadow:none}
+
+  /* ---------- Kartendesigns ---------- */
+  .mini{width:34px;height:46px;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:15px;line-height:1;border:1px solid rgba(0,0,0,.2)}
+  .mini i{font-style:normal;font-size:13px;color:#c0392b}
+  .cf-classic{background:#fbf8ee;color:#1c1c1c}
+  .cf-dark{background:#25262b;color:#eee}.cf-dark i{color:#ff6b6b}
+  .cf-vintage{background:#ead9b5;color:#3b2a16;font-family:Georgia,serif}.cf-vintage i{color:#8e2b1d}
+  .cf-gold{background:linear-gradient(135deg,#fff3c4,#e6b84a 55%,#b8862a);color:#3a2600}
+  .cf-neon{background:#0b0b18;color:#5ff;text-shadow:0 0 6px #5ff}.cf-neon i{color:#f5c;text-shadow:0 0 6px #f5c}
+  .cf-diamond{background:linear-gradient(135deg,#f4fbff,#cfe9ff 50%,#9fd2ff);color:#123}.cf-diamond i{color:#c0392b}
+  body[data-cards=dark] .card{background:#25262b;color:#eee;border-color:#3a3b42}
+  body[data-cards=dark] .card.red,body[data-cards=dark] .oc.red{color:#ff6b6b}
+  body[data-cards=dark] .oc{background:#25262b;color:#eee}
+  body[data-cards=vintage] .card{background:#ead9b5;color:#3b2a16;border-color:#c9b48a;font-family:Georgia,serif}
+  body[data-cards=vintage] .card.red{color:#8e2b1d}
+  body[data-cards=gold] .card{background:linear-gradient(135deg,#fff3c4,#e6b84a 55%,#b8862a);color:#3a2600;border-color:#a87a20;box-shadow:0 2px 8px rgba(160,110,0,.5)}
+  body[data-cards=gold] .card.red{color:#9e1f12}
+  body[data-cards=neon] .card{background:#0b0b18;color:#5ff;border-color:#5ff;box-shadow:0 0 8px rgba(80,255,255,.5)}
+  body[data-cards=neon] .card .k,body[data-cards=neon] .card .s,body[data-cards=neon] .card .big{text-shadow:0 0 6px currentColor}
+  body[data-cards=neon] .card.red{color:#f5c;border-color:#f5c;box-shadow:0 0 8px rgba(255,80,200,.5)}
+  body[data-cards=diamond] .card{background:linear-gradient(135deg,#ffffff,#d6eeff 45%,#a4d4ff);color:#123;border-color:#8fc4ee;box-shadow:0 2px 10px rgba(120,190,255,.6)}
+  .mini.cb-red,body[data-back=red] .card.back{background:repeating-linear-gradient(45deg,#7a1f1f 0 6px,#932a2a 6px 12px)}
+  .mini.cb-blue,body[data-back=blue] .card.back{background:repeating-linear-gradient(45deg,#1f3f7a 0 6px,#2a5293 6px 12px)}
+  .mini.cb-black,body[data-back=black] .card.back{background:repeating-linear-gradient(45deg,#111 0 6px,#2a2a2a 6px 12px)}
+  .mini.cb-gold,body[data-back=gold] .card.back{background:radial-gradient(circle at 50% 50%,#fff3c4 0 10%,transparent 11%),repeating-linear-gradient(45deg,#b8862a 0 6px,#e6b84a 6px 12px)}
+  .mini.cb-flame,body[data-back=flame] .card.back{background:radial-gradient(ellipse at 50% 100%,#ffd257,#ff6a00 40%,#7a1200 80%)}
+  .mini.cb-legend,body[data-back=legend] .card.back{background:conic-gradient(from 0deg,#f2c14e,#fff3c4,#f2c14e,#a8741a,#f2c14e)}
+  .mini[class*=cb-]{border:3px solid #fbf8ee}
+
+  /* ---------- Avatare ---------- */
+  .av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden;flex:none;color:#fff;line-height:1;vertical-align:middle;box-shadow:0 0 0 2px rgba(255,255,255,.18)}
+  .av img{width:100%;height:100%;object-fit:cover}
+  .av b{font-weight:800;font-size:.8em}
+  .av.fr1{box-shadow:0 0 0 2px #f2c14e,0 0 8px rgba(242,193,78,.6)}
+  .av.fr2{box-shadow:0 0 0 2px #bfe6ff,0 0 0 4px #5aa8e8,0 0 12px rgba(120,200,255,.8)}
+  .av.fr3{box-shadow:0 0 0 2px #ffcc33,0 0 0 4px #ff5a00,0 0 14px rgba(255,90,0,.9);animation:frfire 1.2s ease-in-out infinite alternate}
+  .av.fr4{box-shadow:0 0 0 3px #fff3c4,0 0 0 5px #f2c14e,0 0 18px rgba(255,215,90,1);animation:frleg 2.4s linear infinite}
+  @keyframes frfire{to{box-shadow:0 0 0 2px #ffe066,0 0 0 4px #ff2a00,0 0 20px rgba(255,60,0,1)}}
+  @keyframes frleg{0%,100%{box-shadow:0 0 0 3px #fff3c4,0 0 0 5px #f2c14e,0 0 18px rgba(255,215,90,1)}50%{box-shadow:0 0 0 3px #f2c14e,0 0 0 5px #fff3c4,0 0 26px rgba(255,240,180,1)}}
+  .avw{position:relative;display:inline-flex;flex:none}
+  .avw .dot{position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border:2px solid #24170e;margin:0!important}
+  .opp .n{display:flex;align-items:center;gap:7px}
+  .opp .avw .dot{width:9px;height:9px;right:-3px;bottom:-3px}
+  .acct{display:inline-flex;align-items:center;gap:7px;padding:0 12px 0 6px}
+  .avedit .avbig{display:flex;gap:14px;align-items:center}
+  .avedit .avbig b{display:block;font-size:19px}
+  .avgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+  .avgrid button{height:40px;padding:0;font-size:22px;border-radius:10px;background:rgba(255,255,255,.08);border:2px solid transparent}
+  .avgrid button.on{border-color:var(--gold)}
+  .avcols{display:flex;flex-wrap:wrap;gap:8px}
+  .avcols button{width:34px;height:34px;padding:0;border-radius:50%;border:3px solid transparent}
+  .avcols button.on{border-color:#fff}
+  .rkn{display:inline-flex;align-items:center;gap:7px}
+  .phead{display:flex;justify-content:center;margin:6px 0 2px}
 </style>
 </head>
 <body>
@@ -454,30 +528,32 @@ function cardsTxt(cs){return (cs.length>1?cs.length+'× ':'')+RANKS[rk(cs[0])]}
 function activeSeats(g){return g.players.map((_,i)=>i).filter(i=>g.hands[i].length>0)}
 function nextActive(g,from,excl){const n=g.players.length;for(let i=1;i<=n;i++){const s=(from+i)%n;if(g.hands[s].length&&!(excl&&excl(s)))return s}return -1}
 function isFree(g){return !g.pile||g.pile.closed}
+const DEFAULT_RULES={turn:20,bombs:true,stock:true,aceRule:true,target:0};
+function R(g){return Object.assign({},DEFAULT_RULES,g.rules||{})}
 
 // Neue Partie: Statistik pro Platz zuruecksetzen
 function initMs(g){
   const n=g.players.length;g.ms={};
-  for(let i=0;i<n;i++)g.ms[i]={pts:0,rounds:0,pl:Array(n).fill(0),aces:0,bombs:0,aceEnd:0,to:0};
+  for(let i=0;i<n;i++)g.ms[i]={pts:0,rounds:0,pl:Array(n).fill(0),aces:0,bombs:0,aceEnd:0,to:0,streak:0,best:0,climbs:0,bob:0};
 }
-function startMatch(g){initMs(g);g.order=null;g.round=0;g.paused=null}
+function startMatch(g){initMs(g);g.order=null;g.round=0;g.paused=null;g.final=false}
 function deal(g){
   const n=g.players.length, deck=shuffle([...Array(32).keys()]);
-  g.stock=n===4?[]:deck.splice(0,2);g.bauer=-1;g.open=[];g.losers=[];
-  g.rs={aces:{},bombs:{},aceEnd:{},to:{}};
+  g.stock=n===4||!R(g).stock?[]:deck.splice(0,2);g.bauer=-1;g.open=[];g.losers=[];
+  g.rs={aces:{},bombs:{},aceEnd:{},to:{},streak:{},climb:{},bob:{}};
   const prev=g.order&&g.order.length===n?g.order:null;
   const start=prev?prev[0]:Math.floor(Math.random()*n);
   const hands={},fresh={};
   for(let i=0;i<n;i++){hands[i]=[];fresh[i]=[]}
   deck.forEach((c,i)=>hands[(start+i)%n].push(c));
   for(let i=0;i<n;i++)hands[i].sort(asc);
-  g.hands=hands;g.fresh=fresh;g.pile=null;g.passed=[];g.last=-1;g.finished=[];g.swaps=[];g.wishQ=[];
+  g.prevRoles={};g.hands=hands;g.fresh=fresh;g.pile=null;g.passed=[];g.last=-1;g.finished=[];g.swaps=[];g.wishQ=[];
   g.round=(g.round||0)+1;g.roles={};
   if(prev){
-    prev.forEach((s,i)=>g.roles[s]=i);
+    prev.forEach((s,i)=>g.roles[s]=i);g.prevRoles=Object.assign({},g.roles);
     g.wishQ.push({hi:prev[0],lo:prev[n-1],n:2});
     if(n>=4)g.wishQ.push({hi:prev[1],lo:prev[n-2],n:1});
-    if(n!==4)g.bauer=prev[(n-1)/2];
+    if(n!==4&&g.stock.length)g.bauer=prev[(n-1)/2];
     g.phase='wish';g.turn=prev[0];g.starter=prev[n-1];
     g.msg=nm(g,prev[0])+' darf sich 2 Karten wünschen.';
   }else{g.turn=start;g.msg=nm(g,start)+' fängt an.'+(g.stock.length?' 2 Karten bleiben verdeckt liegen.':'');startPlay(g)}
@@ -535,26 +611,32 @@ function canPlay(g,seat,cards){
   const r=rk(cards[0]);if(!cards.every(c=>rk(c)===r))return false;
   if(isFree(g))return true;
   const pn=g.pile.cards.length,pr=rk(g.pile.cards[0]);
-  if(cards.length===4&&pn!==4)return true;
+  if(cards.length===4&&pn!==4&&R(g).bombs)return true;
   return cards.length===pn&&r>pr;
 }
 function endRound(g){
   const n=g.players.length;
   g.phase='end';g.order=g.finished.concat(g.losers.slice().reverse());g.roles={};g.order.forEach((s,i)=>g.roles[s]=i);g.turn=-1;
   if(!g.ms)initMs(g);
+  const prevRoles=g.prevRoles||{};
   g.order.forEach((s,i)=>{const m=g.ms[s];m.pts+=n-1-i;m.rounds++;m.pl[i]++;
-    m.aces+=g.rs.aces[s]||0;m.bombs+=g.rs.bombs[s]||0;m.aceEnd+=g.rs.aceEnd[s]?1:0;m.to+=g.rs.to[s]||0});
+    m.aces+=g.rs.aces[s]||0;m.bombs+=g.rs.bombs[s]||0;m.aceEnd+=g.rs.aceEnd[s]?1:0;m.to+=g.rs.to[s]||0;m.bob=(m.bob||0)+(g.rs.bob[s]||0);
+    if(i===0){m.streak=(m.streak||0)+1;m.best=Math.max(m.best||0,m.streak);if(prevRoles[s]===n-1){g.rs.climb[s]=true;m.climbs=(m.climbs||0)+1}}else m.streak=0;
+    g.rs.streak[s]=m.streak;
+  });
+  const t=R(g).target;g.final=!!(t&&g.order.some(s=>g.ms[s].pts>=t));
 }
 function play(g,seat,cards){
   g.hands[seat]=g.hands[seat].filter(c=>!cards.includes(c));
   g.fresh[seat]=[];
+  const wasBomb=!isFree(g)&&g.pile.cards.length===4;
   if(isFree(g))g.passed=[];
   g.pile={cards:cards.slice().sort(asc),by:seat,closed:false};g.last=seat;
-  if(cards.length===4)g.rs.bombs[seat]=(g.rs.bombs[seat]||0)+1;
+  if(cards.length===4){g.rs.bombs[seat]=(g.rs.bombs[seat]||0)+1;if(wasBomb)g.rs.bob[seat]=(g.rs.bob[seat]||0)+1}
   g.msg=nm(g,seat)+(cards.length===4?' legt eine Bombe: ':' legt ')+cardsTxt(cards)+'.';
   g.losers=g.losers||[];
   if(!g.hands[seat].length){
-    if(rk(cards[0])===7){g.losers.push(seat);g.rs.aceEnd[seat]=true;g.msg+=' Mit Ass beendet – verboten! '+nm(g,seat)+' landet automatisch ganz hinten.'}
+    if(rk(cards[0])===7&&R(g).aceRule){g.losers.push(seat);g.rs.aceEnd[seat]=true;g.msg+=' Mit Ass beendet – verboten! '+nm(g,seat)+' landet automatisch ganz hinten.'}
     else{g.finished.push(seat);g.msg+=' Fertig!'}
   }
   const act=activeSeats(g);
@@ -580,19 +662,76 @@ function timeoutMove(g){
   if(canPass(g,s))pass(g,s);else play(g,s,[g.hands[s][0]]);
   g.msg='Zeit abgelaufen! '+g.msg;
 }
+function groupsOf(h){const gr={};h.forEach(c=>(gr[rk(c)]=gr[rk(c)]||[]).push(c));return gr}
+function legalMoves(g,seat){
+  const gr=groupsOf(g.hands[seat]),out=[];
+  if(isFree(g)){for(const r in gr)for(let k=1;k<=gr[r].length;k++)out.push(gr[r].slice(0,k));return out}
+  const n=g.pile.cards.length,pr=rk(g.pile.cards[0]);
+  for(const r in gr){const x=gr[r];if(+r>pr&&x.length>=n)out.push(x.slice(0,n));if(x.length===4&&n!==4&&R(g).bombs)out.push(x)}
+  return out;
+}
 function botMove(g,seat){
-  const groups={};g.hands[seat].forEach(c=>(groups[rk(c)]=groups[rk(c)]||[]).push(c));
-  const ranks=Object.keys(groups).map(Number).sort(asc);
-  if(isFree(g))return ranks.length===2&&ranks[1]===7?groups[7]:groups[ranks[0]];
-  if(ranks.length===1&&ranks[0]===7)return null;
-  const n=g.pile.cards.length,r=rk(g.pile.cards[0]);
-  const opts=ranks.filter(x=>x>r&&groups[x].length>=n);
-  if(!opts.length){
-    const b=n!==4&&(r>=5||g.hands[seat].length<=6)?ranks.find(x=>groups[x].length===4):undefined;
-    return b===undefined?null:groups[b];
+  const lvl=(g.players[seat]&&g.players[seat].level)||'normal';
+  const h=g.hands[seat],gr=groupsOf(h),ranks=Object.keys(gr).map(Number).sort(asc);
+  const aceRule=R(g).aceRule,onlyAces=ranks.length===1&&ranks[0]===7;
+  if(lvl==='easy'){
+    const all=legalMoves(g,seat);let mv=all;
+    if(aceRule&&h.length<=4)mv=mv.filter(m=>!(m.length===h.length&&rk(m[0])===7));
+    if(!mv.length)mv=isFree(g)?all:[];
+    if(!mv.length)return null;
+    if(!isFree(g)&&Math.random()<.3)return null;
+    return mv[Math.floor(Math.random()*mv.length)];
   }
-  const exact=opts.filter(x=>groups[x].length===n);
-  return groups[(exact.length?exact:opts)[0]].slice(0,n);
+  if(isFree(g)){
+    if(ranks.length===2&&ranks[1]===7&&aceRule)return gr[7];
+    if(lvl==='hard'){
+      // Kleinste Gruppe anspielen, die nicht Teil einer Bombe ist; Asse aufheben
+      const cand=ranks.filter(r=>gr[r].length<4&&r<7);
+      // Mehrlinge zuerst loswerden, wenn sie niedrig sind
+      const multi=cand.filter(r=>gr[r].length>=2&&r<=3);
+      const r=(multi.length?multi:cand.length?cand:ranks)[0];return gr[r];
+    }
+    return gr[ranks[0]];
+  }
+  if(onlyAces&&aceRule)return null;
+  const n=g.pile.cards.length,r=rk(g.pile.cards[0]);
+  const opts=ranks.filter(x=>x>r&&gr[x].length>=n);
+  const minOpp=Math.min(...g.players.map((_,i)=>i).filter(i=>i!==seat&&g.hands[i].length).map(i=>g.hands[i].length));
+  if(!opts.length){
+    if(!R(g).bombs||n===4)return null;
+    const bomb=ranks.find(x=>gr[x].length===4);if(bomb===undefined)return null;
+    if(lvl==='hard')return (minOpp<=3||h.length<=6||r>=6)?gr[bomb]:null;
+    return (r>=5||h.length<=6)?gr[bomb]:null;
+  }
+  const exact=opts.filter(x=>gr[x].length===n);
+  if(lvl==='hard'){
+    // Keine Bombe sprengen, Paare nicht aufbrechen, Asse fuer spaeter
+    let pool=exact.filter(x=>gr[x].length<4);if(!pool.length)pool=opts.filter(x=>gr[x].length<4);
+    if(!pool.length)return minOpp<=3?gr[opts[0]].slice(0,n):null;
+    // Mit Ass-Regel: Asse frueh genug loswerden, damit die letzte Karte kein Ass ist
+    if(aceRule&&gr[7]&&gr[7].length>=n&&gr[7].length<4&&ranks.length<=3&&h.length>gr[7].length&&r<7)return gr[7].slice(0,n);
+    const pick=pool[0];
+    if(pick===7&&ranks.length>4&&minOpp>3&&Math.random()<.5)return null;
+    if(aceRule&&pick===7&&h.length===n)return null;
+    return gr[pick].slice(0,n);
+  }
+  return gr[(exact.length?exact:opts)[0]].slice(0,n);
+}
+function botWish(g,seat){
+  const q=g.wishQ[0],lvl=(g.players[seat]&&g.players[seat].level)||'normal';
+  if(lvl!=='hard')return [];
+  // Schwer: gezielt Asse/Koenige wuenschen, die man selbst nicht hat
+  const mine=groupsOf(g.hands[seat]),w=[];
+  for(const r of [7,6,5])if(w.length<q.n&&(mine[r]||[]).length<3)w.push(r);
+  return w.slice(0,q.n);
+}
+function botGive(g,seat){
+  const n=g.swaps[0].n,h=g.hands[seat].slice();
+  const lvl=(g.players[seat]&&g.players[seat].level)||'normal';
+  if(lvl!=='hard')return h.slice(0,n);
+  // Schwer: Einzelkarten abgeben statt Paare aufzubrechen
+  const gr=groupsOf(h),singles=h.filter(c=>gr[rk(c)].length===1&&rk(c)<6);
+  return (singles.length>=n?singles:h).slice(0,n);
 }
 // Auszeichnungen fuer die Partie-Auswertung
 function awards(g){
@@ -605,6 +744,8 @@ function awards(g){
   add('💣','Bombenleger',v=>v+' Bombe'+(v>1?'n':''),top(m=>m.bombs));
   add('🤦','Ass-Pechvogel',v=>v+'× mit Ass beendet',top(m=>m.aceEnd));
   add('🐌','Schnarchnase',v=>v+'× Zeit abgelaufen',top(m=>m.to));
+  add('🔥','Längste Serie',v=>v+'× Präsident in Folge',top(m=>m.best||0,2));
+  add('📈','Comeback',v=>v+'× vom Arschloch zum Präsidenten',top(m=>m.climbs||0));
   return out;
 }
 function standings(g){
@@ -630,6 +771,7 @@ function writeErr(e){toast(navigator.onLine===false?'Keine Internetverbindung.':
 let store=null,ready=false,offlineMode=false,me=null,myId=null,myName='',hashCode='';
 let view='home',viewArg=null,drafts={},acctTab='register',acctErr='',busyUi=false;
 let code=null,G=null,lobby=[],sub=null,sel=new Set(),wishSel=[],seen={},busy=false,botTimer=null,stale=false,loadTimer=null,enterT;
+let rankMode='all',monthWinner=null;
 let friends=[],friendsKey='',myGames=[],rankRows=null,profileData=null,lastStatus='',invQ=[],invShown=new Set(),modalOpen=false;
 let endHold=0,turnStart=0,autoV=-1,boomT,boomUntil=0;
 let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0;
@@ -639,7 +781,8 @@ const EKEY={'😂':'laugh','💣':'bomb','😡':'angry','😎':'cool','😭':'cr
 const SPECIAL=[[30,'🌟','Goldstern'],[50,'🔥','Feuerkrone','gold'],[100,'💎','Diamant'],[200,'⚡','Donnergott','throne'],
   [350,'🐉','Drache'],[500,'🚀','Feuerwerk','lava'],[750,'🌋','Vulkan'],[1000,'🏆','Legende','diamond']];
 let presCount=0;
-const TURN=20;
+let online=new Set();
+const turnSecs=()=>G?R(G).turn:20;
 
 /* ---------- Speicher: Supabase (online) ---------- */
 async function sbStore(){
@@ -660,15 +803,18 @@ async function sbStore(){
     let cur=null,state='',last=0,stopped=false,mk='';
     const deliver=(d,force)=>{if(stopped||!d||typeof d.v!=='number')return;if(cur&&(force?d.v<cur.v:d.v<=cur.v))return;cur=d;cb(clone(d))};
     const fg=async force=>{const {data}=await sb.from('games').select('data').eq('code',c).maybeSingle();if(data)deliver(data.data,force)};
-    const fm=async()=>{const {data}=await sb.from('members').select('uid,name,joined_at').eq('code',c).order('joined_at');
-      if(!data||stopped)return;const l=data.map(m=>({id:m.uid,name:m.name,t:Date.parse(m.joined_at)}));const k=JSON.stringify(l);if(k!==mk){mk=k;onM(l)}};
+    const fm=async()=>{const {data}=await sb.rpc('room_members2',{p_code:c});
+      if(!data||stopped)return;const l=data.map(m=>({id:m.uid,name:m.name,t:Date.parse(m.joined_at),av:m.avatar||{},wins:+m.wins||0}));
+      l.forEach(m=>{avMap[m.id]={av:m.av,wins:m.wins}});const k=JSON.stringify(l);if(k!==mk){mk=k;onM(l)}};
     const both=()=>{last=Date.now();fg();fm()};
     // Spielzuege kommen als Broadcast direkt vom Server, ohne Umweg ueber Datenbank-Abfragen
-    const ch=sb.channel('game:'+c,{config:{private:true}})
+    const ch=sb.channel('game:'+c,{config:{private:true,presence:{key:S.uid}}})
+      .on('presence',{event:'sync'},()=>{if(!stopped)onPresence(Object.keys(ch.presenceState()))})
+      .on('broadcast',{event:'kicked'},m=>{if(!stopped&&m.payload&&m.payload.uid===S.uid)onKicked()})
       .on('broadcast',{event:'state'},m=>deliver(m.payload&&m.payload.d))
       .on('broadcast',{event:'members'},()=>fm())
       .on('broadcast',{event:'chat'},m=>{if(!stopped&&onChat&&m.payload)onChat(m.payload)})
-      .subscribe(st=>{state=st;if(st==='SUBSCRIBED')both()});
+      .subscribe(st=>{state=st;if(st==='SUBSCRIBED'){both();ch.track({at:Date.now()}).catch(()=>{})}});
     both();
     const iv=setInterval(()=>{if(document.hidden)return;if(state!=='SUBSCRIBED'||Date.now()-last>20000)both()},3000);
     const vis=()=>{if(!document.hidden)both()};
@@ -676,6 +822,7 @@ async function sbStore(){
     return {local:d=>{cur=d;cb(clone(d))},refetch:()=>fg(true),
       stop(){stopped=true;clearInterval(iv);document.removeEventListener('visibilitychange',vis);window.removeEventListener('online',vis);sb.removeChannel(ch)}};
   };
+  S.kick=(c,u)=>rpc('kick_member',{p_code:c,p_uid:u});
   S.listenUser=(onInv,onFr)=>{sb.channel('user:'+S.uid,{config:{private:true}})
     .on('broadcast',{event:'invite'},m=>onInv(m.payload)).on('broadcast',{event:'friends'},()=>onFr()).subscribe()};
   S.register=async(u,pw)=>{
@@ -702,18 +849,124 @@ function localStore(){
     async commit(){return true},async recordRound(){}};
 }
 
+/* ---------- Avatare ---------- */
+const AV_EMO=['🦊','🐼','🦁','🐯','🐸','🐵','🐶','🐱','🐻','🐨','🐷','🐙','🦄','🐲','🦖','🦈','🦉','🐧','🤠','😎','🤓','🥷','🧙','🧛','🤖','👽','👻','💀','🤡','🎃','🃏','🍀'];
+const AV_COL=['#c0392b','#e67e22','#f1c40f','#27ae60','#16a085','#2980b9','#8e44ad','#d35400','#2c3e50','#7f8c8d','#e84393','#00b894'];
+let avMap={};
+function hashCol(t){let h=0;for(const ch of String(t||'?'))h=(h*31+ch.charCodeAt(0))|0;return AV_COL[Math.abs(h)%AV_COL.length]}
+function frameOf(w){return w>=1000?'fr4':w>=350?'fr3':w>=100?'fr2':w>=30?'fr1':''}
+function avatar(av,name,wins,size,extra){
+  av=av||{};size=size||32;const fr=frameOf(wins||0),st='width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*.58)+'px;';
+  let inner;
+  if(av.img)inner='<img src="'+esc(av.img)+'" alt="">';
+  else if(av.e)inner='<span>'+esc(av.e)+'</span>';
+  else inner='<b>'+esc(String(name||'?').trim().charAt(0).toUpperCase()||'?')+'</b>';
+  const bg=av.img?'#000':av.c||hashCol(name);
+  return '<span class="av '+fr+(extra?' '+extra:'')+'" style="'+st+'background:'+bg+'">'+inner+'</span>';
+}
+function avOf(uid,name,bot){if(bot)return avatar({e:'🤖',c:'#4a4d52'},name,0,28);const m=avMap[uid]||{};return avatar(m.av,name,m.wins,28)}
+async function saveAvatar(av){
+  try{await store.rpc('set_avatar',{p_avatar:av});me.avatar=av;toast('Avatar gespeichert.');render()}catch(e){toast('Avatar konnte nicht gespeichert werden.')}
+}
+function pickPhoto(){
+  const i=document.createElement('input');i.type='file';i.accept='image/*';
+  i.onchange=()=>{const f=i.files&&i.files[0];if(!f)return;const r=new FileReader();
+    r.onload=()=>{const img=new Image();img.onload=()=>{
+      const S=160,cv=document.createElement('canvas');cv.width=cv.height=S;const x=cv.getContext('2d'),m=Math.min(img.width,img.height);
+      x.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);
+      let q=.82,d=cv.toDataURL('image/jpeg',q);while(d.length>40000&&q>.4){q-=.12;d=cv.toDataURL('image/jpeg',q)}
+      saveAvatar({img:d});
+    };img.onerror=()=>toast('Das Bild konnte nicht gelesen werden.');img.src=r.result};
+    r.readAsDataURL(f)};
+  i.click();
+}
+
+/* ---------- Einstellungen ---------- */
+let SET={snd:true,vib:true,push:false};
+try{Object.assign(SET,JSON.parse(ls.get('al_set')||'{}'))}catch(e){}
+function saveSet(){ls.set('al_set',JSON.stringify(SET))}
+
+/* ---------- Sound (wird direkt im Browser erzeugt, keine Dateien) ---------- */
+let AC=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==='suspended')AC.resume().catch(()=>{});return AC}
+document.addEventListener('pointerdown',()=>{if(SET.snd)ac()},true);
+function tone(f,t0,dur,type,vol,f2){const a=AC,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+dur+.05)}
+const NB={};
+function noise(t0,dur,vol,type,freq){const a=AC,k=Math.round(dur*100);let b=NB[k];
+  if(!b){b=NB[k]=a.createBuffer(1,Math.max(1,a.sampleRate*dur|0),a.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2)}
+  const s_=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s_.buffer=b;f.type=type||'lowpass';f.frequency.value=freq||2000;g.gain.value=vol||.3;s_.connect(f).connect(g).connect(a.destination);s_.start(t0)}
+function sfx(k){
+  if(!SET.snd||document.hidden)return;const a=ac();if(!a||a.state!=='running')return;const t=a.currentTime+.01;
+  switch(k){
+    case 'card':noise(t,.09,.55,'bandpass',1800);tone(170,t,.07,'sine',.14,90);break;
+    case 'pass':tone(320,t,.14,'sine',.07,230);break;
+    case 'deal':for(let i=0;i<7;i++)noise(t+i*.055,.05,.25,'bandpass',2600);break;
+    case 'turn':tone(660,t,.16,'sine',.14);tone(880,t+.12,.22,'sine',.14);break;
+    case 'tick':tone(1250,t,.035,'square',.045);break;
+    case 'win':[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.12,.3,'triangle',.17));tone(1047,t+.5,.7,'triangle',.14);tone(1319,t+.5,.7,'triangle',.08);break;
+    case 'lose':[392,370,349,311].forEach((f,i)=>tone(f,t+i*.3,i===3?.7:.32,'sawtooth',.06,f*.96));break;
+    case 'mid':tone(523,t,.15,'triangle',.11);tone(659,t+.12,.22,'triangle',.11);break;
+    case 'fuse':for(let i=0;i<18;i++)noise(t+i*.13,.06,.07,'highpass',4200);break;
+    case 'boom':noise(t,1.7,.95,'lowpass',520);tone(95,t,1.3,'sine',.55,28);break;
+    case 'pop':tone(480,t,.09,'sine',.14,950);break;
+    case 'msg':tone(880,t,.08,'sine',.09);tone(1320,t+.07,.11,'sine',.09);break;
+    case 'invite':[784,988,1175,1568].forEach((f,i)=>tone(f,t+i*.1,.2,'sine',.13));break;
+    case 'unlock':[659,784,988,1319].forEach((f,i)=>tone(f,t+i*.08,.4,'triangle',.15));break;
+    default:if(k.startsWith('special')){const lv=+k.slice(7);[523,659,784,1047,1319].slice(0,2+Math.min(3,lv)).forEach((f,i)=>tone(f,t+i*.09,.4,'triangle',.15));if(lv>=4)noise(t+.45,.9,.35,'lowpass',900)}
+  }
+}
+
+/* ---------- Push-Benachrichtigungen ---------- */
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent),STANDALONE=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+const pushSupported=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+function b64u(x){const p='='.repeat((4-x.length%4)%4),b=atob((x+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))}
+async function enablePush(){
+  if(!me){toast('Benachrichtigungen gibt es nur mit Konto.');return}
+  if(!pushSupported()){toast(IOS&&!STANDALONE?'Auf dem iPhone geht das nur, wenn das Spiel als App auf dem Home-Bildschirm liegt (Teilen → Zum Home-Bildschirm).':'Dein Browser unterstützt keine Benachrichtigungen.');return}
+  try{
+    const perm=await Notification.requestPermission();if(perm!=='granted'){toast('Benachrichtigungen wurden nicht erlaubt.');return}
+    const reg=await navigator.serviceWorker.ready,key=await store.rpc('push_public_key');
+    let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(key)});
+    await store.rpc('save_push_sub',{p_sub:sub.toJSON()});SET.push=true;saveSet();toast('Benachrichtigungen sind an 🔔');render();
+  }catch(e){console.warn(e);toast('Das hat nicht geklappt: '+(e&&e.message||e))}
+}
+async function disablePush(){try{const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();if(sub)await sub.unsubscribe()}catch(e){}SET.push=false;saveSet();render()}
+
+/* ---------- Erfolge ---------- */
+const ACH=[['🎉','Erster Sieg','Einmal Präsident werden',x=>x.wins>=1],['👑','Zehnfacher Präsident','10× Präsident',x=>x.wins>=10],
+  ['🔥','Hattrick','3× in Folge Präsident',x=>x.bestStreak>=3],['⚡','Unaufhaltsam','5× in Folge Präsident',x=>x.bestStreak>=5],
+  ['📈','Comeback','Vom Arschloch direkt zum Präsidenten',x=>x.climbs>=1],['🚀','Comeback-König','10 Comebacks',x=>x.climbs>=10],
+  ['💣','Bombenleger','10 Bomben gelegt',x=>x.bombs>=10],['💥','Bombe auf Bombe','Eine Bombe mit einer höheren Bombe geschlagen',x=>x.bob>=1],
+  ['🂡','Vier Asse','Alle 4 Asse auf der Hand gehabt',x=>x.fourAces>=1],['🤦','Pechvogel','Mit einem Ass beendet',x=>x.aceEnds>=1],
+  ['💩','Abgehärtet','25× Arschloch gewesen',x=>x.last>=25],['🃏','Stammspieler','100 Runden gespielt',x=>x.rounds>=100],
+  ['🏛️','Veteran','500 Runden gespielt',x=>x.rounds>=500],['🎲','Partylöwe','10 Partien gespielt',x=>x.matches>=10],
+  ['👥','Volles Haus','Eine Runde zu fünft gespielt',x=>x.maxPlayers>=5]];
+let myStats=null;
+function achHtml(st){
+  const got=ACH.filter(a=>a[3](st)).length;
+  return '<div class="panel"><h3>Erfolge · '+got+' von '+ACH.length+'</h3><div class="ach">'+ACH.map(a=>{const ok=a[3](st);
+    return '<div class="ac'+(ok?' on':'')+'"><span>'+a[0]+'</span><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></div>'}).join('')+'</div></div>';
+}
+
 /* ---------- Design ---------- */
 const SURF=[['felt','Filz','🟩'],['desk','Schreibtisch','🗄️'],['wood','Holzplatte','🪵'],['grass','Rasen','🌱'],['marble','Marmor','🏛️'],['space','Weltraum','🌌'],
   ['gold','Goldfilz','🥇',50],['throne','Thron','👑',200],['lava','Lava','🌋',500],['diamond','Diamant','💎',1000]];
 const FELT={green:['Grün','#2c8a55','#17603a','#0c3d22'],blue:['Blau','#2f6fb0','#1b4a80','#0e2a4d'],red:['Rot','#b0413b','#7d2622','#4a1311'],
   purple:['Lila','#7a4bb0','#53307f','#2e1a4a'],teal:['Türkis','#24a098','#147068','#0a403b'],black:['Schwarz','#4a4a4a','#2a2a2a','#111']};
+const FRONTS=[['classic','Klassisch'],['dark','Dunkel'],['vintage','Vintage'],['gold','Gold',100],['neon','Neon',350],['diamond','Diamant',1000]];
+const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',50],['flame','Flammen','bob'],['legend','Legende',750]];
+function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return presCount>=req;return !!(myStats&&myStats[req]>=1)}
+function reqText(req){return typeof req==='number'?'🔒 '+req+'× Präsident':'🔒 Erfolg „Bombe auf Bombe“'}
 const BGS=[['bar','Bar','#5a3820'],['night','Nacht','#1a2550'],['living','Wohnzimmer','#6b5442'],['neon','Neon','#5a1a6d'],['concrete','Beton','#4a4d52']];
 const ACC={gold:['Gold','#f2c14e','#2b2100'],mint:['Mint','#5fe0b5','#06281c'],pink:['Pink','#ff7ab6','#3a0820'],sky:['Himmelblau','#6cc4ff','#06243a'],orange:['Orange','#ff9b42','#3a1a00'],white:['Weiß','#f2f2f2','#1a1a1a']};
-let T={surface:'felt',felt:'green',bg:'bar',accent:'gold'};
+let T={surface:'felt',felt:'green',bg:'bar',accent:'gold',cards:'classic',back:'red'};
 try{Object.assign(T,JSON.parse(ls.get('al_theme')||'{}'))}catch(e){}
 function applyTheme(){
   const b=document.body,r=document.documentElement.style,f=FELT[T.felt]||FELT.green,a=ACC[T.accent]||ACC.gold;
   const sf=SURF.find(z=>z[0]===T.surface);b.dataset.surface=sf&&(!sf[3]||presCount>=sf[3])?T.surface:'felt';b.dataset.bg=T.bg;
+  const cf=FRONTS.find(z=>z[0]===T.cards);b.dataset.cards=cf&&unlockedReq(cf[2])?T.cards:'classic';
+  const cb=BACKS.find(z=>z[0]===T.back);b.dataset.back=cb&&unlockedReq(cb[2])?T.back:'red';
   r.setProperty('--f1',f[1]);r.setProperty('--f2',f[2]);r.setProperty('--f3',f[3]);r.setProperty('--gold',a[1]);r.setProperty('--onGold',a[2]);
 }
 let themeT;function saveTheme(){ls.set('al_theme',JSON.stringify(T));applyTheme();clearTimeout(themeT);if(me)themeT=setTimeout(()=>store.rpc('set_theme',{p_theme:T}).catch(()=>{}),800)}
@@ -734,7 +987,7 @@ async function init(){
       store.listenUser(()=>pollInvites(),()=>loadFriends());
       loadFriends();pollInvites();heartbeat();loadPres();
       setInterval(()=>{if(document.hidden)return;heartbeat();pollInvites();if(!code||(G&&G.phase==='lobby'))loadFriends()},25000);
-      document.addEventListener('visibilitychange',()=>{if(!document.hidden){heartbeat();pollInvites()}});
+      document.addEventListener('visibilitychange',()=>{if(!document.hidden){heartbeat();pollInvites()}else if(me)store.rpc('heartbeat',{p_status:'away'}).catch(()=>{})});
     }
     loadMyGames();
     window.addEventListener('offline',()=>render());window.addEventListener('online',()=>render());
@@ -751,7 +1004,7 @@ function myStatus(){
 function heartbeat(){if(me)store.rpc('heartbeat',{p_status:myStatus()}).catch(()=>{})}
 async function loadFriends(){
   if(!me)return;
-  try{friends=await store.rpc('friends_list')||[]}catch(e){return}
+  try{friends=await store.rpc('friends_list2')||[]}catch(e){return}
   const k=JSON.stringify(friends);if(k!==friendsKey){friendsKey=k;renderSoft()}
 }
 async function loadMyGames(){
@@ -765,7 +1018,7 @@ async function pollInvites(){
 }
 function showNextInvite(){
   if(modalOpen||!invQ.length)return;const i=invQ[0];
-  try{navigator.vibrate&&navigator.vibrate(120)}catch(e){}
+  sfx('invite');if(SET.vib)try{navigator.vibrate&&navigator.vibrate(120)}catch(e){}
   openModal('<h2>Einladung 🃏</h2><p><b>'+esc(i.from_name)+'</b> lädt dich zu einer Partie ein.</p><div class="row"><button class="ghost" data-a="inv" data-v="0">Ablehnen</button><button data-a="inv" data-v="1">Annehmen</button></div>',true);
 }
 async function respondInvite(acc){
@@ -780,7 +1033,13 @@ async function respondInvite(acc){
 async function go(v,arg){
   view=v;viewArg=arg||null;acctErr='';render();scrollTo(0,0);
   if(v==='friends')loadFriends();
-  if(v==='ranking'){rankRows=null;try{rankRows=await store.rpc('ranking')}catch(e){rankRows=[]}render()}
+  if(v==='ranking'){rankRows=null;
+    const d=new Date(),m0=new Date(d.getFullYear(),d.getMonth(),1),pm=new Date(d.getFullYear(),d.getMonth()-1,1),f=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-01';
+    try{rankRows=rankMode==='month'?await store.rpc('ranking_month2',{p_month:f(m0)}):await store.rpc('ranking')}catch(e){rankRows=[]}
+    try{const l=(await store.rpc('ranking_month',{p_month:f(pm)})||[]).filter(x=>x.rounds>0).sort((a,b)=>b.points-a.points);
+      monthWinner=l.length?{name:l[0].display,points:l[0].points,month:pm.toLocaleDateString('de-DE',{month:'long'})}:null}catch(e){monthWinner=null}
+    render()}
+  if(v==='ach'){profileData=null;try{profileData=await store.rpc('get_stats',{p_uid:myId});myStats=profileData}catch(e){profileData={err:1}}render()}
   if(v==='profile'){profileData=null;try{profileData=await store.rpc('get_stats',{p_uid:arg||myId})}catch(e){profileData={err:1}}render()}
   if(v==='home')loadMyGames();
 }
@@ -834,13 +1093,18 @@ function boom(t){
   el.classList.remove('on');document.body.classList.remove('rumble');parts.innerHTML=h;void el.offsetWidth;
   el.classList.add('on');document.body.classList.add('rumble');boomUntil=Date.now()+5200;
   clearTimeout(boomT);boomT=setTimeout(()=>{el.classList.remove('on');document.body.classList.remove('rumble');parts.innerHTML=''},5300);
-  setTimeout(()=>{try{navigator.vibrate&&navigator.vibrate([250,60,400])}catch(e){}},2600);
+  sfx('fuse');setTimeout(()=>{sfx('boom');if(SET.vib)try{navigator.vibrate&&navigator.vibrate([250,60,400])}catch(e){}},2600);
 }
 const pileKey=g=>g&&g.pile?g.pile.cards.join('-')+'@'+g.round:'';
 function onGame(g){
   if(G&&g.v<G.v)return;
   const prev=G;
   if(prev&&g.pile&&g.pile.cards.length===4&&pileKey(g)!==pileKey(prev))boom(nm(g,g.pile.by)+' legt 4× '+RANKS[rk(g.pile.cards[0])]);
+  else if(prev&&g.pile&&pileKey(g)!==pileKey(prev))sfx('card');
+  else if(prev&&g.v!==prev.v&&g.phase==='play'&&g.passed&&prev.passed&&g.passed.length>prev.passed.length)sfx('pass');
+  if(prev&&g.round!==prev.round)sfx('deal');
+  if(prev&&g.v!==prev.v&&(g.turn!==prev.turn||g.phase!==prev.phase)&&g.turn===mySeatOf(g)&&['play','wish','swap','stock'].includes(g.phase)&&!g.paused)setTimeout(()=>sfx('turn'),250);
+  if(prev&&prev.phase==='play'&&g.phase==='end'){const ms=mySeatOf(g);if(ms>=0)setTimeout(()=>sfx(g.order[0]===ms?'win':g.order[g.order.length-1]===ms?'lose':'mid'),Math.max(600,boomUntil-Date.now()+200))}
   if(!prev||g.turn!==prev.turn||g.phase!==prev.phase||g.round!==prev.round){sel.clear();wishSel=[]}
   if(!prev||g.v!==prev.v||g.phase!==prev.phase)turnStart=Math.max(Date.now(),boomUntil);
   // Nach dem letzten Stich den Tisch noch kurz zeigen
@@ -866,9 +1130,9 @@ function maybeBot(){
     botTimer=null;if(!G||G.paused)return;if(G.v!==v){maybeBot();return}
     if(busy){setTimeout(maybeBot,300);return}
     const g=clone(G),s=g.turn;
-    if(g.phase==='wish')wish(g,s,[]);
+    if(g.phase==='wish')wish(g,s,botWish(g,s));
     else if(g.phase==='stock')takeStock(g,s,botStock(g,s));
-    else if(g.phase==='swap')give(g,s,g.hands[s].slice(0,g.swaps[0].n));
+    else if(g.phase==='swap')give(g,s,botGive(g,s));
     else{const m=botMove(g,s);if(m)play(g,s,m);else pass(g,s)}
     commit(g);
   },Math.max(1000,boomUntil-Date.now()+400)+(isHost?0:7000+Math.max(0,me_)*1500));
@@ -876,11 +1140,15 @@ function maybeBot(){
 function tick(){
   const hg=$('#hg');
   if(!G||G.phase!=='play'||G.paused||G.turn<0||!G.players[G.turn]||G.players[G.turn].bot){if(hg)hg.classList.remove('on');return}
+  const TURN=turnSecs();
+  if(!TURN){if(hg)hg.classList.remove('on');const t=$('#tm');if(t)t.textContent='';return}
   const me_=mySeat(),el=(Date.now()-turnStart)/1000,left=Math.max(0,Math.ceil(TURN-el)),mine=G.turn===me_;
+  if(mine&&left<=5&&left>0&&left!==seen.tickS){seen.tickS=left;sfx('tick')}
   const t=$('#tm');if(t){t.textContent=el<0?'':left+' s';t.classList.toggle('hot',left<=5)}
   if(hg){
-    if(mine&&el>=10&&el<TURN+1){
-      const q=Math.min(1,(el-10)/10);hg.style.transform='translateY(-50%) scale('+(.6+.4*q).toFixed(3)+')';
+    const hs=TURN/2;
+    if(mine&&el>=hs&&el<TURN+1){
+      const q=Math.min(1,(el-hs)/hs);hg.style.transform='translateY(-50%) scale('+(.6+.4*q).toFixed(3)+')';
       const y=20+50*q;$('#hgTop').setAttribute('y',y);$('#hgTop').setAttribute('height',70-y);
       $('#hgBot').setAttribute('y',126-46*q);$('#hgBot').setAttribute('height',46*q);$('#hgS').style.display=q>=1?'none':'';
       $('#hgN').textContent=left;hg.classList.add('on');
@@ -890,13 +1158,16 @@ function tick(){
 }
 setInterval(tick,250);
 const mySeat=()=>G&&G.players?G.players.findIndex(p=>p.id===myId):-1;
+const mySeatOf=g=>g&&g.players?g.players.findIndex(p=>p.id===myId):-1;
 const total=()=>Math.min(lobby.length,5)+(G.bots||0);
 
 /* ---------- Emotes & Chat ---------- */
+function onPresence(l){online=new Set(l);if(G&&code)render()}
+function onKicked(){toast('Du wurdest aus dem Raum entfernt.');leave()}
 function onChat(m){
   if(m.kind==='emote'){if(m.uid!==myId)showEmote(m.uid,m.body);return}
   chat.push(m);if(chat.length>80)chat.shift();
-  if(!chatOpen&&m.uid!==myId){chatUnread++;bubble(m.uid,m.body);render()}
+  if(!chatOpen&&m.uid!==myId){chatUnread++;bubble(m.uid,m.body);sfx('msg');render()}
   renderChat();
 }
 function anchorFor(uid){
@@ -916,7 +1187,8 @@ function parts(n,emo,cls,spread,extra){let h='';for(let i=0;i<n;i++){const a=(i/
   h+='<i class="'+cls+'" style="--dx:'+(Math.cos(a)*d|0)+'px;--dy:'+(Math.sin(a)*d|0)+'px;--r:'+(rnd(-360,360)|0)+'deg;--d:'+rnd(0,.25).toFixed(2)+'s'+(extra?';'+extra(i):'')+'">'+(Array.isArray(emo)?emo[i%emo.length]:emo)+'</i>'}return h}
 // Normale Emotes: kleine, eigene Animation am Spieler
 function showEmote(uid,e){
-  if(/^sp[1-8]$/.test(e))return special(uid,+e[2]);
+  if(/^sp[1-8]$/.test(e)){sfx('special'+e[2]);return special(uid,+e[2])}
+  sfx('pop');
   const k=EKEY[e];if(!k)return;let x='';
   if(k==='laugh')x=parts(4,'💧','p tear',46)+'<b class="lbl">HAHA</b>';
   if(k==='bomb')x='<i class="p boomx">💥</i>'+parts(7,['✨','🔥'],'p spark',60);
@@ -952,7 +1224,8 @@ function special(uid,t){
   try{navigator.vibrate&&navigator.vibrate(t>=7?[80,40,160]:60)}catch(_){}
 }
 function specialUnlocked(t){return presCount>=SPECIAL[t-1][0]}
-async function loadPres(){if(!me)return;try{const s=await store.rpc('get_stats',{p_uid:myId});if(s){const before=presCount;presCount=s.wins||0;applyTheme();if(wheelOpen)renderChat();
+async function loadPres(){if(!me)return;try{const s=await store.rpc('get_stats',{p_uid:myId});if(s){const before=presCount,prevSt=myStats;myStats=s;presCount=s.wins||0;applyTheme();if(wheelOpen)renderChat();
+  if(prevSt){ACH.forEach(a=>{if(a[3](s)&&!a[3](prevSt)){sfx('unlock');toast('🏅 Erfolg freigeschaltet: '+a[0]+' '+a[1])}})}
   if(before&&presCount>before){const t=SPECIAL.findIndex(x=>before<x[0]&&presCount>=x[0]);if(t>=0)toast('🎉 Freigeschaltet: '+SPECIAL[t][1]+' '+SPECIAL[t][2]+(SPECIAL[t][3]?' + neuer Tisch!':'!'))}}}catch(e){}}
 function bubble(uid,t){floatAt(uid,esc(t.length>60?t.slice(0,58)+'…':t),'bub',3800)}
 async function send(kind,body){
@@ -1022,7 +1295,16 @@ function act(a,v,el){
     case 'fr-del':openModal('<h2>Freund entfernen?</h2><div class="row"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="fr-del2" data-v="'+esc(v)+'">Entfernen</button></div>');return;
     case 'fr-del2':closeModal();return store.rpc('friend_respond',{p_uid:v,p_accept:false}).then(()=>{friendsKey='';loadFriends();go('friends')});
     case 'fr-inv':return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{seen['inv'+v]=Date.now();toast('Einladung verschickt.');render()}).catch(()=>toast('Einladung ging nicht raus.'));
-    case 'th':T[el.dataset.k]=v;saveTheme();return render();
+    case 'th':T[el.dataset.k]=v;saveTheme();sfx('pop');return render();
+    case 'set':SET[v]=!SET[v];saveSet();if(v==='snd'&&SET.snd){ac();setTimeout(()=>sfx('turn'),60)}return render();
+    case 'push-on':return enablePush();
+    case 'av-e':if(me)saveAvatar({e:v,c:(me.avatar&&me.avatar.c)||AV_COL[5]});return;
+    case 'av-c':if(me)saveAvatar(Object.assign({},me.avatar&&me.avatar.img?{e:'🃏'}:me.avatar||{e:'🃏'},{c:v}));return;
+    case 'av-photo':return pickPhoto();
+    case 'av-clear':if(me)saveAvatar({});return;
+    case 'push-off':return disablePush();
+    case 'rk-mode':rankMode=v;return go('ranking');
+    case 'cdlock':{const all=FRONTS.concat(BACKS),x=all.find(z=>z[0]===v&&z[2]);toast(x?(me?reqText(x[2]).replace('🔒 ','Freischalten mit ')+'.':'Besondere Karten gibt es nur mit Konto.'):'Gesperrt');return}
     case 'thlock':{const x=SURF.find(z=>z[0]===v);toast(x[1]+' gibt es ab '+x[3]+'× Präsident'+(me?' – du hast '+presCount+'×.':' (nur mit Konto).'));return}
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
@@ -1047,14 +1329,20 @@ function act(a,v,el){
   const g=clone(G);
   if(G.paused&&a!=='unpause'&&a!=='lv-end')return;
   switch(a){
+    case 'rule':{if(G.host!==myId||G.phase!=='lobby')return;const k=el.dataset.k;g.rules=Object.assign({},DEFAULT_RULES,g.rules||{});
+      g.rules[k]=v==='true'?true:v==='false'?false:+v;commit(g);return}
+    case 'botlvl':if(G.host===myId&&G.phase==='lobby'){g.botLevel=v;commit(g)}return;
+    case 'kick':{const p=lobby.find(x=>x.id===v);if(!p||G.host!==myId)return;
+      openModal('<h2>'+esc(p.name)+' entfernen?</h2><p class="note">'+esc(p.name)+' kann diesem Raum danach nicht mehr beitreten.</p><div class="row"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="kick2" data-v="'+esc(v)+'">Entfernen</button></div>');return}
+    case 'kick2':closeModal();store.kick(code,v).then(()=>toast('Spieler entfernt.')).catch(()=>toast('Hat nicht geklappt.'));return;
     case 'bot+':if(G.host===myId&&total()<5){g.bots=(g.bots||0)+1;commit(g)}return;
     case 'bot-':if(G.host===myId&&g.bots>0){g.bots--;commit(g)}return;
     case 'start':
       if(G.host!==myId||total()<3||total()>5)return;
       g.players=lobby.slice(0,5).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
-      for(let i=0;i<(g.bots||0);i++)g.players.push({id:'bot'+i,name:BOTS[i],bot:true});
+      for(let i=0;i<(g.bots||0);i++)g.players.push({id:'bot'+i,name:BOTS[i],bot:true,level:g.botLevel||'normal'});
       startMatch(g);deal(g);return commit(g);
-    case 'next':if(G.phase==='end'&&s>=0){deal(g);commit(g)}return;
+    case 'next':if(G.phase==='end'&&s>=0&&!G.final){deal(g);commit(g)}return;
     case 'endmatch':if(G.phase==='end'&&s>=0){g.phase='over';commit(g)}return;
     case 'newmatch':if(G.phase==='over'&&s>=0){startMatch(g);deal(g);commit(g)}return;
     case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name};commit(g)}return;
@@ -1100,7 +1388,7 @@ function cardHtml(c,cls,attrs){
   return '<div class="card'+(red?' red':'')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="k">'+RANKS[rk(c)]+'</span><span class="s">'+SUITS[su(c)]+'</span><span class="big">'+SUITS[su(c)]+'</span></div>';
 }
 function roleOf(g,s){const n=g.players.length;return g.roles&&g.roles[s]!=null&&ROLES[n]?ROLES[n][g.roles[s]]:''}
-const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, kommt derjenige raus, der zuletzt gelegt hat. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletztem Zug aufzuhören ist verboten: Wer das tut, landet automatisch ganz hinten. Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0.</details>';
+const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, kommt derjenige raus, der zuletzt gelegt hat. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletztem Zug aufzuhören ist verboten: Wer das tut, landet automatisch ganz hinten. Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Punkteziel).</details>';
 const HG='<div class="hgw" id="hg"><svg viewBox="0 0 100 140"><defs><clipPath id="hgc"><path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z"/></clipPath></defs>'+
   '<path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z" fill="rgba(0,0,0,.35)" stroke="#f4e4c0" stroke-width="4"/>'+
   '<g clip-path="url(#hgc)" fill="#f2c14e"><rect id="hgTop" x="0" y="20" width="100" height="50"/><rect id="hgBot" x="0" y="126" width="100" height="0"/><line class="stream" id="hgS" x1="50" y1="68" x2="50" y2="126" stroke="#f2c14e" stroke-width="3"/></g>'+
@@ -1119,14 +1407,14 @@ function draw(){
   const app=$('#app');
   if(code){drawGame(app);renderChat();return}
   if($('#chatui').innerHTML)$('#chatui').innerHTML='';
-  app.innerHTML=({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount}[view]||drawHome)();
+  app.innerHTML=({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount,settings:drawSettings,ach:drawAch}[view]||drawHome)();
 }
 const backBtn='<button class="back" data-a="go" data-v="home">‹ Zurück</button>';
 function needAccount(what){return '<div class="panel"><p style="margin-top:0">Für '+what+' brauchst du ein Konto – nur Benutzername und Passwort, keine E-Mail.</p><button data-a="go" data-v="account">Konto erstellen</button></div>'}
 function incomingCount(){return friends.filter(f=>f.rel==='incoming').length}
 
 function drawHome(){
-  const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">👤 '+esc(me.display)+'</button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
+  const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">'+avatar(me.avatar,me.display,presCount,24)+' '+esc(me.display)+'</button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
   let h='<div class="head"><h1>Arschloch</h1>'+acct+'</div><p class="suits">♠<i>♥</i><i>♦</i>♣</p>';
   if(!ready)return h+'<p class="note">Verbinde …</p>';
   if(!me)h+='<div class="panel"><label for="name">Dein Name</label><input id="name" data-k="name" maxlength="16" autocomplete="off" placeholder="z. B. Max" value="'+esc(drafts.name||'')+'"></div>';
@@ -1142,7 +1430,9 @@ function drawHome(){
     '<button class="ghost" data-a="go" data-v="friends"><b>👥'+(ic?'<span class="badge">'+ic+'</span>':'')+'</b>Freunde</button>'+
     '<button class="ghost" data-a="go" data-v="ranking"><b>🏆</b>Rangliste</button>'+
     '<button class="ghost" data-a="go" data-v="profile"><b>📊</b>Statistik</button>'+
-    '<button class="ghost" data-a="go" data-v="design"><b>🎨</b>Design</button></div>';
+    '<button class="ghost" data-a="go" data-v="ach"><b>🏅</b>Erfolge</button>'+
+    '<button class="ghost" data-a="go" data-v="design"><b>🎨</b>Design</button>'+
+    '<button class="ghost" data-a="go" data-v="settings"><b>⚙️</b>Einstellungen</button></div>';
   h+='<div class="panel">'+RULES+'</div>'+
     (navigator.standalone||matchMedia('(display-mode: standalone)').matches?'':'<p class="note" style="text-align:center">Tipp: Über „Teilen“ → „Zum Home-Bildschirm“ (iPhone) bzw. Menü → „App installieren“ (Android) hast du das Spiel als App.</p>');
   return h;
@@ -1150,6 +1440,12 @@ function drawHome(){
 function drawAccount(){
   let h=backBtn+'<h2>Konto</h2>';
   if(!store||!store.online)return h+'<p class="note">Gerade keine Verbindung.</p>';
+  if(me){const av=me.avatar||{};
+    h+='<div class="panel avedit"><div class="avbig">'+avatar(av,me.display,presCount,88)+'<div><b>'+esc(me.display)+'</b><span class="note">'+(frameOf(presCount)?'Rahmen durch '+presCount+'× Präsident':'Ab 30× Präsident bekommst du einen Rahmen')+'</span></div></div>'+
+      '<h3 style="margin-top:14px">Avatar</h3><div class="avgrid">'+AV_EMO.map(e=>'<button class="'+(av.e===e&&!av.img?'on':'')+'" data-a="av-e" data-v="'+e+'">'+e+'</button>').join('')+'</div>'+
+      '<h3 style="margin-top:14px">Farbe</h3><div class="avcols">'+AV_COL.map(c=>'<button style="background:'+c+'" class="'+(av.c===c&&!av.img?'on':'')+'" data-a="av-c" data-v="'+c+'"></button>').join('')+'</div>'+
+      '<div class="row" style="margin-top:14px"><button class="ghost" data-a="av-photo">📷 Eigenes Foto</button>'+(av.img||av.e?'<button class="ghost" data-a="av-clear">Zurücksetzen</button>':'')+'</div></div>';
+  }
   if(me)return h+'<div class="panel"><p style="margin-top:0">Angemeldet als <b>'+esc(me.display)+'</b>.</p><p class="note">Deine Freunde finden dich über diesen Benutzernamen.</p>'+
     '<div class="stack"><button class="ghost" data-a="go" data-v="profile">📊 Meine Statistik</button><button class="ghost" data-a="logout">Abmelden</button></div></div>';
   const reg=acctTab==='register';
@@ -1167,8 +1463,8 @@ function drawFriends(){
   h+='<div class="panel"><label for="fr">Freund hinzufügen</label><div class="row"><input id="fr" data-k="fr" maxlength="16" autocapitalize="off" placeholder="Benutzername" value="'+esc(drafts.fr||'')+'"><button class="ghost" style="flex:0 0 auto;width:auto" data-a="fr-add">Hinzufügen</button></div>'+
     '<p class="note" style="margin-bottom:0">Dein Benutzername: <b>'+esc(me.display)+'</b></p></div>';
   const inc=friends.filter(f=>f.rel==='incoming'),out=friends.filter(f=>f.rel==='outgoing'),fr=friends.filter(f=>f.rel==='friend');
-  if(inc.length)h+='<div class="panel"><h3>Anfragen</h3><ul class="plist">'+inc.map(f=>'<li><span>'+esc(f.display)+'</span><span class="row" style="flex:0 0 auto"><button class="small ghost" data-a="fr-no" data-v="'+f.uid+'">Ablehnen</button><button class="small" data-a="fr-yes" data-v="'+f.uid+'">Annehmen</button></span></li>').join('')+'</ul></div>';
-  h+='<div class="panel"><h3>Deine Freunde ('+fr.length+')</h3>'+(fr.length?'<ul class="plist">'+fr.map((f,i)=>'<li style="--i:'+i+'"><span><span class="dot'+(f.online?' on':'')+'"></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
+  if(inc.length)h+='<div class="panel"><h3>Anfragen</h3><ul class="plist">'+inc.map(f=>'<li><span>'+avatar(f.avatar,f.display,f.wins,32)+esc(f.display)+'</span><span class="row" style="flex:0 0 auto"><button class="small ghost" data-a="fr-no" data-v="'+f.uid+'">Ablehnen</button><button class="small" data-a="fr-yes" data-v="'+f.uid+'">Annehmen</button></span></li>').join('')+'</ul></div>';
+  h+='<div class="panel"><h3>Deine Freunde ('+fr.length+')</h3>'+(fr.length?'<ul class="plist">'+fr.map((f,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,40)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
     '<button class="small ghost" data-a="go" data-v="profile" data-u="'+f.uid+'">Profil</button></li>').join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde. Füg sie oben über ihren Benutzernamen hinzu.</p>')+'</div>';
   if(out.length)h+='<div class="panel"><h3>Gesendet</h3><ul class="plist">'+out.map(f=>'<li><span>'+esc(f.display)+'</span><span class="tag">wartet</span></li>').join('')+'</ul></div>';
   return h;
@@ -1180,7 +1476,7 @@ function drawProfile(){
   if(!p)return h+'<h2>Statistik</h2><p class="note">Lade …</p>';
   if(p.err)return h+'<h2>Statistik</h2><p class="note">Konnte nicht geladen werden.</p>';
   const r=p.rounds||0;
-  h+='<div class="head"><h2>'+(mine?'Deine Statistik':esc(p.display))+'</h2>'+(mine?'':'<span class="tag"><span class="dot'+(p.online?' on':'')+'" style="display:inline-block;width:8px;height:8px;margin-right:5px"></span>'+(p.online?STATUS[p.status]||'online':'offline')+'</span>')+'</div>';
+  h+='<div class="phead">'+avatar(p.avatar,p.display,p.wins,64)+'</div><div class="head"><h2>'+(mine?'Deine Statistik':esc(p.display))+'</h2>'+(mine?'':'<span class="tag"><span class="dot'+(p.online?' on':'')+'" style="display:inline-block;width:8px;height:8px;margin-right:5px"></span>'+(p.online?STATUS[p.status]||'online':'offline')+'</span>')+'</div>';
   const lv=SPECIAL.filter(x=>(p.wins||0)>=x[0]).length,nx=SPECIAL[lv];
   h+='<div class="panel tier"><div class="tb"><span class="te">'+(lv?SPECIAL[lv-1][1]:'🃏')+'</span><div><b>Präsident-Stufe '+lv+(lv?' · '+esc(SPECIAL[lv-1][2]):'')+'</b><span>'+(p.wins||0)+'× Präsident'+(nx?' · nächste Stufe bei '+nx[0]+'× ('+nx[1]+' '+esc(nx[2])+')':' · höchste Stufe erreicht!')+'</span></div></div>'+
     (nx?'<div class="bar"><i style="width:'+Math.min(100,Math.round(((p.wins||0)-(lv?SPECIAL[lv-1][0]:0))*100/(nx[0]-(lv?SPECIAL[lv-1][0]:0))))+'%"></i></div>':'')+
@@ -1193,7 +1489,7 @@ function drawProfile(){
     [p.bombs||0,'Bomben gelegt'],[p.aceEnds||0,'Mit Ass beendet'],
     [p.timeouts||0,'Zeit abgelaufen'],[p.since?new Date(p.since).toLocaleDateString('de-DE',{month:'short',year:'numeric'}):'–','Dabei seit']
   ].map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('')+'</div>';
-  h+='<p class="note">Punkteschnitt: 100 % heißt immer Präsident, 0 % immer Arschloch. Gezählt werden nur Runden, die du mit Konto gespielt hast.</p>';
+  h+='<p class="note">Punkteschnitt: 100 % heißt immer Präsident, 0 % immer Arschloch. Gezählt werden nur Runden, die du mit Konto gespielt hast.</p>'+achHtml(p);
   if(!mine)h+='<button class="ghost" data-a="fr-del" data-v="'+esc(p.uid)+'">Freund entfernen</button>';
   return h;
 }
@@ -1201,10 +1497,14 @@ function drawRanking(){
   let h=backBtn+'<h2>Rangliste</h2>';
   if(!me)return h+needAccount('die Rangliste');
   if(!rankRows)return h+'<p class="note">Lade …</p>';
-  const rows=rankRows.slice().sort((a,b)=>b.points-a.points||b.avg-a.avg);
+  const rows=rankRows.slice().filter(x=>rankMode!=='month'||x.rounds>0||x.uid===myId).sort((a,b)=>b.points-a.points||b.avg-a.avg);
+  const mName=new Date().toLocaleDateString('de-DE',{month:'long'});
+  h='<button class="back" data-a="go" data-v="home">‹ Zurück</button><h2>Rangliste</h2>'+
+    '<div class="row" style="margin-bottom:12px"><button class="'+(rankMode==='all'?'':'ghost')+'" data-a="rk-mode" data-v="all">Gesamt</button><button class="'+(rankMode==='month'?'':'ghost')+'" data-a="rk-mode" data-v="month">Saison '+esc(mName)+'</button></div>'+
+    (monthWinner?'<div class="panel mwin"><span>👑</span><div><b>Monatssieger '+esc(monthWinner.month)+'</b><span>'+esc(monthWinner.name)+' mit '+monthWinner.points+' Punkten</span></div></div>':'');
   h+='<div class="panel"><table class="rk"><tr><th>#</th><th>Spieler</th><th>Punkte</th><th>Präs.</th><th>Schnitt</th></tr>'+
-    rows.map((x,i)=>'<tr class="'+(x.uid===myId?'me':'')+'" data-a="go" data-v="profile" data-u="'+x.uid+'" style="cursor:pointer"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+esc(x.display)+'</td><td><b>'+x.points+'</b></td><td>'+pct(x.wins,x.rounds)+'</td><td>'+(x.rounds?x.avg+' %':'–')+'</td></tr>').join('')+'</table></div>'+
-    '<p class="note">Du und deine Freunde, sortiert nach Punkten aus allen Runden. Antippen öffnet das Profil.</p>';
+    rows.map((x,i)=>'<tr class="'+(x.uid===myId?'me':'')+'" data-a="go" data-v="profile" data-u="'+x.uid+'" style="cursor:pointer"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td><span class="rkn">'+avatar(x.avatar,x.display,x.wins,24)+esc(x.display)+'</span></td><td><b>'+x.points+'</b></td><td>'+pct(x.wins,x.rounds)+'</td><td>'+(x.rounds?x.avg+' %':'–')+'</td></tr>').join('')+'</table></div>'+
+    '<p class="note">'+(rankMode==='month'?'Die Saison startet jeden Monat neu – wer am Monatsende vorne liegt, wird Monatssieger.':'Du und deine Freunde, sortiert nach Punkten aus allen Runden.')+' Antippen öffnet das Profil.</p>';
   if(rows.length<2)h+='<button class="ghost" data-a="go" data-v="friends">Freunde hinzufügen</button>';
   return h;
 }
@@ -1217,12 +1517,40 @@ function drawDesign(){
     '<p class="note" style="margin-bottom:0">Besondere Tische schaltest du frei, indem du oft Präsident wirst'+(me?' – bisher '+presCount+'×.':' (nur mit Konto).')+'</p></div>';
   h+='<div class="panel"><h3>Filzfarbe</h3>'+opt('felt',Object.entries(FELT).map(([v,f])=>[v,f[0],'<span class="sw" style="background:radial-gradient('+f[1]+','+f[3]+')"></span>']))+
     '<p class="note" style="margin-bottom:0">Gilt für den Filz- und den Schreibtisch.</p></div>';
+  const cardOpt=(k,list,prev)=>'<div class="opts">'+list.map(([v,l,req])=>{const ok=unlockedReq(req);
+    return '<button class="opt'+(T[k]===v?' on':'')+(ok?'':' lock')+'" data-a="'+(ok?'th':'cdlock')+'" data-k="'+k+'" data-v="'+v+'">'+prev(v)+'<span>'+l+'</span>'+(req?'<small>'+(ok?'freigeschaltet':reqText(req))+'</small>':'')+'</button>'}).join('')+'</div>';
+  h+='<div class="panel"><h3>Karten</h3>'+cardOpt('cards',FRONTS,v=>'<span class="mini cf-'+v+'">A<i>♥</i></span>')+'</div>';
+  h+='<div class="panel"><h3>Kartenrücken</h3>'+cardOpt('back',BACKS,v=>'<span class="mini cb-'+v+'"></span>')+'<p class="note" style="margin-bottom:0">Siehst du beim Stock und bei verdeckten Karten.</p></div>';
   h+='<div class="panel"><h3>Hintergrund</h3>'+opt('bg',BGS.map(([v,l,c])=>[v,l,'<span class="sw" style="background:'+c+'"></span>']))+'</div>';
   h+='<div class="panel"><h3>Akzentfarbe</h3>'+opt('accent',Object.entries(ACC).map(([v,a])=>[v,a[0],'<span class="swc" style="background:'+a[1]+'"></span>']))+'</div>';
   h+='<p class="note">'+(me?'Dein Design wird in deinem Konto gespeichert.':'Dein Design wird auf diesem Gerät gespeichert. Mit Konto hast du es überall.')+' Jeder Spieler sieht sein eigenes Design.</p>';
   return h;
 }
 
+function drawSettings(){
+  const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
+  let h=backBtn+'<h2>Einstellungen</h2><div class="panel"><ul class="plist">'+
+    tg('snd','Soundeffekte','Karten, Mi Bombo, Sanduhr, Fanfare …')+
+    tg('vib','Vibration','Bei Bomben und Einladungen')+'</ul></div>';
+  let push;
+  if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
+  else if(!pushSupported())push='<p class="note" style="margin:0">'+(IOS&&!STANDALONE?'Auf dem iPhone gehen Benachrichtigungen nur, wenn das Spiel als App auf dem Home-Bildschirm liegt: Safari → Teilen → „Zum Home-Bildschirm“, dann die App von dort öffnen.':'Dein Browser unterstützt keine Benachrichtigungen.')+'</p>';
+  else if(SET.push&&Notification.permission==='granted')push='<p class="note" style="margin-top:0">🔔 An – du bekommst eine Meldung bei Einladungen und wenn du dran bist, während du nicht in der App bist.</p><button class="ghost" data-a="push-off">Ausschalten</button>';
+  else push='<p class="note" style="margin-top:0">Bekomm eine Meldung aufs Handy, wenn dich jemand einlädt oder du dran bist – auch bei gesperrtem Bildschirm.</p><button data-a="push-on">🔔 Benachrichtigungen einschalten</button>'+(Notification.permission==='denied'?'<p class="note">Du hast Benachrichtigungen für diese Seite blockiert. Erlaube sie in den Browser- bzw. Handy-Einstellungen.</p>':'');
+  h+='<div class="panel"><h3>Benachrichtigungen</h3>'+push+'</div>';
+  h+='<button class="ghost" data-a="go" data-v="design">🎨 Design anpassen</button>';
+  return h;
+}
+function drawAch(){
+  let h=backBtn+'<h2>Erfolge</h2>';
+  if(!me)return h+needAccount('Erfolge');
+  if(!profileData)return h+'<p class="note">Lade …</p>';
+  if(profileData.err)return h+'<p class="note">Konnte nicht geladen werden.</p>';
+  return h+achHtml(profileData)+'<p class="note">Erfolge zählen ab jetzt über alle Partien mit Konto.</p>';
+}
+function rulesText(r){
+  return (r.turn?r.turn+' s pro Zug':'ohne Zeitlimit')+' · Bomben '+(r.bombs?'an':'aus')+' · Stock '+(r.stock?'an':'aus')+' · Ass-Regel '+(r.aceRule?'an':'aus')+(r.target?' · bis '+r.target+' Punkte':'');
+}
 function topBar(){
   const s=mySeat(),canPause=running()&&s>=0&&store.online&&!G.paused;
   return '<div class="top"><span>Raum <b>'+esc(code)+'</b>'+(G&&G.round?' · Runde '+G.round:'')+'</span><span class="tb">'+
@@ -1241,20 +1569,30 @@ function drawGame(app){
 
   if(G.phase==='lobby'){
     const t=total();
-    let li=lobby.slice(0,5).map((p,i)=>'<li style="--i:'+i+'"><span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+(p.id===G.host?'<span class="tag gold">Host</span>':'')+'</li>').join('');
-    for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+BOTS[i]+'</span><span class="tag">Computer</span></li>';
+    let li=lobby.slice(0,5).map((p,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(p.av,p.name,p.wins,34)+'<span class="dot'+(online.has(p.id)||p.id===myId?' on':'')+'"></span></span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+
+      (p.id===G.host?'<span class="tag gold">Host</span>':host&&store.online?'<button class="small ghost" data-a="kick" data-v="'+esc(p.id)+'" title="Entfernen">✕</button>':'')+'</li>').join('');
+    const LV={easy:'leicht',normal:'normal',hard:'schwer'};
+    for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[G.botLevel||'normal']+'</span></li>';
+    const r=R(G),seg=(k,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[k])===String(v)?'on':'')+'" data-a="rule" data-k="'+k+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
+    const rules=host?'<div class="panel"><h3>Hausregeln</h3><div class="rl"><span>Zeit pro Zug</span>'+seg('turn',[[10,'10 s'],[20,'20 s'],[30,'30 s'],[0,'aus']])+'</div>'+
+        '<div class="rl"><span>Bomben</span>'+seg('bombs',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Stock (3 & 5 Spieler)</span>'+seg('stock',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Mit Ass beenden verboten</span>'+seg('aceRule',[[true,'an'],[false,'aus']])+'</div>'+
+        '<div class="rl"><span>Partie endet bei</span>'+seg('target',[[0,'offen'],[10,'10 P'],[20,'20 P'],[30,'30 P']])+'</div>'+
+        ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span><div class="seg">'+[['easy','leicht'],['normal','normal'],['hard','schwer']].map(([v,l])=>'<button class="'+((G.botLevel||'normal')===v?'on':'')+'" data-a="botlvl" data-v="'+v+'">'+l+'</button>').join('')+'</div></div>':'')+'</div>'
+      :'<div class="panel"><h3>Hausregeln</h3><p class="note" style="margin:0">'+esc(rulesText(r))+((G.bots||0)?' · Computer '+LV[G.botLevel||'normal']:'')+'</p></div>';
     let fr='';
     if(me&&store.online){
       const inLobby=new Set(lobby.map(p=>p.id)),on=friends.filter(f=>f.rel==='friend'&&!inLobby.has(f.uid)).sort((a,b)=>b.online-a.online);
       fr='<div class="panel"><h3>Freunde einladen</h3>'+(on.length?'<ul class="plist">'+on.map(f=>{const sent=seen['inv'+f.uid]&&Date.now()-seen['inv'+f.uid]<60000;
-        return '<li><span><span class="dot'+(f.online?' on':'')+'"></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
+        return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
         '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
     }
     app.innerHTML=top+'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<button class="ghost" data-a="share" style="margin-top:10px">Link teilen</button>':'')+'</div>'+
       '<div class="panel"><label>Am Tisch ('+t+' von 3–5)</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul></div>'+
       (host?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=5?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+(G.bots>0?'':'disabled')+'>− Computer</button></div>'+
         '<button data-a="start" '+(t>=3?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<3?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens 3 Spieler.</p>':'')
-      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+fr;
+      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+rules+fr;
     return;
   }
   const n=(G.players||[]).length;
@@ -1263,7 +1601,7 @@ function drawGame(app){
     const rounds=Math.max(0,...st.map(x=>x.m.rounds));
     app.innerHTML=top+'<h1 style="margin-top:6px">Partie vorbei</h1><p class="sub">'+rounds+' Runde'+(rounds===1?'':'n')+' gespielt'+(st[0]&&rounds?' – '+esc(st[0].name)+' gewinnt die Partie!':'')+'</p>'+
       '<div class="panel"><h3>Endstand</h3>'+st.map((x,i)=>{const r=x.m.rounds||0;
-        return '<div class="pcard" style="--i:'+i+'"><span class="place">'+(medal[i]||i+1)+'</span><div style="min-width:0"><b>'+(i===0&&rounds?'<span class="crown">👑</span> ':'')+esc(x.name)+(G.players[x.s].id===myId?' (du)':'')+'</b>'+
+        return '<div class="pcard" style="--i:'+i+'"><span class="place">'+(medal[i]||i+1)+'</span>'+avOf(G.players[x.s].id,x.name,x.bot)+'<div style="min-width:0"><b>'+(i===0&&rounds?'<span class="crown">👑</span> ':'')+esc(x.name)+(G.players[x.s].id===myId?' (du)':'')+'</b>'+
         '<div class="det">Präsident '+pct(x.m.pl[0]||0,r)+' · '+(x.m.pl[n-1]||0)+'× Arschloch · '+x.m.aces+' Asse'+(x.m.bombs?' · '+x.m.bombs+' 💣':'')+'</div></div><span class="pts">'+x.m.pts+'</span></div>'}).join('')+'</div>'+
       (aw.length?'<div class="panel"><h3>Auszeichnungen</h3>'+aw.map(a=>'<div class="award"><span class="e">'+a.e+'</span><div><b>'+esc(a.t)+'</b><span>'+esc(a.who.join(', '))+' – '+esc(a.d)+'</span></div></div>').join('')+'</div>':'')+
       (me_>=0?'<button data-a="newmatch" style="margin-bottom:10px">Neue Partie mit denselben Spielern</button>':'')+'<button class="ghost" data-a="lv-just">Zur Startseite</button>';
@@ -1271,9 +1609,10 @@ function drawGame(app){
   }
   if(G.phase==='end'&&Date.now()>=endHold){
     const li=G.order.map((s,i)=>'<li style="--i:'+i+'"><span><span class="place">'+(i+1)+'</span>'+(i===0?'<span class="crown">👑</span>':'')+esc(nm(G,s))+(s===me_?' (du)':'')+'</span><span class="tag'+(i===0?' gold':'')+'">'+ROLES[n][i]+' · +'+(n-1-i)+'</span></li>').join('');
-    app.innerHTML=top+'<h1 style="margin-top:6px">Runde '+G.round+' vorbei</h1><p class="sub">'+esc(nm(G,G.order[0]))+' ist Präsident, '+esc(nm(G,G.order[n-1]))+' ist das Arschloch.</p>'+
-      '<div class="panel"><ul class="plist">'+li+'</ul></div><div class="panel"><h3>Stand der Partie</h3>'+pointsTable(G)+'</div>'+
-      (me_>=0?'<button data-a="next" style="margin-bottom:10px">Nächste Runde</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>':'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
+    const lead=standings(G)[0];
+    app.innerHTML=top+'<h1 style="margin-top:6px">'+(G.final?'🏁 Entschieden!':'Runde '+G.round+' vorbei')+'</h1><p class="sub">'+(G.final?esc(lead.name)+' hat '+lead.m.pts+' Punkte erreicht und gewinnt die Partie. ':'')+esc(nm(G,G.order[0]))+' ist Präsident, '+esc(nm(G,G.order[n-1]))+' ist das Arschloch.</p>'+
+      '<div class="panel"><ul class="plist">'+li+'</ul></div><div class="panel"><h3>Stand der Partie'+(R(G).target?' · Ziel '+R(G).target+' P':'')+'</h3>'+pointsTable(G)+'</div>'+
+      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px">Nächste Runde</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
     return;
   }
 
@@ -1284,7 +1623,8 @@ function drawGame(app){
     const p=G.players[s],cnt=G.hands[s].length,place=G.finished.indexOf(s),lost=(G.losers||[]).includes(s),open=(G.open||[]).includes(s)&&cnt>0;
     const st=lost?'Ass-Ende ✗':place>=0?'fertig ('+(place+1)+'.)':G.passed.includes(s)?'passt':'';
     const oh=open?'<div class="oh">'+G.hands[s].map(c=>'<span class="oc'+(su(c)===1||su(c)===2?' red':'')+'">'+RANKS[rk(c)]+'<i>'+SUITS[su(c)]+'</i></span>').join('')+'</div>':'';
-    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n">'+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(open?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+' Karten')+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
+    const conn=p.bot||!store.online||online.has(p.id);
+    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(open?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+' Karten')+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
   }
   const inStock=G.phase==='stock'&&G.stock&&G.stock.length===2;
   const pk=inStock?'stock'+G.round:pileKey(G);
@@ -1348,6 +1688,7 @@ function drawGame(app){
       stHtml+meHtml+handHtml+(me_>=0&&G.hands[me_].length&&G.phase!=='end'?'<div class="actions">'+left+'<button id="do" data-a="do" '+(goOk?'':'disabled')+'>'+goLabel+'</button></div>':''));
   tick();
 }
+window.addEventListener('hashchange',()=>{const h=(location.hash||'').slice(1).toUpperCase();if(ready&&store.online&&/^[A-Z]{4}$/.test(h)&&h!==code){if(myName){if(code)leave();joinRoom(h)}else{drafts.code=h;render()}}});
 init();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
