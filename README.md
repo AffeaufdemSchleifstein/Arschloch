@@ -15,7 +15,7 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 ## Funktionen
 
 - Konten nur mit Benutzername und Passwort, Freunde mit Online-Status, Einladungen und Benachrichtigungen
-- Chat, Emote-Rad und Spezial-Emotes, die man durch viele Siege als Präsident freischaltet
+- Chat mit Sprachnachrichten, Emote-Rad und Spezial-Emotes, die man durch viele Siege als Präsident freischaltet
 - Punkte, Partie-Auswertung mit Auszeichnungen, Statistik, 15 Erfolge, Rangliste und Monats-Saison
 - Pausieren und später unter „Meine Partien“ weiterspielen
 - Eigenes Design: Tische, Filzfarben, Hintergründe, Kartenvorder- und -rückseiten, Avatare oder eigenes Foto
