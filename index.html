@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hyru1+uqf1z7fr3GlzGBAJL/AseNJCJejbBRli0vnBE=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-mJbSjsAgD9WwAmlc1zjDkJ+vuylgzSdpsAZq676gCtQ=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -546,6 +546,10 @@
 .ov .ovp{margin-top:6px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
 .ov .ovp .rk{font-size:13px}
 #modal .vol{margin-top:10px}
+
+.top .rinfo{white-space:nowrap;font-size:13px}
+.top .tb{gap:5px}
+.top .tb .iconbtn{width:32px;height:32px;font-size:14px}
 </style>
 </head>
 <body>
@@ -923,7 +927,7 @@ async function sbStore(){
     const fg=async force=>{const {data}=await sb.from('games').select('data').eq('code',c).maybeSingle();if(data)deliver(data.data,force)};
     const fm=async()=>{const {data}=await sb.rpc('room_members2',{p_code:c});
       if(!data||stopped)return;const l=data.map(m=>({id:m.uid,name:m.name,t:Date.parse(m.joined_at),av:m.avatar||{},wins:+m.wins||0}));
-      l.forEach(m=>{avMap[m.id]={av:m.av,wins:m.wins}});const k=JSON.stringify(l);if(k!==mk){mk=k;onM(l)}};
+      l.forEach((m,i)=>{m.acct=!!data[i].acct;avMap[m.id]={av:m.av,wins:m.wins}});const k=JSON.stringify(l);if(k!==mk){mk=k;onM(l)}};
     const both=()=>{last=Date.now();fg();fm()};
     // Spielzuege kommen als Broadcast direkt vom Server, ohne Umweg ueber Datenbank-Abfragen
     const ch=sb.channel('game:'+c,{config:{private:true,presence:{key:S.uid}}})
@@ -1286,7 +1290,7 @@ function enter(c){
 function leave(){
   if(REC)micStop(true);
   if(sub)sub.stop();sub=null;clearTimeout(botTimer);botTimer=null;clearTimeout(loadTimer);
-  code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';
+  code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';$('#chatui')._h='';
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
   closeModal();render();loadMyGames();lastStatus='home';heartbeat();
 }
@@ -1451,7 +1455,7 @@ async function send(kind,body){
 }
 function renderChat(){
   const box=$('#chatui');if(!box)return;
-  if(!code||!G){box.innerHTML='';return}
+  if(!code||!G){box.innerHTML='';box._h='';return}
   let h='';
   if(wheelOpen)h+='<div class="wheel" data-a="wheel">'+EMOTES.map((e,i)=>{const a=i/EMOTES.length*6.283-1.571;
     return '<button class="we" data-a="emote" data-v="'+e+'" style="--x:'+(Math.cos(a)*108).toFixed(0)+'px;--y:'+(Math.sin(a)*108-40).toFixed(0)+'px;--i:'+i+'">'+e+'</button>'}).join('')+'<span class="wc">✕</span>'+
@@ -1461,6 +1465,8 @@ function renderChat(){
     (chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+
     '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
       '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>')+'</div>';
+  // Nur neu aufbauen, wenn sich etwas geaendert hat (sonst startet die Oeffnen-Animation immer wieder neu)
+  if(box._h===h)return;box._h=h;
   const hadFocus=document.activeElement&&document.activeElement.id==='cmsg';
   box.innerHTML=h;
   const l=$('#clist');if(l)l.scrollTop=l.scrollHeight;
@@ -1567,7 +1573,10 @@ function act(a,v,el){
     case 'fr-yes':case 'fr-no':return store.rpc('friend_respond',{p_uid:v,p_accept:a==='fr-yes'}).then(()=>{friendsKey='';loadFriends()}).catch(()=>toast('Hat nicht geklappt.'));
     case 'fr-del':openModal('<h2>Freund entfernen?</h2><div class="row"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="fr-del2" data-v="'+esc(v)+'">Entfernen</button></div>');return;
     case 'fr-del2':closeModal();return store.rpc('friend_respond',{p_uid:v,p_accept:false}).then(()=>{friendsKey='';loadFriends();go('friends')});
-    case 'fr-inv':return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{seen['inv'+v]=Date.now();toast('Einladung verschickt.');render()}).catch(e=>toast(/slow down/.test(String(e&&e.message))?'Zu viele Einladungen – warte kurz.':'Einladung ging nicht raus.'));
+    case 'fr-inv':if(seen['inv'+v]&&Date.now()-seen['inv'+v]<5000)return;seen['inv'+v]=Date.now();if(invOpen)openInvite();
+      return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{toast('Einladung verschickt.');render();setTimeout(()=>{render();if(invOpen)openInvite()},5100)})
+        .catch(e=>{delete seen['inv'+v];if(invOpen)openInvite();const m=String(e&&e.message);toast(/slow down/.test(m)?'Zu viele Einladungen – warte kurz.':/no account/.test(m)?'Nur Spieler mit Konto bekommen Einladungen – schick ihnen sonst den Link.':'Einladung ging nicht raus.')});
+    case 'inv-open':return openInvite();
     case 'th':T[el.dataset.k]=v;saveTheme();sfx('pop');return render();
     case 'set':SET[v]=!SET[v];saveSet();if(v==='snd'&&SET.snd){ac();setTimeout(()=>sfx('turn'),60)}return render();
     case 'push-on':return enablePush();
@@ -1676,7 +1685,7 @@ document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
 function openModal(h,sticky){modalOpen=true;const m=$('#modal');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
-function closeModal(){if(!modalOpen)return;modalOpen=false;soundOpen=false;$('#modal').classList.remove('on');setTimeout(showNextInvite,300)}
+function closeModal(){if(!modalOpen)return;modalOpen=false;soundOpen=false;invOpen=false;$('#modal').classList.remove('on');setTimeout(showNextInvite,300)}
 
 /* ---------- Anzeige ---------- */
 function cardHtml(c,cls,attrs){
@@ -1702,7 +1711,7 @@ function doRender(){
 function draw(){
   const app=$('#app');
   if(code){drawGame(app);renderChat();return}
-  if($('#chatui').innerHTML)$('#chatui').innerHTML='';
+  if($('#chatui').innerHTML){$('#chatui').innerHTML='';$('#chatui')._h=''}
   app.innerHTML=({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount,settings:drawSettings,ach:drawAch}[view]||drawHome)();
 }
 const backBtn='<button class="back" data-a="go" data-v="home">‹ Zurück</button>';
@@ -1834,7 +1843,26 @@ function soundInner(){
     (SET.music&&SET.music!=='off'?sl('musVol','Musik-Lautstärke',''):'')+
     (IOS?'<p class="note" style="margin-bottom:0">iPhone: Ist der Stumm-Schalter an der Seite aktiv, bleibt das Spiel still.</p>':'');
 }
-let soundOpen=false;
+let soundOpen=false,invOpen=false;
+// Einladen aus der laufenden Runde: Mitspieler aus diesem Raum (die gerade nicht da sind) und Freunde
+function openInvite(){
+  if(!code||!store.online)return;
+  const btn=(uid,on)=>{const sent=seen['inv'+uid]&&Date.now()-seen['inv'+uid]<5000,again=!!seen['inv'+uid];
+    return '<button class="small'+(on?'':' ghost')+'" style="flex:0 0 auto;width:auto" data-a="fr-inv" data-v="'+esc(uid)+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen ✓':again?'Nochmal':'Einladen')+'</button>'};
+  const fmap={};friends.forEach(f=>fmap[f.uid]=f);
+  const mem=lobby.filter(p=>p.id!==myId);
+  let h='<h2>👥 Einladen</h2>';
+  if(!me)h+='<p class="note">Einladungen verschicken geht nur mit Konto. Du kannst aber den Link teilen.</p>';
+  else{
+    h+='<h3>Aus dieser Runde</h3>'+(mem.length?'<ul class="plist">'+mem.map(p=>{const here=online.has(p.id);
+      return '<li><span><span class="avw">'+avatar(p.av,p.name,p.wins,32)+'<span class="dot'+(here?' on':'')+'"></span></span>'+esc(p.name)+'</span>'+
+        (here?'<span class="tag">ist da</span>':p.acct?btn(p.id,false):'<span class="tag">Gast</span>')+'</li>'}).join('')+'</ul>':'<p class="note">Noch niemand außer dir.</p>');
+    const inR=new Set(lobby.map(p=>p.id)),fr=friends.filter(f=>f.rel==='friend'&&!inR.has(f.uid)).sort((a,b)=>b.online-a.online);
+    h+='<h3 style="margin-top:14px">Freunde</h3>'+(fr.length?'<ul class="plist">'+fr.map(f=>'<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,32)+'<span class="dot'+(f.online?' on':'')+'"></span></span>'+esc(f.display)+'</span>'+btn(f.uid,f.online)+'</li>').join('')+'</ul>':'<p class="note">Keine weiteren Freunde.</p>');
+  }
+  h+='<div class="row" style="margin-top:12px"><button class="ghost" data-a="share">Link teilen</button><button data-a="modal-x">Fertig</button></div>';
+  openModal(h);invOpen=true;
+}
 function openSound(){openModal('<h2>🎵 Sound</h2>'+soundInner()+'<button class="ghost" style="margin-top:12px" data-a="modal-x">Fertig</button>');soundOpen=true}
 function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
@@ -1862,9 +1890,9 @@ function rulesText(r){
 }
 function topBar(){
   const s=mySeat(),canPause=running()&&s>=0&&store.online&&!G.paused;
-  return '<div class="top"><span>Raum <b>'+esc(code)+'</b>'+(G&&G.round?' · Runde '+G.round:'')+'</span><span class="tb">'+
+  return '<div class="top"><span class="rinfo"><b>'+esc(code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
     (store.online?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat" style="position:relative">💬'+(chatUnread?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+chatUnread+'</span>':'')+'</button>':'')+
-    '<button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
+    (store.online&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
@@ -1894,9 +1922,9 @@ function drawGame(app){
     let fr='';
     if(me&&store.online){
       const inLobby=new Set(lobby.map(p=>p.id)),on=friends.filter(f=>f.rel==='friend'&&!inLobby.has(f.uid)).sort((a,b)=>b.online-a.online);
-      fr='<div class="panel"><h3>Freunde einladen</h3>'+(on.length?'<ul class="plist">'+on.map(f=>{const sent=seen['inv'+f.uid]&&Date.now()-seen['inv'+f.uid]<60000;
+      fr='<div class="panel"><h3>Freunde einladen</h3>'+(on.length?'<ul class="plist">'+on.map(f=>{const sent=seen['inv'+f.uid]&&Date.now()-seen['inv'+f.uid]<5000,again=!!seen['inv'+f.uid];
         return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
-        '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
+        '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen ✓':again?'Nochmal einladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
     }
     app.innerHTML=top+'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<button class="ghost" data-a="share" style="margin-top:10px">Link teilen</button>':'')+'</div>'+
       '<div class="panel"><label>Am Tisch ('+t+' von 3–5)</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul></div>'+
