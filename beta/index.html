@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZNAEnVWE1gS0CtyL6fFtYg3d4746IkEa5Dc8HNjIOeM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hyru1+uqf1z7fr3GlzGBAJL/AseNJCJejbBRli0vnBE=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -606,16 +606,20 @@ function startPlay(g){
   if(g.open.length)g.msg+=' '+g.open.map(i=>nm(g,i)).join(' und ')+' hat 4 Asse und muss offen spielen!';
 }
 function wish(g,seat,ranks){
-  const q=g.wishQ.shift(),lo=q.lo,got=[];let hit=0;ranks=ranks.slice(0,q.n);
-  for(const r of ranks){const i=g.hands[lo].findIndex(c=>rk(c)===r);if(i>=0){got.push(g.hands[lo].splice(i,1)[0]);hit++}}
+  const q=g.wishQ.shift(),lo=q.lo,h=g.hands[lo];ranks=ranks.slice(0,q.n);
+  // Der Wunsch gilt nur, wenn er komplett erfuellt werden kann – sonst gibt es die besten Karten
+  const pool=h.slice(),pick=[];let full=ranks.length>0;
+  for(const r of ranks){const k=pool.findIndex(c=>rk(c)===r);if(k<0){full=false;break}pick.push(pool.splice(k,1)[0])}
+  const got=full?pick:[];
+  g.hands[lo]=full?pool:h;
   while(got.length<q.n)got.push(g.hands[lo].pop());
   g.hands[seat].push(...got);g.hands[seat].sort(asc);g.fresh[seat]=got;
   g.swaps.push({from:seat,to:lo,n:q.n});
   const best=q.n===1?'die beste Karte':'die '+q.n+' besten Karten';
   if(!ranks.length)g.msg=nm(g,seat)+' nimmt '+best+' von '+nm(g,lo)+'.';
   else g.msg=nm(g,seat)+' wünscht sich '+ranks.map(r=>RANKS[r]).join(' und ')+' – '+
-    (hit===ranks.length?(hit===q.n?(q.n===2?'beide bekommen.':'bekommen.'):'bekommen, dazu die beste Karte.')
-      :hit?'eine bekommen, dazu die beste Karte.':nm(g,lo)+' hat '+(ranks.length>1?'sie':'sie')+' nicht, es gibt '+(q.n===1?'die beste Karte.':'die besten Karten.'));
+    (full?(ranks.length<q.n?'bekommen, dazu die beste Karte.':ranks.length>1?'beide bekommen.':'bekommen.')
+      :nm(g,lo)+' hat '+(ranks.length>1?'nicht beide':'sie nicht')+', deshalb gibt es '+best+'.');
   if(g.wishQ.length){g.turn=g.wishQ[0].hi;g.msg+=' Jetzt wünscht sich '+nm(g,g.turn)+' eine Karte.'}
   else{g.phase='swap';g.turn=g.swaps[0].from}
 }
@@ -1680,7 +1684,7 @@ function cardHtml(c,cls,attrs){
   return '<div class="card'+(red?' red':'')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="k">'+RANKS[rk(c)]+'</span><span class="s">'+SUITS[su(c)]+'</span><span class="big">'+SUITS[su(c)]+'</span></div>';
 }
 function roleOf(g,s){const n=g.players.length;return g.roles&&g.roles[s]!=null&&ROLES[n]?ROLES[n][g.roles[s]]:''}
-const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, darf derjenige, der zuletzt gelegt hat, allein weiter immer höher legen (gleich viele Karten) – hört er auf, kommt er neu raus. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel).</details>';
+const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, darf derjenige, der zuletzt gelegt hat, allein weiter immer höher legen (gleich viele Karten) – hört er auf, kommt er neu raus. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – der Wunsch gilt nur, wenn er komplett erfüllt werden kann – sonst gibt es die besten Karten. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel).</details>';
 const HG='<div class="hgw" id="hg"><svg viewBox="0 0 100 140"><defs><clipPath id="hgc"><path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z"/></clipPath></defs>'+
   '<path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z" fill="rgba(0,0,0,.35)" stroke="#f4e4c0" stroke-width="4"/>'+
   '<g clip-path="url(#hgc)" fill="#f2c14e"><rect id="hgTop" x="0" y="20" width="100" height="50"/><rect id="hgBot" x="0" y="126" width="100" height="0"/><line class="stream" id="hgS" x1="50" y1="68" x2="50" y2="126" stroke="#f2c14e" stroke-width="3"/></g>'+
@@ -1958,7 +1962,7 @@ function drawGame(app){
       mine=true;status='Wünsch dir '+(q.n===1?'eine Karte':'bis zu 2 Karten')+' von '+esc(nm(G,q.lo))+'.';
       wishUi='<div class="wish"><div class="wr">'+RANKS.map((r,i)=>'<button class="ghost" data-a="wr" data-v="'+i+'" '+(wishSel.length>=q.n?'disabled':'')+'>'+r+'</button>').join('')+'</div>'+
         '<div class="chosen">'+(wishSel.length?'Dein Wunsch: '+wishSel.map((r,i)=>'<button class="ghost chip" data-a="wx" data-v="'+i+'">'+RANKS[r]+' ✕</button>').join(''):
-          (q.n===1?'Ohne Wunsch bekommst du die beste Karte. Hat '+esc(nm(G,q.lo))+' deine Wunschkarte nicht, gibt es die beste.':'Ohne Wunsch bekommst du die 2 besten Karten. Fehlt eine gewünschte Karte, gibt es dafür die beste.'))+'</div>'+
+          (q.n===1?'Ohne Wunsch bekommst du die beste Karte. Hat '+esc(nm(G,q.lo))+' deine Wunschkarte nicht, gibt es die beste.':'Ohne Wunsch bekommst du die 2 besten Karten. Der Wunsch gilt nur, wenn '+esc(nm(G,q.lo))+' alles Gewünschte hat – sonst gibt es die 2 besten.'))+'</div>'+
         '<button data-a="wish">'+(wishSel.length?'Wünschen':(q.n===1?'Beste Karte nehmen':'2 beste Karten nehmen'))+'</button></div>';
     }else status=esc(nm(G,G.turn))+' wünscht sich '+(q.n===1?'eine Karte':'Karten')+' …';
   }else if(inStock){

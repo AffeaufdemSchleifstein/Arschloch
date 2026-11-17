@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-/JLznQ/+vDmSKrCMQqYBrZbDnVALdQtKJZrSwvf/kFo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hyru1+uqf1z7fr3GlzGBAJL/AseNJCJejbBRli0vnBE=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -530,6 +530,22 @@
 #chatui .cin.rec{align-items:center;gap:10px;min-height:46px}
 #chatui .recdot{width:12px;height:12px;border-radius:50%;background:#e74c3c;flex:0 0 auto;animation:recb 1s infinite}
 @keyframes recb{50%{opacity:.25}}
+
+/* Zeitleiste unter dem Tisch */
+.tbar{display:flex;align-items:center;gap:10px;margin:8px 2px 6px;min-height:22px}
+.tbar .tl{font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%}
+.tbar.me .tl{color:var(--gold);font-weight:700}
+.tbar .tt{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.tbar .tt i{display:block;height:100%;width:100%;background:var(--gold);border-radius:99px;transition:width .25s linear,background .3s}
+.tbar.hot .tt i{background:#e74c3c}
+.tbar b{font-size:13px;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.tbar.hot b{color:#ff6b5b}
+/* Schnelluebersicht Punktestand */
+.ov{margin:-2px 0 6px}
+.ov .ovb{height:26px;width:auto;padding:0 12px;font-size:12.5px;border-radius:99px;background:rgba(0,0,0,.28);color:var(--mute);border:1px solid var(--line)}
+.ov .ovp{margin-top:6px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
+.ov .ovp .rk{font-size:13px}
+#modal .vol{margin-top:10px}
 </style>
 </head>
 <body>
@@ -590,16 +606,20 @@ function startPlay(g){
   if(g.open.length)g.msg+=' '+g.open.map(i=>nm(g,i)).join(' und ')+' hat 4 Asse und muss offen spielen!';
 }
 function wish(g,seat,ranks){
-  const q=g.wishQ.shift(),lo=q.lo,got=[];let hit=0;ranks=ranks.slice(0,q.n);
-  for(const r of ranks){const i=g.hands[lo].findIndex(c=>rk(c)===r);if(i>=0){got.push(g.hands[lo].splice(i,1)[0]);hit++}}
+  const q=g.wishQ.shift(),lo=q.lo,h=g.hands[lo];ranks=ranks.slice(0,q.n);
+  // Der Wunsch gilt nur, wenn er komplett erfuellt werden kann – sonst gibt es die besten Karten
+  const pool=h.slice(),pick=[];let full=ranks.length>0;
+  for(const r of ranks){const k=pool.findIndex(c=>rk(c)===r);if(k<0){full=false;break}pick.push(pool.splice(k,1)[0])}
+  const got=full?pick:[];
+  g.hands[lo]=full?pool:h;
   while(got.length<q.n)got.push(g.hands[lo].pop());
   g.hands[seat].push(...got);g.hands[seat].sort(asc);g.fresh[seat]=got;
   g.swaps.push({from:seat,to:lo,n:q.n});
   const best=q.n===1?'die beste Karte':'die '+q.n+' besten Karten';
   if(!ranks.length)g.msg=nm(g,seat)+' nimmt '+best+' von '+nm(g,lo)+'.';
   else g.msg=nm(g,seat)+' wünscht sich '+ranks.map(r=>RANKS[r]).join(' und ')+' – '+
-    (hit===ranks.length?(hit===q.n?(q.n===2?'beide bekommen.':'bekommen.'):'bekommen, dazu die beste Karte.')
-      :hit?'eine bekommen, dazu die beste Karte.':nm(g,lo)+' hat '+(ranks.length>1?'sie':'sie')+' nicht, es gibt '+(q.n===1?'die beste Karte.':'die besten Karten.'));
+    (full?(ranks.length<q.n?'bekommen, dazu die beste Karte.':ranks.length>1?'beide bekommen.':'bekommen.')
+      :nm(g,lo)+' hat '+(ranks.length>1?'nicht beide':'sie nicht')+', deshalb gibt es '+best+'.');
   if(g.wishQ.length){g.turn=g.wishQ[0].hi;g.msg+=' Jetzt wünscht sich '+nm(g,g.turn)+' eine Karte.'}
   else{g.phase='swap';g.turn=g.swaps[0].from}
 }
@@ -856,7 +876,7 @@ function writeErr(e){toast(navigator.onLine===false?'Keine Internetverbindung.':
 let store=null,ready=false,offlineMode=false,me=null,myId=null,myName='',hashCode='';
 let view='home',viewArg=null,drafts={},acctTab='register',acctErr='',busyUi=false;
 let code=null,G=null,lobby=[],sub=null,sel=new Set(),wishSel=[],seen={},busy=false,botTimer=null,stale=false,loadTimer=null,enterT;
-let rankMode='all',monthWinner=null;
+let rankMode='all',monthWinner=null,ovOpen=false;
 let friends=[],friendsKey='',myGames=[],rankRows=null,profileData=null,lastStatus='',invQ=[],invShown=new Set(),modalOpen=false;
 let endHold=0,turnStart=0,autoV=-1,boomT,boomUntil=0;
 let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0;
@@ -1333,13 +1353,13 @@ function maybeBot(){
 }
 function tick(){
   const hg=$('#hg');
-  if(!G||G.phase!=='play'||G.paused||G.turn<0||!G.players[G.turn]||G.players[G.turn].bot){if(hg)hg.classList.remove('on');return}
+  if(!G||G.phase!=='play'||G.paused||G.turn<0||!G.players[G.turn]||G.players[G.turn].bot||!turnSecs()){if(hg)hg.classList.remove('on');const t=$('#tm');if(t)t.textContent='';const bt=$('.tbar .tt');if(bt)bt.style.visibility='hidden';const bn=$('#tbarN');if(bn)bn.textContent='';return}
   const TURN=turnSecs();
-  if(!TURN){if(hg)hg.classList.remove('on');const t=$('#tm');if(t)t.textContent='';return}
   const me_=mySeat(),el=(Date.now()-turnStart)/1000,left=Math.max(0,Math.ceil(TURN-el)),mine=G.turn===me_;
   // Warnton in den letzten 5 Sekunden, die letzten 2 hoeher; dazu ein kurzes Vibrieren
   if(mine&&left<=5&&left>0&&left!==seen.tickS){seen.tickS=left;sfx(left<=2?'tick2':'tick');if(SET.vib)try{navigator.vibrate&&navigator.vibrate(left<=2?60:30)}catch(e){}}
   const t=$('#tm');if(t){t.textContent=el<0?'':left+' s';t.classList.toggle('hot',left<=5)}
+  const bi=$('#tbarI'),bn=$('#tbarN');if(bi){const q=Math.max(0,Math.min(1,1-el/TURN));bi.style.width=(q*100).toFixed(1)+'%';bi.parentNode.parentNode.classList.toggle('hot',left<=5);if(bn)bn.textContent=left+' s'}
   if(hg){
     const hs=TURN/2;
     if(mine&&el>=hs&&el<TURN+1){
@@ -1553,7 +1573,7 @@ function act(a,v,el){
     case 'push-on':return enablePush();
     case 'hide':store.hide(v).then(()=>{myGames=myGames.filter(x=>x.code!==v);render()}).catch(()=>toast('Hat nicht geklappt.'));return;
     case 'lv-keep':closeModal();return leave();
-    case 'mus':SET.music=v;saveSet();ac();musicStop();if(v!=='off'){if(SET.musVol<=0)setVol('musVol',.35);musicStart()}return render();
+    case 'mus':SET.music=v;saveSet();ac();musicStop();if(v!=='off'){if(SET.musVol<=0)setVol('musVol',.35);musicStart()}if(soundOpen)openSound();return render();
     case 'av-e':if(me)saveAvatar({e:v,c:(me.avatar&&me.avatar.c)||AV_COL[5]});return;
     case 'av-c':if(me)saveAvatar(Object.assign({},me.avatar&&me.avatar.img?{e:'🃏'}:me.avatar||{e:'🃏'},{c:v}));return;
     case 'av-photo':return pickPhoto();
@@ -1566,6 +1586,8 @@ function act(a,v,el){
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
     case 'splock':{const t=+v.slice(2),x=SPECIAL[t-1];toast(me?x[1]+' „'+x[2]+'“ gibt es ab '+x[0]+'× Präsident. Du hast '+presCount+'×.':'Spezial-Emotes gibt es nur mit Konto.');return}
     case 'chat':if(REC)micStop(true);chatOpen=!chatOpen;wheelOpen=false;if(chatOpen&&chatUnread){chatUnread=0;render()}renderChat();if(chatOpen&&!('ontouchstart' in window)){const i=$('#cmsg');i&&i.focus()}return;
+    case 'snd':return openSound();
+    case 'ov':ovOpen=!ovOpen;return render();
     case 'mic':return micStart();
     case 'micx':return micStop(true);
     case 'micok':return micStop(false);
@@ -1602,7 +1624,7 @@ function act(a,v,el){
       g.players=lobby.slice(0,5).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
       for(let i=0;i<(g.bots||0);i++)g.players.push({id:'bot'+i,name:BOTS[i],bot:true,level:g.botLevel||'normal'});
       startMatch(g);deal(g);return commit(g);
-    case 'next':if(G.phase==='end'&&s>=0&&!G.final){deal(g);commit(g)}return;
+    case 'next':if(G.phase==='end'&&s>=0&&!G.final&&Date.now()-(seen.endAt||0)>=3000){deal(g);commit(g)}return;
     case 'endmatch':if(G.phase==='end'&&s>=0){g.phase='over';commit(g)}return;
     case 'newmatch':if(G.phase==='over'&&s>=0){startMatch(g);deal(g);commit(g)}return;
     case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name,uid:myId};commit(g)}return;
@@ -1654,7 +1676,7 @@ document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
 function openModal(h,sticky){modalOpen=true;const m=$('#modal');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
-function closeModal(){if(!modalOpen)return;modalOpen=false;$('#modal').classList.remove('on');setTimeout(showNextInvite,300)}
+function closeModal(){if(!modalOpen)return;modalOpen=false;soundOpen=false;$('#modal').classList.remove('on');setTimeout(showNextInvite,300)}
 
 /* ---------- Anzeige ---------- */
 function cardHtml(c,cls,attrs){
@@ -1662,7 +1684,7 @@ function cardHtml(c,cls,attrs){
   return '<div class="card'+(red?' red':'')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="k">'+RANKS[rk(c)]+'</span><span class="s">'+SUITS[su(c)]+'</span><span class="big">'+SUITS[su(c)]+'</span></div>';
 }
 function roleOf(g,s){const n=g.players.length;return g.roles&&g.roles[s]!=null&&ROLES[n]?ROLES[n][g.roles[s]]:''}
-const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, darf derjenige, der zuletzt gelegt hat, allein weiter immer höher legen (gleich viele Karten) – hört er auf, kommt er neu raus. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – fehlt eine gewünschte Karte, gibt es dafür die beste. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel).</details>';
+const RULES='<details><summary>Regeln in Kurzform</summary>32 Karten, 7 bis Ass. Wer rauskommt, legt eine oder mehrere gleiche Karten. Danach muss jeder gleich viele, aber höhere Karten legen – oder passen. Wer einmal passt, darf in diesem Stich nicht mehr legen. Passen alle, darf derjenige, der zuletzt gelegt hat, allein weiter immer höher legen (gleich viele Karten) – hört er auf, kommt er neu raus. Vier gleiche Karten sind eine Bombe: Sie schlägt alles, auch Asse, und kann nur von einer höheren Bombe geschlagen werden. Wer zuerst keine Karten mehr hat, wird Präsident, der Letzte Arschloch. Jeder hat pro Zug 20 Sekunden – danach wird automatisch gepasst (oder beim Rauskommen die niedrigste Karte gelegt). Mit einem Ass als allerletzter Karte fertig zu werden ist erlaubt – wer das tut, landet aber automatisch auf dem letzten Platz (Arschloch). Wer nach dem Tauschen alle 4 Asse hält, muss offen spielen. Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch, bei 4+ Spielern der Vize-Präsident 1 Karte vom Vize-Arschloch – der Wunsch gilt nur, wenn er komplett erfüllt werden kann – sonst gibt es die besten Karten. Zurück gibt es gleich viele beliebige Karten. Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer darf beide gegen 2 eigene tauschen oder liegen lassen. Das Arschloch kommt raus. Punkte pro Runde: Erster bekommt so viele Punkte, wie Mitspieler da sind, minus eins; Letzter bekommt 0. Der Host kann in der Lobby Hausregeln einstellen (Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel).</details>';
 const HG='<div class="hgw" id="hg"><svg viewBox="0 0 100 140"><defs><clipPath id="hgc"><path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z"/></clipPath></defs>'+
   '<path d="M22 14H78V30Q78 55 54 70Q78 85 78 110V126H22V110Q22 85 46 70Q22 55 22 30Z" fill="rgba(0,0,0,.35)" stroke="#f4e4c0" stroke-width="4"/>'+
   '<g clip-path="url(#hgc)" fill="#f2c14e"><rect id="hgTop" x="0" y="20" width="100" height="50"/><rect id="hgBot" x="0" y="126" width="100" height="0"/><line class="stream" id="hgS" x1="50" y1="68" x2="50" y2="126" stroke="#f2c14e" stroke-width="3"/></g>'+
@@ -1802,17 +1824,22 @@ function drawDesign(){
   return h;
 }
 
-function drawSettings(){
-  const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
+function soundInner(){
   const sl=(k,label,sub)=>'<div class="vol"><div><b>'+label+'</b><span class="note">'+sub+'</span></div><div class="vrow"><span>🔈</span><input type="range" min="0" max="100" step="1" data-vol="'+k+'" value="'+Math.round(SET[k]*100)+'" aria-label="'+label+'"><span class="vv" id="vv-'+k+'">'+Math.round(SET[k]*100)+'</span></div></div>';
   const MUSICS=[['off','Aus'],['pop','Pop'],['chill','Ruhig'],['lounge','Lounge']];
-  let h=backBtn+'<h2>Einstellungen</h2>'+
-    '<div class="panel"><h3>Sound</h3>'+sl('sfxVol','Spiel-Sounds','Karten, Mi Bombo, Sanduhr, Fanfare …')+
+  return sl('sfxVol','Spiel-Sounds','Karten, Mi Bombo, Sanduhr, Fanfare …')+
     '<div class="vol"><div><b>Hintergrundmusik</b><span class="note">Wird live auf dem Handy erzeugt</span></div><div class="seg" style="margin-top:8px">'+MUSICS.map(([v,l])=>'<button class="'+((SET.music||'off')===v?'on':'')+'" data-a="mus" data-v="'+v+'">'+l+'</button>').join('')+'</div>'+
     '<div style="margin-top:12px"><b>Radio live</b><span class="note">Braucht Internet (ca. 60 MB pro Stunde)</span></div><div class="seg radio" style="margin-top:8px;flex-wrap:wrap">'+
     Object.entries(STATIONS).map(([k,x])=>'<button class="'+(SET.music==='r:'+k?'on':'')+'" data-a="mus" data-v="r:'+k+'">'+esc(x[0])+'</button>').join('')+'</div></div>'+
     (SET.music&&SET.music!=='off'?sl('musVol','Musik-Lautstärke',''):'')+
-    (IOS?'<p class="note" style="margin-bottom:0">iPhone: Ist der Stumm-Schalter an der Seite aktiv, bleibt das Spiel still.</p>':'')+'</div>'+
+    (IOS?'<p class="note" style="margin-bottom:0">iPhone: Ist der Stumm-Schalter an der Seite aktiv, bleibt das Spiel still.</p>':'');
+}
+let soundOpen=false;
+function openSound(){openModal('<h2>🎵 Sound</h2>'+soundInner()+'<button class="ghost" style="margin-top:12px" data-a="modal-x">Fertig</button>');soundOpen=true}
+function drawSettings(){
+  const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
+  let h=backBtn+'<h2>Einstellungen</h2>'+
+    '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
     '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+'</ul></div>';
   let push;
   if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
@@ -1837,7 +1864,7 @@ function topBar(){
   const s=mySeat(),canPause=running()&&s>=0&&store.online&&!G.paused;
   return '<div class="top"><span>Raum <b>'+esc(code)+'</b>'+(G&&G.round?' · Runde '+G.round:'')+'</span><span class="tb">'+
     (store.online?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat" style="position:relative">💬'+(chatUnread?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+chatUnread+'</span>':'')+'</button>':'')+
-    (canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
+    '<button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
@@ -1892,22 +1919,27 @@ function drawGame(app){
   }
   if(G.phase==='end'&&Date.now()>=endHold){
     const li=G.order.map((s,i)=>'<li style="--i:'+i+'"><span><span class="place">'+(i+1)+'</span>'+(i===0?'<span class="crown">👑</span>':'')+esc(nm(G,s))+(s===me_?' (du)':'')+'</span><span class="tag'+(i===0?' gold':'')+'">'+ROLES[n][i]+' · +'+(n-1-i)+'</span></li>').join('');
-    const lead=standings(G)[0];
+    const lead=standings(G)[0],ek=code+':'+G.match+':'+G.round;
+    if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
+    const cd=Math.max(0,3-Math.floor((Date.now()-seen.endAt)/1000));
+    if(cd>0)setTimeout(render,(Date.now()-seen.endAt)%1000?1000-(Date.now()-seen.endAt)%1000+20:1000);
     app.innerHTML=top+'<h1 style="margin-top:6px">'+(G.final?'🏁 Entschieden!':'Runde '+G.round+' vorbei')+'</h1><p class="sub">'+(G.final?esc(lead.name)+' hat '+lead.m.pts+' Punkte erreicht und gewinnt die Partie. ':'')+esc(nm(G,G.order[0]))+' ist Präsident, '+esc(nm(G,G.order[n-1]))+' ist das Arschloch.</p>'+
       '<div class="panel"><ul class="plist">'+li+'</ul></div><div class="panel"><h3>Stand der Partie'+(R(G).target?' · Ziel '+R(G).target+' P':'')+'</h3>'+pointsTable(G)+'</div>'+
-      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px">Nächste Runde</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
+      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px" '+(cd>0?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
     return;
   }
 
   // ----- Spieltisch -----
   let opps='';
+  // Wer schon fertig ist, darf in die Karten der anderen schauen
+  const iAmOut=me_>=0&&G.phase==='play'&&!G.hands[me_].length;
   for(let i=1;i<=n;i++){
     const s=((me_<0?-1:me_)+i+n)%n;if(s===me_)continue;
-    const p=G.players[s],cnt=G.hands[s].length,place=G.finished.indexOf(s),lost=(G.losers||[]).includes(s),open=(G.open||[]).includes(s)&&cnt>0;
+    const p=G.players[s],cnt=G.hands[s].length,place=G.finished.indexOf(s),lost=(G.losers||[]).includes(s),realOpen=(G.open||[]).includes(s)&&cnt>0,open=cnt>0&&(realOpen||iAmOut);
     const st=lost?'Ass-Ende ✗':place>=0?'fertig ('+(place+1)+'.)':G.passed.includes(s)?'passt':'';
     const oh=open?'<div class="oh">'+G.hands[s].map(c=>'<span class="oc'+(su(c)===1||su(c)===2?' red':'')+'">'+RANKS[rk(c)]+'<i>'+SUITS[su(c)]+'</i></span>').join('')+'</div>':'';
     const conn=p.bot||!store.online||online.has(p.id);
-    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(open?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+' Karten')+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
+    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(realOpen?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+' Karten')+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
   }
   const inStock=G.phase==='stock'&&G.stock&&G.stock.length===2;
   const pk=inStock?'stock'+G.round:pileKey(G);
@@ -1930,7 +1962,7 @@ function drawGame(app){
       mine=true;status='Wünsch dir '+(q.n===1?'eine Karte':'bis zu 2 Karten')+' von '+esc(nm(G,q.lo))+'.';
       wishUi='<div class="wish"><div class="wr">'+RANKS.map((r,i)=>'<button class="ghost" data-a="wr" data-v="'+i+'" '+(wishSel.length>=q.n?'disabled':'')+'>'+r+'</button>').join('')+'</div>'+
         '<div class="chosen">'+(wishSel.length?'Dein Wunsch: '+wishSel.map((r,i)=>'<button class="ghost chip" data-a="wx" data-v="'+i+'">'+RANKS[r]+' ✕</button>').join(''):
-          (q.n===1?'Ohne Wunsch bekommst du die beste Karte. Hat '+esc(nm(G,q.lo))+' deine Wunschkarte nicht, gibt es die beste.':'Ohne Wunsch bekommst du die 2 besten Karten. Fehlt eine gewünschte Karte, gibt es dafür die beste.'))+'</div>'+
+          (q.n===1?'Ohne Wunsch bekommst du die beste Karte. Hat '+esc(nm(G,q.lo))+' deine Wunschkarte nicht, gibt es die beste.':'Ohne Wunsch bekommst du die 2 besten Karten. Der Wunsch gilt nur, wenn '+esc(nm(G,q.lo))+' alles Gewünschte hat – sonst gibt es die 2 besten.'))+'</div>'+
         '<button data-a="wish">'+(wishSel.length?'Wünschen':(q.n===1?'Beste Karte nehmen':'2 beste Karten nehmen'))+'</button></div>';
     }else status=esc(nm(G,G.turn))+' wünscht sich '+(q.n===1?'eine Karte':'Karten')+' …';
   }else if(inStock){
@@ -1946,7 +1978,6 @@ function drawGame(app){
     else{const k=G.pile.cards.length,need=(k>1?k+' gleiche Karten':'eine Karte')+' höher als '+RANKS[rk(G.pile.cards[0])];
       status=G.solo?'Alle haben gepasst – du darfst allein weiterlegen: '+need+'. Oder aufhören und neu rauskommen.':'Du bist dran: '+need+(k<4?', eine Bombe':'')+' – oder passen.'}
     if(G.hands[me_].every(c=>rk(c)===7))status+=' Achtung: Mit Ass aufhören heißt automatisch Letzter!';
-    status+='<span id="tm" class="tm"></span>';
     goOk=canPlay(G,me_,cs);passOk=canPass(G,me_);
   }else status=esc(nm(G,G.turn))+(G.solo&&G.phase==='play'?' legt allein weiter …':' ist dran …');
   if(G.paused){mine=false;status='Pausiert'}
@@ -1964,12 +1995,17 @@ function drawGame(app){
   }else hand='<p class="note">Du schaust nur zu.</p>';
   seen.round=G.round;
   const pauseBox=G.paused?'<div class="pausebox"><b>⏸ Pausiert</b><span>von '+esc(G.paused.by)+'</span>'+(me_>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':me_>=0?'<span class="note">Nur '+esc(G.paused.by)+' kann fortsetzen.</span>':'')+'</div>':'';
-  const stHtml='<div class="status'+(mine?' me':'')+(stNew?' new':'')+'">'+status+'</div>';
+  let stHtml='<div class="status'+(mine?' me':'')+(stNew?' new':'')+'">'+status+'</div>';
+  if(G.phase==='play'&&!G.paused){
+    const lbl=G.turn===me_?(G.solo?'Du legst allein weiter':'Du bist dran')+(R(G).aceRule&&G.hands[me_].length&&G.hands[me_].every(c=>rk(c)===7)?' · ⚠ Ass-Ende = letzter Platz':''):esc(nm(G,G.turn))+(G.solo?' legt allein weiter':' ist dran');
+    stHtml='<div class="tbar'+(G.turn===me_?' me':'')+'"><span class="tl">'+lbl+'</span><div class="tt"><i id="tbarI"></i></div><b id="tbarN"></b></div>';
+  }else if(G.phase==='play'||G.phase==='end')stHtml='';
   const meHtml=me_>=0?'<div class="mebar"><span>'+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
   const handHtml='<div class="hand'+(dealAnim?' deal':'')+(wishUi?' mini':'')+'">'+hand+'</div>';
   const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="ghost" data-a="pass" '+(passOk?'':'disabled')+'>'+(G.solo&&G.turn===me_?'Aufhören':'Passen')+'</button>';
   const showHg=G.phase==='play'&&G.turn===me_&&!G.paused;
-  app.innerHTML=top+'<div class="opps">'+opps+'</div>'+
+  const ov='<div class="ov'+(ovOpen?' on':'')+'"><button class="ovb" data-a="ov">'+(ovOpen?'▴':'▾')+' Punktestand</button>'+(ovOpen?'<div class="ovp">'+pointsTable(G)+'</div>':'')+'</div>';
+  app.innerHTML=top+ov+'<div class="opps">'+opps+'</div>'+
     '<div class="table'+(wishUi?' small':'')+'"><div class="pile'+pcls+'">'+pile+'</div><div class="msg'+(msgNew?' new':'')+'">'+esc(G.msg||'')+'</div>'+(showHg?HG:'')+pauseBox+'</div>'+
     (wishUi?stHtml+wishUi+meHtml+handHtml:
       stHtml+meHtml+handHtml+(me_>=0&&G.hands[me_].length&&G.phase!=='end'?'<div class="actions">'+left+'<button id="do" data-a="do" '+(goOk?'':'disabled')+'>'+goLabel+'</button></div>':''));

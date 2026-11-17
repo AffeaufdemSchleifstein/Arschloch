@@ -28,7 +28,7 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 - Gleich viele, aber höhere Karten legen – oder passen. Wer passt, ist für den Stich raus.
 - **Weiterlegen:** Haben alle anderen gepasst, darf der Letzte allein weiter immer höher legen; hört er auf, kommt er neu raus (Hausregel, abschaltbar).
 - **Bombe:** Vier gleiche Karten schlagen alles, nur eine höhere Bombe kommt drüber. *Mi Bombo!*
-- Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch (fehlt eine, gibt es die beste) und gibt 2 beliebige zurück. Bei 4+ Spielern tauscht der Vize-Präsident 1 Karte mit dem Vize-Arschloch.
+- Ab Runde 2 wünscht sich der Präsident bis zu 2 Karten vom Arschloch (nur wenn der Wunsch komplett erfüllbar ist, sonst gibt es die besten) und gibt 2 beliebige zurück. Bei 4+ Spielern tauscht der Vize-Präsident 1 Karte mit dem Vize-Arschloch.
 - Bei 3 und 5 Spielern bleiben 2 Karten als Stock liegen: Der Bauer nimmt beide oder keine.
 - Wer nach dem Tauschen alle 4 Asse hat, spielt offen.
 - Mit einem Ass als letzter Karte fertig werden ist erlaubt – man landet dann aber automatisch ganz hinten.
