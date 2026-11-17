@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-JPnpVOZ2fUB+R2z5JPv58X5L+pjdHou4U7kDayKNvAo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -546,7 +547,7 @@ function initMs(g){
   const n=g.players.length;g.ms={};
   for(let i=0;i<n;i++)g.ms[i]={pts:0,rounds:0,pl:Array(n).fill(0),aces:0,bombs:0,aceEnd:0,to:0,streak:0,best:0,climbs:0,bob:0};
 }
-function startMatch(g){initMs(g);g.order=null;g.round=0;g.paused=null;g.final=false}
+function startMatch(g){initMs(g);g.order=null;g.round=0;g.paused=null;g.final=false;g.match=(g.match|0)+1}
 function deal(g){
   const n=g.players.length, deck=shuffle([...Array(32).keys()]);
   g.stock=n===4||!R(g).stock?[]:deck.splice(0,2);g.bauer=-1;g.open=[];g.losers=[];
@@ -762,6 +763,60 @@ function standings(g){
   return g.players.map((p,s)=>({s,name:p.name,bot:p.bot,m:(g.ms&&g.ms[s])||{pts:0,rounds:0,pl:[],aces:0,bombs:0,aceEnd:0,to:0}}))
     .sort((a,b)=>b.m.pts-a.m.pts||(b.m.pl[0]||0)-(a.m.pl[0]||0));
 }
+// Spielstand, der von anderen Geraeten kommt, pruefen: nur erwartete Typen und Wertebereiche
+// durchlassen. Gueltige Spielstaende bleiben dabei unveraendert.
+const PHASES=['lobby','wish','swap','stock','play','end','over','closed'];
+function cleanGame(g){
+  if(!g||typeof g!=='object'||Array.isArray(g)||!Number.isInteger(g.v)||g.v<1||!PHASES.includes(g.phase))return null;
+  const I=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x),LV=['easy','normal','hard'];
+  if('host' in g)g.host=S(g.host,64);
+  if('bots' in g)g.bots=I(g.bots,0,4)?g.bots:0;
+  if('botLevel' in g&&!LV.includes(g.botLevel))g.botLevel='normal';
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={};
+    for(const k in DEFAULT_RULES)if(k in r)g.rules[k]=typeof DEFAULT_RULES[k]==='boolean'?!!r[k]:[0,10,20,30].includes(r[k])?r[k]:DEFAULT_RULES[k]}
+  if('paused' in g)g.paused=O(g.paused)?{by:S(g.paused.by,16)}:null;
+  if('created' in g&&typeof g.created!=='number')g.created=0;
+  if('match' in g)g.match=I(g.match,0,1e6)?g.match:0;
+  if('round' in g)g.round=I(g.round,0,1e5)?g.round:0;
+  if('msg' in g)g.msg=S(g.msg,400);
+  if('final' in g)g.final=!!g.final;
+  const playing=g.phase!=='lobby'&&g.phase!=='closed';
+  if(!Array.isArray(g.players)||g.players.length<3||g.players.length>5||!g.players.every(O)){if(playing)return null;delete g.players;return g}
+  g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,16)||'Spieler';if('bot' in p)p.bot=!!p.bot;if('level' in p&&!LV.includes(p.level))p.level='normal'});
+  if(!playing)return g;
+  const n=g.players.length,seat=x=>I(x,0,n-1),at=(o,i)=>o&&typeof o==='object'?o[i]:undefined;
+  const cards=a=>Array.isArray(a)?a.filter(c=>I(c,0,31)).slice(0,32):[],seats=a=>Array.isArray(a)?a.filter(seat).slice(0,n):[];
+  const full=(o,f)=>{const r={};for(let i=0;i<n;i++)r[i]=f(at(o,i));return r};
+  const perSeat=(o,f)=>{const r={};if(O(o))for(const k of Object.keys(o))if(String(+k)===k&&seat(+k))r[k]=f(o[k]);return r};
+  g.hands=full(g.hands,cards);
+  if('fresh' in g)g.fresh=full(g.fresh,cards);
+  if('stock' in g)g.stock=cards(g.stock).slice(0,2);
+  g.pile=O(g.pile)&&cards(g.pile.cards).length?{cards:cards(g.pile.cards).slice(0,4),by:seat(g.pile.by)?g.pile.by:0,closed:!!g.pile.closed}:null;
+  g.passed=seats(g.passed);g.finished=seats(g.finished);
+  if('losers' in g)g.losers=seats(g.losers);
+  if('open' in g)g.open=seats(g.open);
+  if('order' in g)g.order=Array.isArray(g.order)?seats(g.order):null;
+  for(const k of ['turn','last','bauer','starter'])if(k in g)g[k]=I(g[k],-1,n-1)?g[k]:-1;
+  const sel=(a,f)=>Array.isArray(a)?a.filter(f):[];
+  if('swaps' in g)g.swaps=sel(g.swaps,x=>O(x)&&seat(x.from)&&seat(x.to)&&I(x.n,1,2)).map(x=>({from:x.from,to:x.to,n:x.n}));
+  if('wishQ' in g)g.wishQ=sel(g.wishQ,x=>O(x)&&seat(x.hi)&&seat(x.lo)&&I(x.n,1,2)).map(x=>({hi:x.hi,lo:x.lo,n:x.n}));
+  for(const k of ['roles','prevRoles'])if(k in g)g[k]=perSeat(g[k],v=>I(v,0,n-1)?v:0);
+  const rs=O(g.rs)?g.rs:{};g.rs={};
+  for(const [k,mx] of [['aces',4],['bombs',8],['aceEnd',-1],['to',999],['streak',1e5],['climb',-1],['bob',8]])g.rs[k]=perSeat(rs[k],v=>mx<0?!!v:I(v,0,mx)?v:0);
+  if('ms' in g){const src=O(g.ms)?g.ms:{},o={};
+    for(const k of Object.keys(src))if(String(+k)===k&&seat(+k)&&O(src[k])){const m=src[k],c={};
+      for(const f of Object.keys(m))c[f]=f==='pl'?(Array.isArray(m.pl)?m.pl.slice(0,n).map(x=>I(x,0,1e6)?x:0):[]):I(m[f],0,1e7)?m[f]:0;
+      if(!c.pl)c.pl=[];while(c.pl.length<n)c.pl.push(0);o[k]=c}
+    for(let i=0;i<n;i++)if(!o[i])o[i]={pts:0,rounds:0,pl:Array(n).fill(0),aces:0,bombs:0,aceEnd:0,to:0,streak:0,best:0,climbs:0,bob:0};
+    g.ms=o}
+  // Ohne diese Angaben laesst sich die jeweilige Phase nicht anzeigen
+  if(['wish','swap','stock','play'].includes(g.phase)&&!seat(g.turn))return null;
+  if(g.phase==='wish'&&!(g.wishQ&&g.wishQ.length))return null;
+  if(g.phase==='swap'&&!(g.swaps&&g.swaps.length))return null;
+  if(g.phase==='end'&&!(g.order&&g.order.length===n&&new Set(g.order).size===n))return null;
+  return g;
+}
 //LOGIC-END
 
 /* ---------- Grundlagen ---------- */
@@ -772,7 +827,7 @@ const LOW=/Android/i.test(navigator.userAgent)||(navigator.hardwareConcurrency||
 const BOTS=['Bot Anna','Bot Ben','Bot Cleo','Bot Dino'];
 const STATUS={home:'online',lobby:'in der Lobby',bots:'spielt gegen Bots',game:'im Spiel'};
 const $=s=>document.querySelector(s);
-const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const esc=s=>(typeof s==='string'?s:typeof s==='number'?String(s):'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const ls={get(k){try{return localStorage.getItem(k+SLOT)}catch(e){return null}},set(k,v){try{localStorage.setItem(k+SLOT,v)}catch(e){}}};
 const pct=(a,b)=>b?Math.round(a*100/b)+' %':'–';
 let toastT;function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),4200)}
@@ -822,8 +877,9 @@ async function sbStore(){
   S.sendChat=(c,kind,body)=>rpc('send_chat',{p_code:c,p_kind:kind,p_body:body});
   S.chatHistory=c=>rpc('chat_history',{p_code:c});
   S.subGame=(c,cb,onM,onChat)=>{
-    let cur=null,state='',last=0,stopped=false,mk='';
-    const deliver=(d,force)=>{if(stopped||!d||typeof d.v!=='number')return;if(cur&&(force?d.v<cur.v:d.v<=cur.v))return;cur=d;cb(clone(d))};
+    let cur=null,srv=0,state='',last=0,stopped=false,mk='';
+    // force: Stand vom Server nach einem Fehler – gilt auch, wenn die eigene (nicht gespeicherte) Version hoeher war
+    const deliver=(d,force)=>{if(stopped||!d||typeof d.v!=='number')return;if(force?d.v<srv:(cur&&d.v<=cur.v))return;srv=Math.max(srv,d.v);cur=d;cb(clone(d),!!force)};
     const fg=async force=>{const {data}=await sb.from('games').select('data').eq('code',c).maybeSingle();if(data)deliver(data.data,force)};
     const fm=async()=>{const {data}=await sb.rpc('room_members2',{p_code:c});
       if(!data||stopped)return;const l=data.map(m=>({id:m.uid,name:m.name,t:Date.parse(m.joined_at),av:m.avatar||{},wins:+m.wins||0}));
@@ -882,10 +938,11 @@ function frameOf(w){return w>=1000?'fr4':w>=350?'fr3':w>=100?'fr2':w>=30?'fr1':'
 function avatar(av,name,wins,size,extra){
   av=av||{};size=size||32;const fr=frameOf(wins||0),st='width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*.58)+'px;';
   let inner;
-  if(av.img)inner='<img src="'+esc(av.img)+'" alt="">';
-  else if(av.e)inner='<span>'+esc(av.e)+'</span>';
+  const img=typeof av.img==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(av.img)?av.img:'';
+  if(img)inner='<img src="'+img+'" alt="">';
+  else if(av.e)inner='<span>'+esc(String(av.e).slice(0,8))+'</span>';
   else inner='<b>'+esc(String(name||'?').trim().charAt(0).toUpperCase()||'?')+'</b>';
-  const bg=av.img?'#000':av.c||hashCol(name);
+  const bg=img?'#000':typeof av.c==='string'&&/^#[0-9a-fA-F]{6}$/.test(av.c)?av.c:hashCol(name);
   return '<span class="av '+fr+(extra?' '+extra:'')+'" style="'+st+'background:'+bg+'">'+inner+'</span>';
 }
 function avOf(uid,name,bot){if(bot)return avatar({e:'🤖',c:'#4a4d52'},name,0,28);const m=avMap[uid]||{};return avatar(m.av,name,m.wins,28)}
@@ -1023,7 +1080,10 @@ async function enablePush(){
     await store.rpc('save_push_sub',{p_sub:sub.toJSON()});SET.push=true;saveSet();toast('Benachrichtigungen sind an 🔔');render();
   }catch(e){console.warn(e);toast('Das hat nicht geklappt: '+(e&&e.message||e))}
 }
-async function disablePush(){try{const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();if(sub)await sub.unsubscribe()}catch(e){}SET.push=false;saveSet();render()}
+async function disablePush(quiet){
+  try{const reg=await Promise.race([navigator.serviceWorker.ready,new Promise((_,r)=>setTimeout(r,3000))]),sub=await reg.pushManager.getSubscription();
+    if(sub){if(store&&store.online)await store.rpc('drop_push_sub',{p_endpoint:sub.endpoint}).catch(()=>{});await sub.unsubscribe()}}catch(e){}
+  SET.push=false;saveSet();if(!quiet)render()}
 
 /* ---------- Erfolge ---------- */
 const ACH=[['🎉','Erster Sieg','Einmal Präsident werden',x=>x.wins>=1],['👑','Zehnfacher Präsident','10× Präsident',x=>x.wins>=10],
@@ -1117,7 +1177,7 @@ async function respondInvite(acc){
   const i=invQ.shift();closeModal();if(!i)return;
   try{const c=await store.rpc('respond_invite',{p_id:i.id,p_accept:!!acc});
     if(acc&&c){if(code)leave();enter(c)}else if(acc)toast('Die Einladung ist leider abgelaufen.')}
-  catch(e){toast('Das hat nicht geklappt.')}
+  catch(e){toast(/room full/.test(String(e&&e.message))?'Der Raum ist leider voll.':'Das hat nicht geklappt.')}
   setTimeout(showNextInvite,400);
 }
 
@@ -1141,7 +1201,7 @@ function grabName(){if(me){myName=me.display;return myName}myName=(drafts.name||
 function needName(){if(grabName())return true;toast('Gib erst deinen Namen ein.');const i=$('#name');if(i)i.focus();return false}
 async function createRoom(){
   if(!ready||busyUi||!needName())return;busyUi=true;
-  try{enter(await store.create(myName,{v:1,phase:'lobby',host:myId,bots:store.online?0:2,created:Date.now()}))}catch(e){writeErr(e)}
+  try{enter(await store.create(myName,{v:1,phase:'lobby',host:myId,bots:store.online?0:2,created:Date.now()}))}catch(e){if(/slow down/.test(String(e&&e.message)))toast('Du hast gerade sehr viele Räume erstellt – warte ein paar Minuten.');else writeErr(e)}
   busyUi=false;
 }
 async function joinRoom(pre){
@@ -1150,7 +1210,7 @@ async function joinRoom(pre){
   if(c.length!==4){toast('Der Raumcode hat 4 Buchstaben.');return}
   busyUi=true;
   try{const g=await store.join(c,myName);if(!g){toast('Raum '+c+' nicht gefunden.');hashCode='';render()}else enter(c)}
-  catch(e){toast(/room full/.test(e&&e.message)?'Der Raum ist voll.':'Keine Verbindung – Raum konnte nicht geladen werden.')}
+  catch(e){const m=String(e&&e.message||'');toast(/room full/.test(m)?'Der Raum ist voll.':/kicked/.test(m)?'Du wurdest aus diesem Raum entfernt.':/slow down/.test(m)?'Zu viele Versuche – warte kurz und probier es dann nochmal.':'Keine Verbindung – Raum konnte nicht geladen werden.')}
   busyUi=false;
 }
 function enter(c){
@@ -1188,8 +1248,9 @@ function boom(t){
   duck(5200);sfx('fuse');setTimeout(()=>{sfx('boom');if(SET.vib)try{navigator.vibrate&&navigator.vibrate([250,60,400])}catch(e){}},2600);
 }
 const pileKey=g=>g&&g.pile?g.pile.cards.join('-')+'@'+g.round:'';
-function onGame(g){
-  if(G&&g.v<G.v)return;
+function onGame(g,force){
+  g=cleanGame(g);if(!g)return;
+  if(G&&g.v<G.v&&!force)return;
   if(g.phase==='closed'){if(code){const h=g.host===myId;if(!h)toast('Der Host hat den Raum geschlossen.');const c=code;leave();store.hide&&store.hide(c).then(loadMyGames).catch(()=>{})}return}
   const prev=G;
   if(prev&&g.pile&&g.pile.cards.length===4&&pileKey(g)!==pileKey(prev))boom(nm(g,g.pile.by)+' legt 4× '+RANKS[rk(g.pile.cards[0])]);
@@ -1381,16 +1442,16 @@ function act(a,v,el){
     case 'logout':openModal('<h2>Abmelden?</h2><p class="note">Auf diesem Gerät spielst du danach als Gast weiter. Mit Benutzername und Passwort kommst du jederzeit wieder rein.</p><div class="row"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="logout2">Abmelden</button></div>');return;
     case 'del1':drafts.delc='';openModal('<h2>Konto wirklich löschen?</h2><p class="note">Das lässt sich nicht rückgängig machen. Tippe zur Bestätigung deinen Benutzernamen <b>'+esc(me.display)+'</b> ein.</p><input data-k="delc" autocomplete="off" autocapitalize="off" placeholder="'+esc(me.display)+'"><div class="row" style="margin-top:12px"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="del2">Endgültig löschen</button></div>');return;
     case 'del2':if((drafts.delc||'').trim().toLowerCase()!==me.display.toLowerCase()){toast('Der Benutzername stimmt nicht.');return}
-      closeModal();toast('Konto wird gelöscht …');return store.deleteAccount().then(()=>{ls.set('al_theme','');location.hash='';location.reload()}).catch(()=>toast('Löschen hat nicht geklappt.'));
-    case 'logout2':return store.logout().then(()=>{location.hash='';location.reload()});
+      closeModal();toast('Konto wird gelöscht …');return store.deleteAccount().then(()=>{SET.push=false;saveSet();ls.set('al_theme','');location.hash='';location.reload()}).catch(()=>toast('Löschen hat nicht geklappt.'));
+    case 'logout2':return (pushSupported()?disablePush(true):Promise.resolve()).then(()=>store.logout()).then(()=>{location.hash='';location.reload()});
     case 'fr-add':{const u=(drafts.fr||'').trim();if(!u)return;
       store.rpc('friend_request',{p_username:u}).then(r=>{
         toast({sent:'Anfrage an '+u+' geschickt.',accepted:'Ihr seid jetzt Freunde!',already:'Ihr seid schon befreundet.',pending:'Anfrage ist schon unterwegs.',notfound:'Benutzer „'+u+'“ gibt es nicht.',self:'Das bist du selbst 😄'}[r]||'Erledigt.');
-        if(r==='sent'||r==='accepted'){drafts.fr='';loadFriends();render()}}).catch(()=>toast('Hat nicht geklappt.'));return}
+        if(r==='sent'||r==='accepted'){drafts.fr='';loadFriends();render()}}).catch(e=>toast(/slow down/.test(String(e&&e.message))?'Zu viele Anfragen – warte kurz.':'Hat nicht geklappt.'));return}
     case 'fr-yes':case 'fr-no':return store.rpc('friend_respond',{p_uid:v,p_accept:a==='fr-yes'}).then(()=>{friendsKey='';loadFriends()}).catch(()=>toast('Hat nicht geklappt.'));
     case 'fr-del':openModal('<h2>Freund entfernen?</h2><div class="row"><button class="ghost" data-a="modal-x">Abbrechen</button><button class="danger" data-a="fr-del2" data-v="'+esc(v)+'">Entfernen</button></div>');return;
     case 'fr-del2':closeModal();return store.rpc('friend_respond',{p_uid:v,p_accept:false}).then(()=>{friendsKey='';loadFriends();go('friends')});
-    case 'fr-inv':return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{seen['inv'+v]=Date.now();toast('Einladung verschickt.');render()}).catch(()=>toast('Einladung ging nicht raus.'));
+    case 'fr-inv':return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{seen['inv'+v]=Date.now();toast('Einladung verschickt.');render()}).catch(e=>toast(/slow down/.test(String(e&&e.message))?'Zu viele Einladungen – warte kurz.':'Einladung ging nicht raus.'));
     case 'th':T[el.dataset.k]=v;saveTheme();sfx('pop');return render();
     case 'set':SET[v]=!SET[v];saveSet();if(v==='snd'&&SET.snd){ac();setTimeout(()=>sfx('turn'),60)}return render();
     case 'push-on':return enablePush();
