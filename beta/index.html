@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-JPnpVOZ2fUB+R2z5JPv58X5L+pjdHou4U7kDayKNvAo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-GSbUkYjbQvr6LYvnA20obyi4sxsDP8mI45Up/cvsia4=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -22,6 +22,9 @@
     --f1:#2c8a55; --f2:#17603a; --f3:#0c3d22; --ttext:#d5ead9;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  /* Kein Markieren bei langem Druecken (sonst oeffnet Android die Google-Suche) */
+  body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
   html,body{margin:0}
   body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#1d110a;
     min-height:100vh;min-height:100dvh;display:flex;justify-content:center}
@@ -1550,6 +1553,7 @@ let volPrev=0;
 document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)drafts[ds.k]=e.target.value;
   if(ds.vol){const v=+e.target.value/100;ac();setVol(ds.vol,v);const o=document.getElementById('vv-'+ds.vol);if(o)o.textContent=Math.round(v*100);
     if(ds.vol==='sfxVol'&&Date.now()-volPrev>180){volPrev=Date.now();sfx('card')}}});
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea'))e.preventDefault()});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
 function openModal(h,sticky){modalOpen=true;const m=$('#modal');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
