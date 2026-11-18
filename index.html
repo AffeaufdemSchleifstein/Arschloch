@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-f9/Z/jDtmRpDFqMw+4l2KZ/0JNtk78+cRws3tWp5jSA=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dkDrES8KXCFdB2ttOHvPBlJRcJL4NLS98KSFS+AnTus=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -1380,7 +1380,7 @@ function tick(){
       $('#hgN').textContent=left;hg.classList.add('on');
     }else hg.classList.remove('on');
   }
-  if(el>=TURN&&autoV!==G.v&&!busy&&(mine||(G.host===myId&&el>=TURN+5)||(me_>=0&&el>=TURN+12+me_*2))){autoV=G.v;const g=clone(G);timeoutMove(g);sel.clear();commit(g)}
+  if(el>=TURN&&autoV!==G.v&&!busy&&(mine||(G.host===myId&&el>=TURN+5)||(me_>=0&&el>=TURN+12+me_*2))){autoV=G.v;const g=clone(G);timeoutMove(g);if(mine)sel.clear();commit(g)}
 }
 setInterval(tick,250);
 const mySeat=()=>G&&G.players?G.players.findIndex(p=>p.id===myId):-1;
