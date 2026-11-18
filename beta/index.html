@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hPk1fUGqovdqz+pHCBoKbii2ymOiOKK8re1RiBtYrDM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8FU0C+HaBfCL2ApMg146TelYafSNEXZbwV0CJwlpcfU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -550,6 +550,11 @@
 .top .rinfo{white-space:nowrap;font-size:13px}
 .top .tb{gap:5px}
 .top .tb .iconbtn{width:32px;height:32px;font-size:14px}
+
+/* Passen-Knopf deutlich, wenn man dran ist; pulsiert, wenn man nichts legen kann */
+.passbtn{background:linear-gradient(180deg,#ff8a3d,#e8571b);color:#fff;border:2px solid #ffb27a;font-weight:800;box-shadow:0 0 0 0 rgba(255,122,48,.6),0 4px 14px rgba(232,87,27,.45)}
+.passbtn.must{animation:passp 1.1s ease-in-out infinite}
+@keyframes passp{0%,100%{box-shadow:0 0 0 0 rgba(255,122,48,.65),0 4px 14px rgba(232,87,27,.45);transform:scale(1)}50%{box-shadow:0 0 0 9px rgba(255,122,48,0),0 4px 18px rgba(232,87,27,.6);transform:scale(1.04)}}
 </style>
 </head>
 <body>
@@ -1323,7 +1328,9 @@ function onGame(g,force){
   if(prev&&g.round!==prev.round)sfx('deal');
   if(prev&&g.v!==prev.v&&(g.turn!==prev.turn||g.phase!==prev.phase)&&g.turn===mySeatOf(g)&&['play','wish','swap','stock'].includes(g.phase)&&!g.paused)setTimeout(()=>sfx('turn'),250);
   if(prev&&prev.phase==='play'&&g.phase==='end'){const ms=mySeatOf(g);if(ms>=0)setTimeout(()=>sfx(g.order[0]===ms?'win':g.order[g.order.length-1]===ms?'lose':'mid'),Math.max(600,boomUntil-Date.now()+200))}
-  if(!prev||g.turn!==prev.turn||g.phase!==prev.phase||g.round!==prev.round){sel.clear();wishSel=[]}
+  // Vorausgewaehlte Karten bleiben beim Zugwechsel erhalten (nur neue Phase/Runde leert die Auswahl)
+  if(!prev||g.phase!==prev.phase||g.round!==prev.round){sel.clear();wishSel=[]}
+  else{if(g.turn!==prev.turn)wishSel=[];const s=g.players.findIndex(p=>p.id===myId),h=s>=0?g.hands[s]:[];for(const c of [...sel])if(!h.includes(c))sel.delete(c)}
   if(!prev||g.v!==prev.v||g.phase!==prev.phase)turnStart=Math.max(Date.now(),boomUntil);
   // Nach dem letzten Stich den Tisch noch kurz zeigen
   if(prev&&prev.phase==='play'&&g.phase==='end'){endHold=Math.max(Date.now()+2300,boomUntil+300);setTimeout(render,endHold-Date.now()+40)}
@@ -2030,7 +2037,7 @@ function drawGame(app){
   }else if(G.phase==='play'||G.phase==='end')stHtml='';
   const meHtml=me_>=0?'<div class="mebar"><span>'+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
   const handHtml='<div class="hand'+(dealAnim?' deal':'')+(wishUi?' mini':'')+'">'+hand+'</div>';
-  const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="ghost" data-a="pass" '+(passOk?'':'disabled')+'>'+(G.solo&&G.turn===me_?'Aufhören':'Passen')+'</button>';
+  const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="'+(passOk?'passbtn'+(legalMoves(G,me_).length?'':' must'):'ghost')+'" data-a="pass" '+(passOk?'':'disabled')+'>'+(G.solo&&G.turn===me_?'Aufhören':'Passen')+'</button>';
   const showHg=G.phase==='play'&&G.turn===me_&&!G.paused;
   const ov='<div class="ov'+(ovOpen?' on':'')+'"><button class="ovb" data-a="ov">'+(ovOpen?'▴':'▾')+' Punktestand</button>'+(ovOpen?'<div class="ovp">'+pointsTable(G)+'</div>':'')+'</div>';
   app.innerHTML=top+ov+'<div class="opps">'+opps+'</div>'+
