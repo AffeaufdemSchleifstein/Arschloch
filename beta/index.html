@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XgUg97FJ7yg4IRBM0DHhXslJMp2dFbuTgcwpnyvZbJE=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-MzrzXnbYKCrJOi8VnkIWv7IuCVqRFbqRAbtvXRXqdg0=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -885,7 +885,7 @@ function writeErr(e){toast(navigator.onLine===false?'Keine Internetverbindung.':
 let store=null,ready=false,offlineMode=false,me=null,myId=null,myName='',hashCode='';
 let view='home',viewArg=null,drafts={},acctTab='register',acctErr='',busyUi=false;
 let code=null,G=null,lobby=[],sub=null,sel=new Set(),wishSel=[],seen={},busy=false,botTimer=null,stale=false,loadTimer=null,enterT;
-let rankMode='all',monthWinner=null,ovOpen=false;
+let rankMode='all',monthWinner=null,ovOpen=false,fGames={};
 let friends=[],friendsKey='',myGames=[],rankRows=null,profileData=null,lastStatus='',invQ=[],invShown=new Set(),modalOpen=false;
 let endHold=0,turnStart=0,autoV=-1,boomT,boomUntil=0;
 let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0;
@@ -1225,7 +1225,8 @@ function heartbeat(){if(me)store.rpc('heartbeat',{p_status:myStatus()}).catch(()
 async function loadFriends(){
   if(!me)return;
   try{friends=await store.rpc('friends_list2')||[]}catch(e){return}
-  const k=JSON.stringify(friends);if(k!==friendsKey){friendsKey=k;renderSoft()}
+  try{const l=await store.rpc('friend_games')||[];fGames={};l.forEach(x=>{if(/^[A-Z]{4}$/.test(x.code))fGames[x.uid]=x})}catch(e){}
+  const k=JSON.stringify(friends)+JSON.stringify(fGames);if(k!==friendsKey){friendsKey=k;renderSoft()}
 }
 async function loadMyGames(){
   if(!store||!store.online)return;
@@ -1587,6 +1588,7 @@ function act(a,v,el){
       return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{toast('Einladung verschickt.');render();setTimeout(()=>{render();if(invOpen)openInvite()},5100)})
         .catch(e=>{delete seen['inv'+v];if(invOpen)openInvite();const m=String(e&&e.message);toast(/slow down/.test(m)?'Zu viele Einladungen – warte kurz.':/no account/.test(m)?'Nur Spieler mit Konto bekommen Einladungen – schick ihnen sonst den Link.':'Einladung ging nicht raus.')});
     case 'inv-open':return openInvite();
+    case 'watch':if(!/^[A-Z]{4}$/.test(v))return;if(code&&code!==v)leave();return joinRoom(v);
     case 'th':T[el.dataset.k]=v;saveTheme();sfx('pop');return render();
     case 'set':SET[v]=!SET[v];saveSet();if(v==='snd'&&SET.snd){ac();setTimeout(()=>sfx('turn'),60)}return render();
     case 'push-on':return enablePush();
@@ -1739,6 +1741,7 @@ function drawHome(){
   if(store.online){
     h+='<div class="panel"><button data-a="create">Neuen Raum erstellen</button></div>'+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
+    h+=friendsPlaying();
     if(myGames.length)h+='<div class="panel"><h3>Meine Partien</h3><ul class="plist">'+myGames.map((x,i)=>
       '<li style="--i:'+i+'"><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px">'+esc(x.players||x.code)+'</b><span class="note">'+
       (x.phase==='lobby'?'Lobby':'Runde '+x.round)+(x.paused?' · ⏸ pausiert':'')+'</span></span><span class="row" style="flex:0 0 auto;gap:6px"><button class="small" data-a="resume" data-v="'+esc(x.code)+'">'+(x.paused?'Fortsetzen':'Öffnen')+'</button><button class="small ghost" data-a="hide" data-v="'+esc(x.code)+'" title="Aus der Liste entfernen">✕</button></span></li>').join('')+'</ul></div>';
@@ -1776,6 +1779,15 @@ function drawAccount(){
     '<p class="note" style="margin-bottom:0">'+(reg?'Der Benutzername ist einmalig. Keine E-Mail nötig – merk dir dein Passwort gut, es lässt sich nicht zurücksetzen.':'Mit deinem Konto hast du Freunde, Statistiken und dein Design auf jedem Gerät.')+'</p></div>';
   return h;
 }
+// Zuschauen bzw. beitreten, wenn ein Freund gerade in einer Partie ist
+function watchBtn(uid){const x=fGames[uid];if(!x||x.code===code)return '';
+  return '<button class="small" style="margin-right:6px;white-space:nowrap;flex:0 0 auto;width:auto" data-a="watch" data-v="'+esc(x.code)+'">'+(x.phase==='lobby'?'Beitreten':'👀 Zuschauen')+'</button>'}
+function friendsPlaying(){
+  const l=friends.filter(f=>f.rel==='friend'&&fGames[f.uid]);if(!l.length)return '';
+  return '<div class="panel"><h3>Freunde spielen gerade</h3><ul class="plist">'+l.map(f=>{const x=fGames[f.uid];
+    return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,32)+'<span class="dot on"></span></span><span style="display:flex;flex-direction:column"><b>'+esc(f.display)+'</b><span class="note">'+
+      (x.phase==='lobby'?'wartet in der Lobby':'Runde '+(+x.round||1)+' · '+(+x.players||0)+' Spieler'+(+x.bots?' (davon '+(+x.bots)+' Computer)':''))+'</span></span></span>'+watchBtn(f.uid)+'</li>'}).join('')+'</ul></div>';
+}
 function drawFriends(){
   let h=backBtn+'<h2>Freunde</h2>';
   if(!me)return h+needAccount('Freunde');
@@ -1784,7 +1796,7 @@ function drawFriends(){
   const inc=friends.filter(f=>f.rel==='incoming'),out=friends.filter(f=>f.rel==='outgoing'),fr=friends.filter(f=>f.rel==='friend');
   if(inc.length)h+='<div class="panel"><h3>Anfragen</h3><ul class="plist">'+inc.map(f=>'<li><span>'+avatar(f.avatar,f.display,f.wins,32)+esc(f.display)+'</span><span class="row" style="flex:0 0 auto"><button class="small ghost" data-a="fr-no" data-v="'+f.uid+'">Ablehnen</button><button class="small" data-a="fr-yes" data-v="'+f.uid+'">Annehmen</button></span></li>').join('')+'</ul></div>';
   h+='<div class="panel"><h3>Deine Freunde ('+fr.length+')</h3>'+(fr.length?'<ul class="plist">'+fr.map((f,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,40)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
-    '<button class="small ghost" data-a="go" data-v="profile" data-u="'+f.uid+'">Profil</button></li>').join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde. Füg sie oben über ihren Benutzernamen hinzu.</p>')+'</div>';
+    watchBtn(f.uid)+'<button class="small ghost" data-a="go" data-v="profile" data-u="'+f.uid+'">Profil</button></li>').join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde. Füg sie oben über ihren Benutzernamen hinzu.</p>')+'</div>';
   if(out.length)h+='<div class="panel"><h3>Gesendet</h3><ul class="plist">'+out.map(f=>'<li><span>'+esc(f.display)+'</span><span class="tag">wartet</span></li>').join('')+'</ul></div>';
   return h;
 }
