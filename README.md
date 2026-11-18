@@ -1,6 +1,6 @@
 # Spieleabend
 
-Spiele-App fürs Handy mit **Arschloch**, **Wizard** und **Würfelblock** – jeder spielt auf seinem eigenen Gerät.
+Spiele-App fürs Handy mit **Arschloch**, **Wizard** und **Kniffel** – jeder spielt auf seinem eigenen Gerät.
 
 **Spielen:** https://affeaufdemschleifstein.github.io/Arschloch/
 
@@ -8,7 +8,7 @@ Spiele-App fürs Handy mit **Arschloch**, **Wizard** und **Würfelblock** – je
 
 1. Link öffnen, Namen eingeben, **Neues Spiel starten** und das Spiel auswählen.
 2. **Link teilen** oder den 4-Buchstaben-Code sagen – mit Konto auch Freunde direkt einladen.
-3. Auf **Spiel starten** (Arschloch 3–8, Wizard 3–6, Würfelblock 1–8 Spieler). Fehlende Plätze kann man mit Computergegnern (leicht, normal, schwer) füllen.
+3. Auf **Spiel starten** (Arschloch 3–8, Wizard 3–6, Kniffel 1–8 Spieler). Fehlende Plätze kann man mit Computergegnern (leicht, normal, schwer) füllen.
 
 Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. Android → Chrome → Menü → *App installieren*.
 
@@ -26,7 +26,7 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 
 - **Arschloch** – Präsident oder Arschloch, mit den Modi unten.
 - **Wizard** – Stiche ansagen und holen, mit 4 Zauberern und 4 Narren. Wahlweise mit den 7 Sonderkarten (Gestaltwandler, Drache, Fee, Bombe, Werwolf, Jongleur, Wolke) und der Plus/Minus-Regel.
-- **Würfelblock** – 5 Würfel, 3 Würfe, 13 Felder. Am Handy würfeln oder mit echten Würfeln nur zählen: online (jeder trägt bei sich ein) oder als **Würfelblock am Tisch** (ein Handy für alle, ohne Internet).
+- **Kniffel** – 5 Würfel, 3 Würfe, 13 Felder. Am Handy würfeln oder mit echten Würfeln nur zählen: online (jeder trägt bei sich ein) oder als **Kniffel am Tisch** (ein Handy für alle, ohne Internet).
 
 ## Spielmodi Arschloch
 

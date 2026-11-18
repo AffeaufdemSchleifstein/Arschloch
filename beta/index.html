@@ -2,11 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-tL+bsptyTojDGmX5C02w0VCRb6Wt4LGdBp7Ri7ztHFo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Z1o6CU7VjcWMhhqEvBR5dqdcJwv1QdX5pcc28rBA+nA=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
-<meta name="description" content="Spieleabend – Arschloch, Wizard und Würfelblock online mit Freunden, jeder auf seinem Handy.">
+<meta name="description" content="Spieleabend – Arschloch, Wizard und Kniffel online mit Freunden, jeder auf seinem Handy.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -637,7 +637,7 @@
 .blockw{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.block td,table.block th{text-align:center;font-size:12px;padding:4px 3px;white-space:nowrap}
 table.block td b{font-size:12.5px}table.block tr.sum td{border-top:2px solid var(--line);font-size:14px}
-/* ===== Würfelblock ===== */
+/* ===== Kniffel ===== */
 .dicebox{text-align:center}
 .dturn{font-weight:800;margin-bottom:10px}
 .dice{display:flex;justify-content:center;gap:9px;min-height:62px;align-items:center;margin-bottom:12px}
@@ -759,7 +759,7 @@ body.low #app.enter>.panel,body.low #app.enter>.nav,body.low .strick .te.win .sc
 .hbtns .homechat{flex:none}
 .hbtns .acct{min-width:0;max-width:44vw;overflow:hidden;text-overflow:ellipsis}
 html,body{overflow-x:hidden;overflow-x:clip}
-/* Würfelblock: bei vielen Spielern seitlich wischen, Feldnamen bleiben stehen */
+/* Kniffel: bei vielen Spielern seitlich wischen, Feldnamen bleiben stehen */
 .blockw{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
 table.dsheet th{max-width:62px;overflow:hidden;text-overflow:ellipsis}
 table.dsheet td.cn,table.dsheet tr>th:first-child{position:sticky;left:0;z-index:1;background:#2a1a0f}
@@ -1454,9 +1454,9 @@ function cleanStich(g){
 //STICH-END
 
 //DICE-START
-// ===== Würfelblock: 5 Würfel, 13 Felder (Regeln wie das bekannte Würfelspiel) =====
+// ===== Kniffel: 5 Würfel, 13 Felder (Regeln wie das bekannte Würfelspiel) =====
 const DC_CATS=['c1','c2','c3','c4','c5','c6','k3','k4','fh','ss','ls','kn','ch'];
-const DC_NAME={c1:'Einser',c2:'Zweier',c3:'Dreier',c4:'Vierer',c5:'Fünfer',c6:'Sechser',k3:'Dreierpasch',k4:'Viererpasch',fh:'Full House',ss:'Kleine Straße',ls:'Große Straße',kn:'Fünf Gleiche',ch:'Chance'};
+const DC_NAME={c1:'Einser',c2:'Zweier',c3:'Dreier',c4:'Vierer',c5:'Fünfer',c6:'Sechser',k3:'Dreierpasch',k4:'Viererpasch',fh:'Full House',ss:'Kleine Straße',ls:'Große Straße',kn:'Kniffel',ch:'Chance'};
 const DC_HINT={c1:'Summe der Einser',c2:'Summe der Zweier',c3:'Summe der Dreier',c4:'Summe der Vierer',c5:'Summe der Fünfer',c6:'Summe der Sechser',k3:'3 gleiche – Summe aller Augen',k4:'4 gleiche – Summe aller Augen',fh:'3 + 2 gleiche = 25',ss:'4 in Folge = 30',ls:'5 in Folge = 40',kn:'5 gleiche = 50',ch:'Summe aller Augen'};
 const DC_UPPER=['c1','c2','c3','c4','c5','c6'];
 const DC_RULES={mode:'roll',bots:'normal'};
@@ -2649,8 +2649,8 @@ function drawHome(){
   if(!me)h+='<div class="panel"><label for="name">Dein Name</label><input id="name" data-k="name" maxlength="16" autocomplete="off" placeholder="z. B. Max" value="'+esc(drafts.name||'')+'"></div>';
   if(store.online){
     const tb=savedTable();
-    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Würfelblock</p></div>'+
-      (tb?'<div class="panel"><button class="ghost" data-a="resume-local">📝 Würfelblock am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button></div>':'')+
+    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Kniffel</p></div>'+
+      (tb?'<div class="panel"><button class="ghost" data-a="resume-local">📝 Kniffel am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button></div>':'')+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
     h+=questPanel()+friendsPlaying();
     if(myGames.length)h+='<div class="panel"><h3>Meine Partien</h3><ul class="plist">'+myGames.map((x,i)=>
@@ -2818,7 +2818,7 @@ function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
   let h=backBtn+'<h2>Einstellungen</h2>'+
     '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
-    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+tg('shake','Schütteln zum Würfeln','Im Würfelblock das Handy schütteln statt tippen')+
+    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+tg('shake','Schütteln zum Würfeln','Im Kniffel das Handy schütteln statt tippen')+
       (me?'<li><span style="display:flex;flex-direction:column"><b>Erinnerung an Tagesaufgaben</b><span class="note">Push-Nachricht am Abend, wenn noch Aufgaben offen sind'+(SET.push?'':' (braucht Benachrichtigungen)')+'</span></span><button class="sw2'+(me.quest_push!==false?' on':'')+'" data-a="qpush" aria-label="Erinnerung an Tagesaufgaben"><i></i></button></li>':'')+'</ul></div>';
   let push;
   if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
@@ -2997,11 +2997,11 @@ window.addEventListener('hashchange',()=>{const h=(location.hash||'').slice(1).t
 init();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
-/* ===================== Spieleabend: Spielauswahl, Wizard, Würfelblock ===================== */
+/* ===================== Spieleabend: Spielauswahl, Wizard, Kniffel ===================== */
 const GAMES={
   arsch:{name:'Arschloch',icon:'🃏',min:3,max:8,desc:'Präsident oder Arschloch – wer zuerst alle Karten los ist, gewinnt.'},
   stich:{name:'Wizard',icon:'🧙',min:3,max:6,desc:'Sag an, wie viele Stiche du holst – mit Zauberern, Narren und auf Wunsch 7 Sonderkarten.'},
-  dice:{name:'Würfelblock',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'}};
+  dice:{name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'}};
 const gameOf=g=>g&&GAMES[g.game]?g.game:'arsch';
 let rstore=null,trickHold=0,diceAnim=0;
 const RS=()=>rstore||store;
@@ -3011,7 +3011,7 @@ function openNewRoom(){
   const off=!store.online;
   openModal('<h2>Was wollt ihr spielen?</h2><div class="gpick">'+Object.entries(GAMES).map(([k,x])=>
     '<button class="gcard" data-a="create" data-v="'+k+'"><span class="gi">'+x.icon+'</span><span class="gt"><b>'+x.name+'</b><small>'+x.desc+'</small></span></button>').join('')+
-    '<button class="gcard ghost" data-a="create-local"><span class="gi">📝</span><span class="gt"><b>Würfelblock am Tisch</b><small>Ein Handy für alle – ohne Raum, perfekt mit echten Würfeln.</small></span></button></div>'+
+    '<button class="gcard ghost" data-a="create-local"><span class="gi">📝</span><span class="gt"><b>Kniffel am Tisch</b><small>Ein Handy für alle – ohne Raum, perfekt mit echten Würfeln.</small></span></button></div>'+
     (off?'<p class="note">Gerade offline – es wird gegen Computer gespielt.</p>':'')+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Abbrechen</button>');
 }
 function newRoomData(game){
@@ -3235,7 +3235,7 @@ function drawStich(app,top){
   setHTML(app,top+'<div class="opps'+(n>4?' many':'')+'">'+opps+'</div>'+table+pz+meB+(G.local&&cs>=0&&G.phase!=='juggle'?'<p class="note" style="text-align:center;margin:4px 0">📱 Gib das Handy an <b>'+esc(nm(G,cs))+'</b></p>':'')+hand+panel);
 }
 
-// ----- Würfelblock-Ansicht -----
+// ----- Kniffel-Ansicht -----
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 function dieHtml(v,cls,attrs){return '<div class="die'+(cls?' '+cls:'')+'" '+(attrs||'')+'>'+[...Array(9).keys()].map(i=>'<i class="'+(PIPS[v]&&PIPS[v].includes(i)?'p':'')+'"></i>').join('')+'</div>'}
 function drawDice(app,top){
@@ -3275,7 +3275,7 @@ function drawDice(app,top){
 }
 
 const ST_RULES_TXT='<details><summary>Regeln Wizard</summary>In Runde 1 (eine Karte) spielt ihr blind: Jeder sieht die Karten der anderen, aber nicht die eigene – ausschaltbar in der Lobby. Jede Runde bekommt jeder eine Karte mehr (Runde 1: 1 Karte). Die oberste Karte des Rests bestimmt den Trumpf: Zahl = deren Farbe, Narr = kein Trumpf, Zauberer = der Geber wählt. In der letzten Runde ohne Rest gibt es keinen Trumpf.<br><br>Dann sagt jeder an, wie viele Stiche er holt. Farbe muss bedient werden; Zauberer, Narren und Sonderkarten dürfen immer gespielt werden. Der erste Zauberer gewinnt den Stich, sonst der höchste Trumpf, sonst die höchste Karte der ausgespielten Farbe. Narren verlieren immer (liegen nur Narren, gewinnt der erste).<br><br><b>Punkte:</b> Ansage genau getroffen: 20 + 10 pro Stich. Sonst −10 pro Stich Abweichung.<br><br><b>Sonderkarten (Spezial):</b> 🎭 Gestaltwandler – als Zauberer oder Narr spielbar. 🐉 Drache – schlägt alles, auch Zauberer, nur nicht die Fee. 🧚 Fee – verliert sonst wie ein Narr, schlägt aber den Drachen. 💣 Bombe – der Stich zählt für niemanden, wer ihn bekommen hätte, spielt aus. 🐺 Werwolf – wer ihn bekommt, tauscht ihn vor den Ansagen gegen die Trumpfkarte und bestimmt den Trumpf. 🤹 Jongleur (7½) – Farbe frei wählbar; nach dem Stich gibt jeder eine Karte nach links weiter. ☁️ Wolke (9¾) – Farbe frei wählbar; wer den Stich gewinnt, ändert seine Ansage um +1 oder −1.</details>';
-const DC_RULES_TXT='<details><summary>Regeln Würfelblock</summary>Jeder hat pro Zug bis zu 3 Würfe mit 5 Würfeln. Nach jedem Wurf kannst du Würfel festhalten. Danach trägst du das Ergebnis in ein freies Feld ein – passt nichts, streichst du ein Feld (0 Punkte).<br><br><b>Oben:</b> Einser bis Sechser zählen die Augen der jeweiligen Zahl. Ab 63 Punkten oben gibt es 35 Bonuspunkte.<br><b>Unten:</b> Dreierpasch und Viererpasch (Summe aller Augen), Full House (25), Kleine Straße (4 in Folge, 30), Große Straße (5 in Folge, 40), Fünf Gleiche (50), Chance (Summe aller Augen).<br><br>Nach 13 Runden gewinnt, wer die meisten Punkte hat. Mit echten Würfeln würfelt ihr am Tisch und tragt nur die Punkte ein.</details>';
+const DC_RULES_TXT='<details><summary>Regeln Kniffel</summary>Jeder hat pro Zug bis zu 3 Würfe mit 5 Würfeln. Nach jedem Wurf kannst du Würfel festhalten. Danach trägst du das Ergebnis in ein freies Feld ein – passt nichts, streichst du ein Feld (0 Punkte).<br><br><b>Oben:</b> Einser bis Sechser zählen die Augen der jeweiligen Zahl. Ab 63 Punkten oben gibt es 35 Bonuspunkte.<br><b>Unten:</b> Dreierpasch und Viererpasch (Summe aller Augen), Full House (25), Kleine Straße (4 in Folge, 30), Große Straße (5 in Folge, 40), Kniffel (50), Chance (Summe aller Augen).<br><br>Nach 13 Runden gewinnt, wer die meisten Punkte hat. Mit echten Würfeln würfelt ihr am Tisch und tragt nur die Punkte ein.</details>';
 
 // ----- Schütteln zum Würfeln -----
 let shakeLast=0,motionAsked=false;
