@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-elBGwNc1FOQNdrJ24VqM5PTgj5IxllrdMvyDcaNLdaU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-TgKj8jZgEXWWWjYi0PorUxSpQx0/ShbLuR8rIeLYIjQ=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -793,6 +793,8 @@ ul.plist li>button,ul.plist li>.row{flex:0 0 auto}
 .strick .te.last>span{color:var(--gold);font-weight:800}
 @keyframes tin{0%{transform:translateY(-46px) scale(1.22) rotate(7deg);opacity:0}60%{transform:translateY(3px) scale(1.04);opacity:1}100%{transform:none;opacity:1}}
 .strick .te{animation-duration:.55s}
+#chatui .vmsg.on{background:#5fe08a;color:#10331d;animation:vpulse 1s ease-in-out infinite alternate}
+@keyframes vpulse{from{box-shadow:0 0 0 0 rgba(95,224,138,.5)}to{box-shadow:0 0 0 6px rgba(95,224,138,0)}}
 </style>
 </head>
 <body>
@@ -2257,7 +2259,7 @@ function renderChat(){
     h+='<div class="chat" style="left:'+g.x+'px;top:'+g.y+'px;width:'+g.w+'px;height:'+g.h+'px"><div class="chead" title="Zum Verschieben ziehen"><span class="grip">⠿</span><div class="ctabs">'+tabs+'</div>'+
       '<button class="iconbtn" data-a="chat" title="Schließen (Esc)">✕</button></div>';
     if(chatTab==='room'){
-      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
+      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg'+(vPlaying===m.body?' on':'')+'" data-a="vplay" data-v="'+esc(m.body)+'">'+(vPlaying===m.body?'⏹':'▶')+' 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
         '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
         '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht an den Tisch …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>');
     }else if(!me){
@@ -2357,8 +2359,8 @@ async function micStart(){
   const mt=recMime();
   if(mt===null||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Dein Browser kann keine Sprachnachrichten aufnehmen.');return}
   let stream;
-  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
-  catch(e){toast('Ohne Mikrofon-Erlaubnis geht das nicht – erlaube das Mikrofon für diese Seite bzw. App.');return}
+  try{if(vPlaying)voiceStop();audioSession('play-and-record');stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}
+  catch(e){audioSession('auto');toast('Ohne Mikrofon-Erlaubnis geht das nicht – erlaube das Mikrofon für diese Seite bzw. App.');return}
   let rec;try{rec=new MediaRecorder(stream,Object.assign({audioBitsPerSecond:32000},mt?{mimeType:mt}:{}))}catch(e){rec=new MediaRecorder(stream)}
   REC={rec,stream,chunks:[],t0:Date.now(),cancel:false,code};
   rec.ondataavailable=e=>{if(e.data&&e.data.size&&REC)REC.chunks.push(e.data)};
@@ -2371,7 +2373,7 @@ function micStop(cancel){if(!REC)return;REC.cancel=cancel;clearInterval(REC.time
 async function micDone(){
   const R=REC;REC=null;if(!R)return;
   try{R.stream.getTracks().forEach(t=>t.stop())}catch(e){}
-  musicBack();renderChat();
+  audioSession('auto');musicBack();renderChat();
   if(R.cancel)return;
   const secs=Math.min(30,Math.round((Date.now()-R.t0)/1000));
   if(secs<1){toast('Zu kurz – tippe auf 🎤, sprich und dann auf Senden.');return}
@@ -2382,21 +2384,41 @@ async function micDone(){
   const path=R.code+'/'+crypto.randomUUID()+'_'+secs+'.'+ext;
   try{
     const up=await store.sb.storage.from('voice').upload(path,blob,{contentType:type,upsert:false});if(up.error)throw up.error;
-    VCACHE[path]=URL.createObjectURL(blob);
+    VBLOB[path]=blob;VCACHE[path]=URL.createObjectURL(blob);
     await store.sendChat(R.code,'voice',path);
   }catch(e){console.warn(e);toast(/slow down/.test(String(e&&e.message))?'Zu viele Sprachnachrichten – warte kurz.':'Sprachnachricht ging nicht raus.')}
 }
+// Abspielen ueber das (beim Antippen schon entsperrte) Web-Audio – geht ohne Autoplay-Sperre und laeuft neben Musik/Radio
+const VBLOB={},VBUF={};let vSrc=null,vEl=null,radioVol0=null;
+function audioSession(t){try{if(navigator.audioSession)navigator.audioSession.type=t}catch(e){}}
+function duckAll(on){
+  if(AC&&MUSG)MUSG.gain.setTargetAtTime(on?SET.musVol*.08:SET.musVol*.6,AC.currentTime,.15);
+  const r=RADIO&&RADIO.el;if(r){if(on){if(radioVol0==null)radioVol0=r.volume;r.volume=Math.min(r.volume,.12)}else if(radioVol0!=null){r.volume=radioVol0;radioVol0=null}}
+}
+function voiceStop(){const s=vSrc,e=vEl;vSrc=null;vEl=null;vPlaying=null;try{s&&s.stop()}catch(x){}try{e&&e.pause()}catch(x){}duckAll(false);audioSession('auto');renderChat()}
+const decodeA=(a,ab)=>new Promise((res,rej)=>{try{const p=a.decodeAudioData(ab,res,rej);if(p&&p.then)p.then(res,rej)}catch(e){rej(e)}});
 async function vplay(path){
   if(!store||!store.online||!/^[A-Z]{4}\/[0-9a-f-]{36}_[0-9]{1,2}\.(webm|m4a|ogg)$/.test(String(path)))return;
+  const a=ac();// noch im Antippen: Audio entsperren
+  if(vPlaying){const was=vPlaying;voiceStop();if(was===path)return}
+  vPlaying=path;audioSession('playback');duckAll(true);renderChat();
   try{
-    let u=VCACHE[path];
-    if(!u){const {data,error}=await store.sb.storage.from('voice').download(path);if(error)throw error;u=VCACHE[path]=URL.createObjectURL(data)}
-    if(vPlaying)vPlaying.pause();
-    const a=new Audio(u);vPlaying=a;
-    if(AC&&MUSG)MUSG.gain.setTargetAtTime(SET.musVol*.12,AC.currentTime,.1);
-    a.onended=a.onpause=()=>{if(vPlaying===a){vPlaying=null;musicBack()}};
-    await a.play();
-  }catch(e){console.warn(e);musicBack();toast('Sprachnachricht konnte nicht abgespielt werden.')}
+    let blob=VBLOB[path];
+    if(!blob){const {data,error}=await store.sb.storage.from('voice').download(path);if(error)throw error;blob=VBLOB[path]=data}
+    if(vPlaying!==path)return;
+    let buf=VBUF[path];
+    if(!buf&&a){try{buf=VBUF[path]=await decodeA(a,await blob.arrayBuffer())}catch(e){buf=null}}
+    if(vPlaying!==path)return;
+    if(buf&&a){
+      if(a.state!=='running')try{await a.resume()}catch(e){}
+      const src=a.createBufferSource(),g=a.createGain(),cp=a.createDynamicsCompressor();
+      src.buffer=buf;g.gain.value=1.8;cp.threshold.value=-12;cp.ratio.value=6;
+      src.connect(g).connect(cp).connect(a.destination);src.onended=()=>{if(vSrc===src)voiceStop()};vSrc=src;src.start();return;
+    }
+    // Ersatz: normales Audio-Element
+    const el=new Audio(VCACHE[path]||(VCACHE[path]=URL.createObjectURL(blob)));el.volume=1;vEl=el;
+    el.onended=()=>{if(vEl===el)voiceStop()};await el.play();
+  }catch(e){console.warn(e);if(vPlaying===path)voiceStop();toast('Sprachnachricht konnte nicht abgespielt werden.')}
 }
 
 /* ---------- Konto ---------- */
