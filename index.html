@@ -772,6 +772,9 @@ ul.plist li>span:first-child>span:last-child{min-width:0}
 ul.plist li>span:first-child b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 ul.plist li>button,ul.plist li>.row{flex:0 0 auto}
 @media (max-width:420px){.wl{display:none}}
+/* Absicherung: Knöpfe rutschen lieber in die nächste Zeile als über den Rand */
+.head{flex-wrap:wrap;row-gap:4px}
+.head>.hbtns{margin-left:auto}
 </style>
 </head>
 <body>
