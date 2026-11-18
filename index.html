@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Z1o6CU7VjcWMhhqEvBR5dqdcJwv1QdX5pcc28rBA+nA=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hgLSkB7TrFFHWrpv7sfyKE1o9IG57sy0Zb4EkLjmFCU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1200,7 +1200,7 @@ const SHIFT=80,DRAGON=81,FAIRY=82,BOMB=83,WOLF=84,JUGGLER=85,CLOUD=86,ST_SPECIAL
 const ST_SPEC_NAME={80:'Gestaltwandler',81:'Drache',82:'Fee',83:'Bombe',84:'Werwolf',85:'Jongleur',86:'Wolke'};
 const ST_RULES={mode:'basis',plusminus:false,bots:'normal',blind:true};
 // Runde 1 blind: man sieht nur die Karten der anderen, nicht die eigene
-const stBlind=g=>!!(SR(g).blind&&g.round===1);
+const stBlind=g=>!!(SR(g).blind&&SR(g).mode!=='spezial'&&g.round===1); // laut Anleitung nur ohne Sonderkarten
 const SR=g=>Object.assign({},ST_RULES,g.rules||{});
 const stNum=c=>c>=0&&c<52,stSuit=c=>Math.floor(c/13),stVal=c=>c%13+1;
 const stIsZ=c=>c>=60&&c<64,stIsN=c=>c>=70&&c<74,stIsSpec=c=>c>=80&&c<87;
@@ -1225,14 +1225,14 @@ function stDeal(g){
   const deck=shuffle(stDeck(g)),r=g.round;
   g.hands={};for(let i=0;i<n;i++)g.hands[i]=deck.splice(0,r).sort(stSort);
   g.dealer=(r-1)%n;g.bids=Array(n).fill(null);g.won=Array(n).fill(0);g.trick=[];g.lastTrick=null;g.leader=(g.dealer+1)%n;
-  g.tcard=deck.length?deck.shift():null;g.trump=-1;g.cloudBy=-1;g.jPick=null;g.msg='';
+  g.tcard=deck.length?deck.shift():null;g.trump=-1;g.cloudBy=-1;g.cloudWin=-1;g.jPick=null;g.msg='';
   g.phase='bid';g.turn=(g.dealer+1)%n;
   const tc=g.tcard;
   if(tc==null){g.trump=-1;g.msg='Runde '+r+': letzte Runde ohne Trumpf.'}
   else if(stNum(tc)){g.trump=stSuit(tc);g.msg='Runde '+r+': Trumpf ist '+ST_SUITS[g.trump]+'.'}
   else if(stIsN(tc)||tc===FAIRY||tc===BOMB){g.trump=-1;g.msg='Runde '+r+': '+stCardName(tc)+' aufgedeckt – kein Trumpf.'}
   else{g.phase='trump';g.turn=g.dealer;g.msg='Runde '+r+': '+stCardName(tc)+' aufgedeckt – '+nm(g,g.dealer)+' bestimmt den Trumpf.'}
-  if(g.phase==='bid')stCheckWolf(g);
+  stCheckWolf(g); // Werwolf tauscht auch, wenn der Geber sonst den Trumpf bestimmen wuerde
 }
 // Werwolf auf der Hand: tauscht mit der Trumpfkarte, danach bestimmt der Besitzer den Trumpf
 function stCheckWolf(g){
@@ -1280,7 +1280,6 @@ function stLead(g){
   for(let i=0;i<g.trick.length;i++){const f=stEff(g.trick[i]);
     if(f.kind==='num')return f.suit;
     if(f.kind==='Z'||f.kind==='D')return null;                    // nach Zauberer/Drache ist alles frei
-    if((f.kind==='F'||f.kind==='B')&&i===0)return null;           // mit Fee/Bombe eroeffnet: wie Zauberer
   }
   return null;
 }
@@ -1306,7 +1305,9 @@ function stWinnerIdx(g,trick){
   if(best>=0)return best;
   let lead=null;for(const f of ef){if(f.kind==='num'){lead=f.suit;break}}
   if(lead!=null){ef.forEach((f,i)=>{if(f.kind==='num'&&f.suit===lead&&f.val>bv){bv=f.val;best=i}});return best}
-  return 0; // nur Narren (bzw. Narren-artige Karten): der erste gewinnt
+  // nur Narren (bzw. Fee/Bombe): der erste Narr gewinnt, Fee und Bombe haben keinen Wert
+  const ni=ef.findIndex(f=>f.kind==='N');if(ni>=0)return ni;
+  const fi2=ef.findIndex(f=>f.kind==='F');return fi2>=0?fi2:0;
 }
 function stPlay(g,seat,c,as){
   if(!stCanPlay(g,seat,c,as))return false;
@@ -1323,18 +1324,21 @@ function stPlay(g,seat,c,as){
   else{g.won[w]++;g.msg=nm(g,w)+' gewinnt den Stich.'}
   g.trick=[];g.leader=w;g.turn=w;
   const handsLeft=g.hands[0].length;
-  if(hasCloud&&!bomb){g.phase='cloud';g.cloudBy=w;g.turn=w;g.msg+=' ☁️ Wolke: '+nm(g,w)+' ändert die Ansage um 1.';return true}
+  if(hasCloud&&!bomb){g.cloudWin=w;g.msg+=' ☁️ Wolke: '+nm(g,w)+' muss am Ende der Runde die Ansage um 1 ändern.'}
   if(hasJug&&handsLeft>0){g.phase='juggle';g.jPick=Array(n).fill(null);g.msg+=' 🤹 Jongleur: Alle geben eine Karte nach links weiter.';return true}
-  if(handsLeft===0)stEndRound(g);
+  if(handsLeft===0)stRoundDone(g);
   return true;
+}
+// Rundenende: wer die Wolke in seinen Stichen hat, aendert zuerst seine Ansage um 1
+function stRoundDone(g){
+  if(g.cloudWin>=0){const w=g.cloudWin;g.cloudWin=-1;g.phase='cloud';g.cloudBy=w;g.turn=w;g.msg+=' ☁️ '+nm(g,w)+' ändert jetzt die Ansage um 1.';return}
+  stEndRound(g);
 }
 // Wolke: Ansage um +1 oder -1 aendern
 function stCloud(g,seat,d){
   if(g.phase!=='cloud'||seat!==g.cloudBy||(d!==1&&d!==-1))return false;
   if(d===-1&&g.bids[seat]<=0)return false;
   g.bids[seat]+=d;g.msg=nm(g,seat)+' ändert die Ansage auf '+g.bids[seat]+'.';g.cloudBy=-1;
-  const hasJug=g.lastTrick&&g.lastTrick.cards.some(x=>x.c===JUGGLER);
-  if(hasJug&&g.hands[0].length>0){g.phase='juggle';g.jPick=Array(g.players.length).fill(null);g.msg+=' 🤹 Alle geben eine Karte weiter.';return true}
   g.phase='play';g.turn=g.leader;if(g.hands[0].length===0)stEndRound(g);return true;
 }
 // Jongleur: jeder waehlt eine Karte, dann wird gleichzeitig nach links weitergegeben
@@ -1409,7 +1413,7 @@ function stBotPlay(g,s){
   if(l.length)return l[0];
   return res.sort((a,b)=>a.pow-b.pow)[0];
 }
-function stBotCloud(g,s){const need=g.bids[s]-g.won[s];return (need<0||g.bids[s]<=0)?1:need>0?1:(g.hands[s].reduce((a,c)=>a+stCardPower(g,c),0)>.6?1:-1)}
+function stBotCloud(g,s){const d=g.won[s]>g.bids[s]?1:g.won[s]<g.bids[s]?-1:1;return d===-1&&g.bids[s]<=0?1:d}
 function stBotJuggle(g,s){const h=g.hands[s].slice().sort((a,b)=>stCardPower(g,a)-stCardPower(g,b));return h[0]}
 // Ein Computerzug fuer die aktuelle Phase; gibt true zurueck, wenn etwas passiert ist
 function stBotStep(g){
@@ -1434,7 +1438,7 @@ function cleanStich(g){
   if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules=Object.assign({mode:r.mode==='spezial'?'spezial':'basis',plusminus:!!r.plusminus,bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal'},'blind' in r?{blind:!!r.blind}:{})}
   if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
   if('msg' in g)g.msg=S(g.msg,400);
-  for(const k of ['round','total','match','dealer','turn','leader','trump','cloudBy'])if(k in g)g[k]=I(g[k],-1,1e5)?g[k]:-1;
+  for(const k of ['round','total','match','dealer','turn','leader','trump','cloudBy','cloudWin'])if(k in g)g[k]=I(g[k],-1,1e5)?g[k]:-1;
   if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
   if(!Array.isArray(g.players)||g.players.length<3||g.players.length>6||!g.players.every(O))return null;
   const n=g.players.length,seat=x=>I(x,0,n-1),okc=c=>I(c,0,51)||I(c,60,63)||I(c,70,73)||I(c,80,86);
@@ -3049,7 +3053,7 @@ function onGameOther(g,prev){
   const k=gameOf(g);
   if(k==='stich'&&prev&&prev.trick&&g.trick){
     if(g.trick.length>prev.trick.length)sfx('card');
-    if(prev.trick.length>0&&g.trick.length===0&&g.lastTrick){trickHold=Date.now()+1700;setTimeout(render,1750);if(g.lastTrick.bomb)boom('💣 Bombe!')}
+    if(prev.trick.length>0&&g.trick.length===0&&g.lastTrick){trickHold=Date.now()+2000;setTimeout(render,2050);if(g.lastTrick.bomb)boom('💣 Bombe!')}
   }
   if(k==='stich'&&prev&&g.round!==prev.round)sfx('deal');
   if(k==='dice'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
@@ -3137,10 +3141,10 @@ function drawOtherLobby(app,top,host,k){
   let set='';
   if(k==='stich')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Karten<small>Basis: 60 Karten mit 4 Zauberern und 4 Narren. Spezial: dazu Gestaltwandler, Drache, Fee, Bombe, Werwolf, Jongleur und Wolke.</small></span>'+seg('mode',[['basis','Basis'],['spezial','Spezial ✨']])+'</div>'+
-    '<div class="rl"><span>Runde 1 blind<small>In der ersten Runde siehst du nur die Karten der anderen – deine eigene nicht.</small></span>'+seg('blind',[[true,'an'],[false,'aus']])+'</div>'+
+    (r.mode==='spezial'?'':'<div class="rl"><span>Runde 1 blind („Hellsehen“)<small>In der ersten Runde siehst du nur die Karten der anderen – deine eigene nicht. Laut Anleitung nur ohne Sonderkarten.</small></span>'+seg('blind',[[true,'an'],[false,'aus']])+'</div>')+
     '<div class="rl"><span>Plus/Minus 1<small>Die Summe aller Ansagen darf nicht genau der Stichzahl entsprechen (gilt für den Geber).</small></span>'+seg('plusminus',[[false,'aus'],[true,'an']])+'</div>'+
     ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
-    :'<p class="note" style="margin:0">'+(r.mode==='spezial'?'Spezial-Karten':'Basis-Karten')+(r.plusminus?' · Plus/Minus 1':'')+(r.blind?' · Runde 1 blind':'')+'</p>')+'</div>';
+    :'<p class="note" style="margin:0">'+(r.mode==='spezial'?'Spezial-Karten':'Basis-Karten')+(r.plusminus?' · Plus/Minus 1':'')+(r.blind&&r.mode!=='spezial'?' · Runde 1 blind':'')+'</p>')+'</div>';
   else set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Würfel<small>Am Handy würfeln oder mit echten Würfeln würfeln und nur die Punkte eintragen.</small></span>'+seg('mode',[['roll','📱 am Handy'],['real','🎲 echte Würfel']])+'</div>'+
     (canBots&&(G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
@@ -3175,13 +3179,14 @@ function stBlock(g){
 }
 function drawStich(app,top){
   const n=G.players.length,cs=ctrlSeat(),me_=G.local?cs:mySeat(),viewS=G.local?(cs>=0?cs:-1):me_;
-  if(G.phase==='over'){
+  const holdEnd=(G.phase==='rend'||G.phase==='over')&&G.lastTrick&&trickHold>Date.now();
+  if(G.phase==='over'&&!holdEnd){
     const st=stStandings(G),medal=['🥇','🥈','🥉'],pl=stPlaces(G);
     setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><div class="panel"><ul class="plist">'+st.map(x=>'<li><span>'+(medal[pl[x.s]]||'')+' '+esc(x.name)+'</span><b>'+x.pts+' Punkte</b></li>').join('')+'</ul></div>'+
       '<div class="panel"><h3>Block</h3>'+stBlock(G)+'</div>'+((me_>=0||G.local)?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');
     return;
   }
-  if(G.phase==='rend'){
+  if(G.phase==='rend'&&!holdEnd){
     const h=G.hist[G.hist.length-1],ek=code+':'+G.match+':'+G.round;
     if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
     const cd=Math.max(0,3-Math.ceil((Date.now()-seen.endAt)/1000));if(cd>0)setTimeout(render,400);
@@ -3213,7 +3218,7 @@ function drawStich(app,top){
       panel='<div class="panel act"><b>Wie viele Stiche holst du?</b><span class="note">Bisher angesagt: '+sum+' von '+G.round+'</span><div class="bidpick">'+[...Array(G.round+1).keys()].map(b=>'<button data-a="st-bid" data-v="'+b+'" '+(stBidOk(G,cs,b)?'':'disabled')+'>'+b+'</button>').join('')+'</div></div>'}
     else panel='<p class="note" style="text-align:center">'+esc(nm(G,G.turn))+' sagt an …</p>';
   }else if(G.phase==='cloud'){
-    const cb=G.cloudBy;panel=(G.local?!G.players[cb].bot:cb===mySeat())?'<div class="panel act"><b>☁️ Wolke: Ändere deine Ansage ('+G.bids[cb]+')</b><div class="row"><button data-a="st-cloud" data-v="-1" '+(G.bids[cb]>0?'':'disabled')+'>−1</button><button data-a="st-cloud" data-v="1">+1</button></div></div>':'<p class="note" style="text-align:center">'+esc(nm(G,cb))+' ändert die Ansage …</p>';
+    const cb=G.cloudBy;panel=(G.local?!G.players[cb].bot:cb===mySeat())?'<div class="panel act"><b>☁️ Wolke: Ändere deine Ansage um 1</b><span class="note">Angesagt '+G.bids[cb]+' · geholt '+G.won[cb]+' Stiche</span><div class="row"><button data-a="st-cloud" data-v="-1" '+(G.bids[cb]>0?'':'disabled')+'>−1</button><button data-a="st-cloud" data-v="1">+1</button></div></div>':'<p class="note" style="text-align:center">'+esc(nm(G,cb))+' ändert die Ansage …</p>';
   }else if(G.phase==='juggle'){
     const js=G.local?G.players.findIndex((p,i)=>!p.bot&&G.jPick&&G.jPick[i]==null):mySeat();
     const mine=js>=0&&G.jPick&&G.jPick[js]==null;
@@ -3274,7 +3279,7 @@ function drawDice(app,top){
   setHTML(app,top+pz+area+'<div class="panel" style="padding:8px">'+sheet+'</div>');
 }
 
-const ST_RULES_TXT='<details><summary>Regeln Wizard</summary>In Runde 1 (eine Karte) spielt ihr blind: Jeder sieht die Karten der anderen, aber nicht die eigene – ausschaltbar in der Lobby. Jede Runde bekommt jeder eine Karte mehr (Runde 1: 1 Karte). Die oberste Karte des Rests bestimmt den Trumpf: Zahl = deren Farbe, Narr = kein Trumpf, Zauberer = der Geber wählt. In der letzten Runde ohne Rest gibt es keinen Trumpf.<br><br>Dann sagt jeder an, wie viele Stiche er holt. Farbe muss bedient werden; Zauberer, Narren und Sonderkarten dürfen immer gespielt werden. Der erste Zauberer gewinnt den Stich, sonst der höchste Trumpf, sonst die höchste Karte der ausgespielten Farbe. Narren verlieren immer (liegen nur Narren, gewinnt der erste).<br><br><b>Punkte:</b> Ansage genau getroffen: 20 + 10 pro Stich. Sonst −10 pro Stich Abweichung.<br><br><b>Sonderkarten (Spezial):</b> 🎭 Gestaltwandler – als Zauberer oder Narr spielbar. 🐉 Drache – schlägt alles, auch Zauberer, nur nicht die Fee. 🧚 Fee – verliert sonst wie ein Narr, schlägt aber den Drachen. 💣 Bombe – der Stich zählt für niemanden, wer ihn bekommen hätte, spielt aus. 🐺 Werwolf – wer ihn bekommt, tauscht ihn vor den Ansagen gegen die Trumpfkarte und bestimmt den Trumpf. 🤹 Jongleur (7½) – Farbe frei wählbar; nach dem Stich gibt jeder eine Karte nach links weiter. ☁️ Wolke (9¾) – Farbe frei wählbar; wer den Stich gewinnt, ändert seine Ansage um +1 oder −1.</details>';
+const ST_RULES_TXT='<details><summary>Regeln Wizard</summary>Ohne Sonderkarten spielt ihr Runde 1 blind („Hellsehen“): Jeder sieht die Karten der anderen, aber nicht die eigene – ausschaltbar in der Lobby. Jede Runde bekommt jeder eine Karte mehr (Runde 1: 1 Karte). Die oberste Karte des Rests bestimmt den Trumpf: Zahl = deren Farbe, Narr = kein Trumpf, Zauberer = der Geber wählt. In der letzten Runde ohne Rest gibt es keinen Trumpf.<br><br>Dann sagt jeder an, wie viele Stiche er holt. Farbe muss bedient werden; Zauberer, Narren und Sonderkarten dürfen immer gespielt werden. Der erste Zauberer gewinnt den Stich, sonst der höchste Trumpf, sonst die höchste Karte der ausgespielten Farbe. Narren verlieren immer (liegen nur Narren, gewinnt der erste).<br><br><b>Punkte:</b> Ansage genau getroffen: 20 + 10 pro Stich. Sonst −10 pro Stich Abweichung.<br><br><b>Sonderkarten (Spezial):</b> 🎭 Gestaltwandler – als Zauberer oder Narr spielbar. 🐉 Drache – schlägt alles, auch Zauberer, nur nicht die Fee. 🧚 Fee – die niedrigste Karte, schlägt aber den Drachen. Wer mit Fee oder Bombe eröffnet, spielt wie mit einem Narren: Die erste Farbkarte danach muss bedient werden. Liegt die Fee als Trumpfkarte, gibt es keinen Trumpf. 💣 Bombe – der Stich zählt für niemanden, wer ihn bekommen hätte, spielt aus. Als Trumpfkarte: kein Trumpf. 🐺 Werwolf – wer ihn bekommt, tauscht ihn vor den Ansagen gegen die Trumpfkarte und bestimmt den Trumpf. 🤹 Jongleur (7½) – Farbe frei wählbar; nach dem Stich gibt jeder gleichzeitig eine Karte nach links weiter (nicht beim letzten Stich der Runde). ☁️ Wolke (9¾) – Farbe frei wählbar; wer den Stich mit der Wolke gewinnt, muss am Ende der Runde seine Ansage um +1 oder −1 ändern (nicht, wenn auch die Bombe im Stich lag). Gestaltwandler, Drache, Werwolf, Jongleur oder Wolke als Trumpfkarte: Der Geber bestimmt den Trumpf.</details>';
 const DC_RULES_TXT='<details><summary>Regeln Kniffel</summary>Jeder hat pro Zug bis zu 3 Würfe mit 5 Würfeln. Nach jedem Wurf kannst du Würfel festhalten. Danach trägst du das Ergebnis in ein freies Feld ein – passt nichts, streichst du ein Feld (0 Punkte).<br><br><b>Oben:</b> Einser bis Sechser zählen die Augen der jeweiligen Zahl. Ab 63 Punkten oben gibt es 35 Bonuspunkte.<br><b>Unten:</b> Dreierpasch und Viererpasch (Summe aller Augen), Full House (25), Kleine Straße (4 in Folge, 30), Große Straße (5 in Folge, 40), Kniffel (50), Chance (Summe aller Augen).<br><br>Nach 13 Runden gewinnt, wer die meisten Punkte hat. Mit echten Würfeln würfelt ihr am Tisch und tragt nur die Punkte ein.</details>';
 
 // ----- Schütteln zum Würfeln -----
