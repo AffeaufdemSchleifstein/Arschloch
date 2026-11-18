@@ -1,7 +1,7 @@
 {
-  "name": "Arschloch – Kartenspiel",
-  "short_name": "Arschloch",
-  "description": "Das Kartenspiel Arschloch – online mit Freunden, jeder auf seinem Handy.",
+  "name": "Spieleabend",
+  "short_name": "Spieleabend",
+  "description": "Arschloch, Wizard und Würfelblock – online mit Freunden, jeder auf seinem Handy.",
   "lang": "de",
   "start_url": "./",
   "scope": "./",

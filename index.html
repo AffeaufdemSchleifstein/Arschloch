@@ -2,18 +2,18 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-GnPiaq543VXh9MJtYobzg5TQ7rj8/WUV5b1fS0mBajk=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-wXjSTsW6rgZkqr6ZMvf2u0v3Tiby+VYOUm9NKXUS9hI=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Arschloch – Kartenspiel</title>
+<title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
-<meta name="description" content="Das Kartenspiel Arschloch – online mit Freunden, jeder auf seinem Handy.">
+<meta name="description" content="Spieleabend – Arschloch, Wizard und Würfelblock online mit Freunden, jeder auf seinem Handy.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Arschloch">
+<meta name="apple-mobile-web-app-title" content="Spieleabend">
 <script src="supabase.js"></script>
 <style>
   :root{
@@ -595,6 +595,164 @@
 .quests .qrow.done .qb i{background:#5fe08a}.quests .qrow.done .qt{color:#9df0b8}
 /* Sternen-Kartenruecken */
 .mini.cb-star,body[data-back=star] .card.back{background:radial-gradient(circle at 25% 30%,#fff 0 1.5px,transparent 2.5px),radial-gradient(circle at 70% 60%,#fff 0 1.5px,transparent 2.5px),radial-gradient(circle at 45% 80%,#ffe28a 0 2px,transparent 3px),radial-gradient(circle at 80% 20%,#ffe28a 0 2px,transparent 3px),linear-gradient(160deg,#1b2a6b,#0b1030)}
+/* ===== Spieleabend: Spielauswahl ===== */
+.gpick{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+.gcard{display:flex;align-items:center;gap:12px;text-align:left;height:auto;padding:12px 14px;border-radius:14px}
+.gcard .gi,.gamehead .gi{font-size:30px;flex:none}
+.gcard .gt{display:flex;flex-direction:column;gap:2px}.gcard .gt b{font-size:16px}.gcard .gt small{font-size:12.5px;font-weight:500;opacity:.85;line-height:1.3}
+.gamehead{display:flex;align-items:center;gap:12px}.gamehead b{display:block;font-size:17px}.gamehead small{display:block;color:var(--mute);font-size:12.5px;line-height:1.35}
+.pos{color:#7ee2a0}.neg{color:#ff8b7a}
+.rlist{display:flex;justify-content:space-between;padding:4px 2px;font-size:14px}
+.panel.act{text-align:center}.panel.act>b{display:block;margin-bottom:8px}
+/* ===== Wizard ===== */
+.scard{position:relative;width:52px;height:76px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.75);user-select:none;transition:transform .15s,box-shadow .15s,filter .15s}
+.scard .v{position:absolute;top:3px;left:5px;font-size:15px;line-height:1}
+.scard .v2{position:absolute;bottom:3px;right:5px;font-size:15px;line-height:1;transform:rotate(180deg)}
+.scard .gm{font-size:22px}.scard .em{font-size:25px;margin-top:-6px}
+.scard .lb{position:absolute;bottom:4px;left:1px;right:1px;text-align:center;font-size:7.5px;font-weight:800;letter-spacing:.01em;white-space:nowrap;overflow:hidden}
+.scard .asg{position:absolute;top:2px;right:3px;font-size:11px}
+.scard.s0{background:linear-gradient(160deg,#3f82f0,#1d4fb0)}.scard.s1{background:linear-gradient(160deg,#ef5248,#b0241c)}
+.scard.s2{background:linear-gradient(160deg,#3db466,#1c7a3c)}.scard.s3{background:linear-gradient(160deg,#f1c33a,#c08a0e);color:#3a2700}
+.scard.z{background:linear-gradient(160deg,#7b4fe0,#3b1f8a)}.scard.nr{background:linear-gradient(160deg,#8d939c,#545a63)}
+.scard.sp{background:linear-gradient(160deg,#2a2342,#120e22);border-color:#e5c25a;color:#ffe08a}
+.scard.mini{width:34px;height:50px;border-width:1.5px}.scard.mini .v,.scard.mini .v2{font-size:10px}.scard.mini .gm,.scard.mini .em{font-size:15px}.scard.mini .lb{display:none}
+.scard.none{background:rgba(255,255,255,.12);color:var(--mute)}
+.shand{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:8px 0 10px;padding:0 2px}
+.shand .scard{width:46px;height:68px;cursor:pointer}
+.shand .scard.sel{transform:translateY(-10px);box-shadow:0 0 0 3px var(--gold),0 8px 18px rgba(0,0,0,.45)}
+.shand .scard.ok{box-shadow:0 0 0 2px #5fe08a,0 0 12px rgba(95,224,138,.7)}.shand .scard.no{filter:brightness(.5) saturate(.6)}
+.shand .scard.sel.ok{box-shadow:0 0 0 3px var(--gold),0 8px 18px rgba(0,0,0,.45)}
+.stable{min-height:210px}
+.tinfo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:8px}
+.tinfo small{display:block;font-size:10.5px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em}.tinfo b{font-size:14px}.tinfo .rd{margin-left:14px}
+.strick{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:96px;align-items:flex-start}
+.strick .te{display:flex;flex-direction:column;align-items:center;gap:3px;animation:tin .25s ease both}
+.strick .te span{font-size:10.5px;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
+.strick .te.win .scard{box-shadow:0 0 0 3px #ffd45a,0 0 18px rgba(255,212,90,.8)}
+@keyframes tin{from{transform:translateY(14px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.suitpick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.suitpick .sp0{background:#2a64d0;color:#fff}.suitpick .sp1{background:#c9352c;color:#fff}.suitpick .sp2{background:#2c9152;color:#fff}.suitpick .sp3{background:#e0ad20;color:#2b1d00}
+.bidpick{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.bidpick button{width:46px;height:46px;padding:0;font-size:18px;border-radius:12px;flex:none}
+.blockw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.block td,table.block th{text-align:center;font-size:12px;padding:4px 3px;white-space:nowrap}
+table.block td b{font-size:12.5px}table.block tr.sum td{border-top:2px solid var(--line);font-size:14px}
+/* ===== Würfelblock ===== */
+.dicebox{text-align:center}
+.dturn{font-weight:800;margin-bottom:10px}
+.dice{display:flex;justify-content:center;gap:9px;min-height:62px;align-items:center;margin-bottom:12px}
+.die{width:54px;height:54px;border-radius:12px;background:linear-gradient(160deg,#fff,#e4e4e4);box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 -3px 0 rgba(0,0,0,.12);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:7px;gap:2px;cursor:pointer;transition:transform .15s}
+.die i{border-radius:50%}.die i.p{background:#1d1d1d;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
+.die.held{transform:translateY(-6px);box-shadow:0 0 0 3px var(--gold),0 8px 16px rgba(0,0,0,.45);background:linear-gradient(160deg,#fff6d8,#f1dfa0)}
+.die.roll{animation:droll .32s linear infinite}
+@keyframes droll{0%{transform:rotate(0) translateY(0)}25%{transform:rotate(12deg) translateY(-6px)}50%{transform:rotate(-8deg)}75%{transform:rotate(10deg) translateY(-3px)}100%{transform:rotate(0)}}
+table.dsheet{width:100%;border-collapse:collapse;font-size:13px}
+table.dsheet th,table.dsheet td{padding:6px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08)}
+table.dsheet th{font-size:11.5px;color:var(--mute);white-space:nowrap}table.dsheet th.cur{color:var(--gold)}
+table.dsheet td.cn{text-align:left;white-space:nowrap;font-size:12.5px;color:#e9e2d4}
+table.dsheet td.f{font-weight:800}table.dsheet td .z{color:#ff8b7a}
+table.dsheet td.pot{color:#7ee2a0;font-weight:800;cursor:pointer;background:rgba(95,224,138,.12);border-radius:6px}
+table.dsheet td.pot.zero{color:var(--mute);background:rgba(255,255,255,.05)}
+table.dsheet td.ed{cursor:pointer}table.dsheet td.ed.empty{color:var(--mute)}
+table.dsheet tr.sum td{color:var(--mute);font-size:12px}table.dsheet tr.sum td.cn{color:var(--mute)}
+table.dsheet tr.total td{font-size:15px;border-top:2px solid var(--line)}
+.vpick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:50vh;overflow:auto}
+.vpick button{height:42px;padding:0;font-size:15px}.vpick button.on{box-shadow:0 0 0 3px var(--gold)}
+
+/* ===================== Geschmeidige Animationen ===================== */
+:root{--e-out:cubic-bezier(.22,1,.36,1);--e-spring:cubic-bezier(.34,1.45,.64,1);--e-soft:cubic-bezier(.4,0,.2,1)}
+button{transition:transform .2s var(--e-out),background-color .22s var(--e-soft),color .22s,box-shadow .28s var(--e-out),opacity .22s,filter .22s}
+button:active:not(:disabled){transform:scale(.965);transition-duration:.07s}
+.card,.scard{transition:transform .32s var(--e-spring),box-shadow .3s var(--e-out),filter .28s var(--e-soft),opacity .28s}
+.die{transition:transform .34s var(--e-spring),box-shadow .3s var(--e-out),background .3s}
+.opp{transition:box-shadow .35s var(--e-out),border-color .35s,background-color .35s,opacity .35s}
+.sw2 i{transition:transform .3s var(--e-spring)}
+.tbar .tt i{transition:width .3s linear,background .45s var(--e-soft)}
+/* Bildschirmwechsel */
+#app.enter{animation:scr .5s var(--e-out)}
+@keyframes scr{from{opacity:0;transform:translateY(12px) scale(.992)}to{opacity:1;transform:none}}
+#app.enter>.panel,#app.enter>.nav{animation:rowIn .55s var(--e-out) backwards}
+#app.enter>.panel:nth-child(2){animation-delay:40ms}#app.enter>.panel:nth-child(3){animation-delay:80ms}#app.enter>.panel:nth-child(4){animation-delay:120ms}
+#app.enter>.panel:nth-child(5),#app.enter>.nav{animation-delay:160ms}#app.enter>.panel:nth-child(n+6){animation-delay:200ms}
+#app.enter .plist li,#app.enter .pcard{animation:rowIn .5s var(--e-out) backwards;animation-delay:calc(var(--i,0)*55ms + 90ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+details[open]>:not(summary){animation:rowIn .38s var(--e-out)}
+/* Fenster */
+#modal{transition:background-color .25s}
+#modal.on{animation:fadeIn .25s var(--e-soft)}
+#modal .box{animation:boxIn .46s var(--e-spring)}
+#modal.out{animation:fadeOut .22s var(--e-soft) forwards;pointer-events:none}
+#modal.out .box{animation:boxOut .22s var(--e-soft) forwards}
+@keyframes boxIn{from{transform:translateY(46px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+@keyframes boxOut{to{transform:translateY(30px) scale(.97);opacity:0}}
+@keyframes fadeOut{to{opacity:0}}
+.gpick .gcard{animation:rowIn .45s var(--e-out) backwards}
+.gpick .gcard:nth-child(2){animation-delay:50ms}.gpick .gcard:nth-child(3){animation-delay:100ms}.gpick .gcard:nth-child(4){animation-delay:150ms}
+#toast{transform:translate(-50%,14px) scale(.96);transition:opacity .3s var(--e-soft),transform .4s var(--e-spring)}
+#toast.on{transform:translate(-50%,0)}
+.ov .ovp{animation:rowIn .35s var(--e-out)}
+/* Karten */
+.pile.in .card{animation:throwDown .52s var(--e-out) backwards;animation-delay:calc(var(--i,0)*65ms)}
+@keyframes throwDown{0%{transform:translateY(-44vh) rotate(-30deg) scale(1.2);opacity:0}30%{opacity:1}82%{transform:rotate(var(--r,0deg)) scale(.975)}100%{transform:rotate(var(--r,0deg));opacity:1}}
+@keyframes throwUp{0%{transform:translateY(44vh) rotate(30deg) scale(1.2);opacity:0}30%{opacity:1}82%{transform:rotate(var(--r,0deg)) scale(.975)}100%{transform:rotate(var(--r,0deg));opacity:1}}
+.pile.closing{animation:closing .6s var(--e-soft) backwards}
+@keyframes closing{from{opacity:1;transform:none}to{opacity:.4;transform:scale(.9) translateY(6px)}}
+.hand.deal .card{animation:dealIn .6s var(--e-spring) backwards;animation-delay:calc(var(--i,0)*40ms)}
+@keyframes dealIn{from{transform:translateY(80px) rotate(-9deg) scale(.88);opacity:0}to{transform:none;opacity:1}}
+.status.new{animation:pop .55s var(--e-spring)}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.msg.new{animation:msgIn .42s var(--e-out)}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.strick .te{animation:tin .46s var(--e-spring) both}
+@keyframes tin{from{transform:translateY(34px) scale(.82) rotate(-7deg);opacity:0}to{transform:none;opacity:1}}
+.strick .te.win .scard{animation:winp 1.2s var(--e-soft) infinite alternate}
+@keyframes winp{from{box-shadow:0 0 0 2px #ffd45a,0 0 8px rgba(255,212,90,.5)}to{box-shadow:0 0 0 3px #ffd45a,0 0 22px rgba(255,212,90,.95);transform:translateY(-3px) scale(1.04)}}
+/* Würfel */
+.die.roll{animation:droll .5s var(--e-soft) infinite}
+@keyframes droll{0%{transform:rotate(0) translateY(0) scale(1)}25%{transform:rotate(90deg) translateY(-10px) scale(.94)}50%{transform:rotate(180deg) translateY(0) scale(1)}75%{transform:rotate(270deg) translateY(-6px) scale(.96)}100%{transform:rotate(360deg) translateY(0) scale(1)}}
+.die:not(.roll){animation:dland .45s var(--e-spring)}
+@keyframes dland{from{transform:scale(.9)}to{transform:none}}
+.die.held:not(.roll){animation:none}
+/* weniger Bewegung bzw. schwache Geräte */
+@media (prefers-reduced-motion:reduce){#app.enter>.panel,#app.enter>.nav,details[open]>:not(summary),#modal .box,#modal.out,#modal.out .box,.gpick .gcard,.ov .ovp,.strick .te,.strick .te.win .scard,.die,.die.roll{animation:none!important}#modal.out{opacity:0}}
+body.low #app.enter>.panel,body.low #app.enter>.nav,body.low .strick .te.win .scard{animation:none}
+
+/* ===================== Chatfenster (verschiebbar) ===================== */
+#chatui .chat{position:fixed;transform:none;max-width:none;bottom:auto;border:1px solid var(--line);border-radius:18px;
+  padding:10px 12px 12px;box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03);z-index:14;
+  background:rgba(32,20,12,.97);animation:chatIn .4s var(--e-spring);display:flex;flex-direction:column;overflow:hidden}
+#chatui .chat.still{animation:none}
+#chatui .chat.drag{transition:none;box-shadow:0 26px 60px rgba(0,0,0,.7),0 0 0 2px var(--gold);user-select:none;cursor:grabbing}
+@keyframes chatIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+#chatui .chead{cursor:grab;touch-action:none;gap:8px;user-select:none;margin:-4px -4px 8px;padding:4px}
+#chatui .grip{color:var(--mute);font-size:18px;line-height:1;padding:0 2px;flex:none}
+#chatui .ctabs{display:flex;gap:6px;flex:1;min-width:0}
+#chatui .ctab{height:32px;width:auto;padding:0 12px;font-size:13.5px;border-radius:99px;background:rgba(255,255,255,.08);color:var(--mute);border:1px solid var(--line);display:inline-flex;align-items:center;gap:6px}
+#chatui .ctab.on{background:var(--gold);color:var(--onGold);border-color:transparent}
+#chatui .ctab .badge{min-width:18px;height:18px;font-size:11px;margin:0}
+#chatui .cresize{position:absolute;right:2px;bottom:2px;width:22px;height:22px;cursor:nwse-resize;touch-action:none;
+  background:linear-gradient(135deg,transparent 55%,var(--mute) 55%,var(--mute) 62%,transparent 62%,transparent 72%,var(--mute) 72%,var(--mute) 79%,transparent 79%);opacity:.6}
+#chatui .dml{gap:4px}
+#chatui .dmf{display:flex;align-items:center;gap:10px;height:52px;padding:0 10px;text-align:left;border-radius:12px;flex:none}
+#chatui .dmf b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
+#chatui .dmf .badge{margin:0}
+#chatui .dmh{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#chatui .dmh .small{width:34px;padding:0;font-size:18px}
+#chatui .dmh .note{margin:0;font-size:12px;color:#5fe08a}
+#chatui .cm{animation:msgIn .3s var(--e-out)}
+#chatui .cm.fail{opacity:.5;text-decoration:line-through}
+.homechat,.dmb{position:relative}
+.homechat .badge,.dmb .badge{position:absolute;top:-7px;right:-8px;margin:0;min-width:18px;height:18px;font-size:11px}
+.dmb{margin-right:6px;flex:0 0 auto}
+@media (prefers-reduced-motion:reduce){#chatui .chat,#chatui .cm{animation:none}}
+/* „schreibt gerade …“ und Schüttel-Hinweis */
+#chatui .typing{display:flex;align-items:center;gap:4px;align-self:flex-start;padding:6px 10px;border-radius:14px;background:rgba(255,255,255,.06);font-size:12.5px;color:var(--mute);animation:msgIn .3s var(--e-out)}
+#chatui .typing span{margin-left:5px}
+#chatui .typing i{width:6px;height:6px;border-radius:50%;background:var(--mute);animation:tdot 1.1s ease-in-out infinite}
+#chatui .typing i:nth-child(2){animation-delay:.15s}#chatui .typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+#chatui .ttag{font-size:11.5px;color:#5fe08a;font-weight:600;flex:none}
+.note.shk{margin:6px 0 0;text-align:center;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -930,7 +1088,15 @@ function standings(g){
 // Spielstand, der von anderen Geraeten kommt, pruefen: nur erwartete Typen und Wertebereiche
 // durchlassen. Gueltige Spielstaende bleiben dabei unveraendert.
 const PHASES=['lobby','wish','swap','stock','play','end','over','closed'];
+// Spielstand pruefen – je nach Spiel
 function cleanGame(g){
+  if(!g||typeof g!=='object'||Array.isArray(g)||!Number.isInteger(g.v)||g.v<1)return null;
+  if(g.game==='stich')return typeof cleanStich==='function'?cleanStich(g):null;
+  if(g.game==='dice')return typeof cleanDice==='function'?cleanDice(g):null;
+  if('game' in g&&g.game!=='arsch')return null;
+  return cleanArsch(g);
+}
+function cleanArsch(g){
   if(!g||typeof g!=='object'||Array.isArray(g)||!Number.isInteger(g.v)||g.v<1||!PHASES.includes(g.phase))return null;
   const I=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
   const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x),LV=['easy','normal','hard'];
@@ -953,7 +1119,7 @@ function cleanGame(g){
   if('teamRound' in g)g.teamRound=I(g.teamRound,-1,1)?g.teamRound:-1;
   const playing=g.phase!=='lobby'&&g.phase!=='closed';
   if(!Array.isArray(g.players)||g.players.length<3||g.players.length>8||!g.players.every(O)){if(playing)return null;delete g.players;return g}
-  g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,16)||'Spieler';if('bot' in p)p.bot=!!p.bot;if('level' in p&&!LV.includes(p.level))p.level='normal'});
+  g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot;if('level' in p&&!LV.includes(p.level))p.level='normal'});
   if(!playing)return g;
   const n=g.players.length,seat=x=>I(x,0,n-1),at=(o,i)=>o&&typeof o==='object'?o[i]:undefined;
   const cmax=g.deck===52?51:31,cards=a=>Array.isArray(a)?a.filter(c=>I(c,0,cmax)||SPECIALS.includes(c)).slice(0,40):[],seats=a=>Array.isArray(a)?a.filter(seat).slice(0,n):[];
@@ -989,12 +1155,405 @@ function cleanGame(g){
 }
 //LOGIC-END
 
+//STICH-START
+// ===== Wizard: Stichspiel mit Ansagen (Regeln wie das bekannte Original, eigenes Design) =====
+// Karten: Farben 0–3 mit Werten 1–13 (id = farbe*13 + wert-1), Zauberer 60–63, Narren 70–73,
+// Sonderkarten 80–86 (nur im Spezial-Modus)
+const ST_SUITS=['Blau','Rot','Grün','Gelb'];
+const ST_Z=[60,61,62,63],ST_N=[70,71,72,73];
+const SHIFT=80,DRAGON=81,FAIRY=82,BOMB=83,WOLF=84,JUGGLER=85,CLOUD=86,ST_SPECIALS=[80,81,82,83,84,85,86];
+const ST_SPEC_NAME={80:'Gestaltwandler',81:'Drache',82:'Fee',83:'Bombe',84:'Werwolf',85:'Jongleur',86:'Wolke'};
+const ST_RULES={mode:'basis',plusminus:false,bots:'normal'};
+const SR=g=>Object.assign({},ST_RULES,g.rules||{});
+const stNum=c=>c>=0&&c<52,stSuit=c=>Math.floor(c/13),stVal=c=>c%13+1;
+const stIsZ=c=>c>=60&&c<64,stIsN=c=>c>=70&&c<74,stIsSpec=c=>c>=80&&c<87;
+const stRounds=n=>({3:20,4:15,5:12,6:10})[n]||10;
+function stCardName(c,as){
+  if(stNum(c))return ST_SUITS[stSuit(c)]+' '+stVal(c);
+  if(stIsZ(c))return 'Zauberer';if(stIsN(c))return 'Narr';
+  let t=ST_SPEC_NAME[c]||'?';
+  if(c===SHIFT&&as)t+=' als '+(as==='Z'?'Zauberer':'Narr');
+  if((c===JUGGLER||c===CLOUD)&&as!=null&&as!=='')t+=' ('+ST_SUITS[+as]+')';
+  return t;
+}
+function stDeck(g){const d=[...Array(52).keys(),...ST_Z,...ST_N];if(SR(g).mode==='spezial')d.push(...ST_SPECIALS);return d}
+function stStart(g){
+  const n=g.players.length;
+  g.total=stRounds(n);g.round=0;g.scores=Array(n).fill(0);g.hist=[];g.match=(g.match|0)+1;g.paused=null;
+  stDeal(g);
+}
+// Neue Runde austeilen und Trumpf bestimmen
+function stDeal(g){
+  const n=g.players.length;g.round++;
+  const deck=shuffle(stDeck(g)),r=g.round;
+  g.hands={};for(let i=0;i<n;i++)g.hands[i]=deck.splice(0,r).sort(stSort);
+  g.dealer=(r-1)%n;g.bids=Array(n).fill(null);g.won=Array(n).fill(0);g.trick=[];g.lastTrick=null;g.leader=(g.dealer+1)%n;
+  g.tcard=deck.length?deck.shift():null;g.trump=-1;g.cloudBy=-1;g.jPick=null;g.msg='';
+  g.phase='bid';g.turn=(g.dealer+1)%n;
+  const tc=g.tcard;
+  if(tc==null){g.trump=-1;g.msg='Runde '+r+': letzte Runde ohne Trumpf.'}
+  else if(stNum(tc)){g.trump=stSuit(tc);g.msg='Runde '+r+': Trumpf ist '+ST_SUITS[g.trump]+'.'}
+  else if(stIsN(tc)||tc===FAIRY||tc===BOMB){g.trump=-1;g.msg='Runde '+r+': '+stCardName(tc)+' aufgedeckt – kein Trumpf.'}
+  else{g.phase='trump';g.turn=g.dealer;g.msg='Runde '+r+': '+stCardName(tc)+' aufgedeckt – '+nm(g,g.dealer)+' bestimmt den Trumpf.'}
+  if(g.phase==='bid')stCheckWolf(g);
+}
+// Werwolf auf der Hand: tauscht mit der Trumpfkarte, danach bestimmt der Besitzer den Trumpf
+function stCheckWolf(g){
+  if(g.tcard==null)return;
+  for(let s=0;s<g.players.length;s++)if(g.hands[s].includes(WOLF)){
+    g.hands[s]=g.hands[s].filter(c=>c!==WOLF).concat([g.tcard]).sort(stSort);g.tcard=WOLF;
+    g.phase='werwolf';g.turn=s;g.msg=nm(g,s)+' hat den Werwolf und tauscht ihn gegen die Trumpfkarte – '+nm(g,s)+' bestimmt den Trumpf.';return;
+  }
+}
+const stSort=(a,b)=>stKey(a)-stKey(b);
+function stKey(c){if(stIsN(c))return -1;if(stNum(c))return stSuit(c)*20+stVal(c);if(stIsZ(c))return 200;return 100+c}
+// Trumpf waehlen (Geber nach Zauberer/Sonderkarte oder Werwolf-Besitzer); -1 = kein Trumpf (nur beim Werwolf)
+function stSetTrump(g,seat,t){
+  if(g.phase==='trump'){if(seat!==g.dealer||!(t>=0&&t<4))return false;g.trump=t;g.msg=nm(g,seat)+' wählt '+ST_SUITS[t]+' als Trumpf.';g.phase='bid';g.turn=(g.dealer+1)%g.players.length;stCheckWolf(g);return true}
+  if(g.phase==='werwolf'){if(seat!==g.turn||!(t>=-1&&t<4))return false;g.trump=t;g.msg=nm(g,seat)+(t<0?' entscheidet: kein Trumpf.':' wählt '+ST_SUITS[t]+' als Trumpf.');g.phase='bid';g.turn=(g.dealer+1)%g.players.length;return true}
+  return false;
+}
+function stBidOk(g,seat,b){
+  if(g.phase!=='bid'||g.turn!==seat||!Number.isInteger(b)||b<0||b>g.round)return false;
+  if(SR(g).plusminus&&stLastBidder(g)===seat){const sum=g.bids.reduce((a,x)=>a+(x||0),0);if(sum+b===g.round)return false}
+  return true;
+}
+const stLastBidder=g=>g.dealer;
+function stBid(g,seat,b){
+  if(!stBidOk(g,seat,b))return false;
+  g.bids[seat]=b;g.msg=nm(g,seat)+' sagt '+b+' an.';
+  if(seat===g.dealer){g.phase='play';g.turn=g.leader=(g.dealer+1)%g.players.length;g.trick=[]}
+  else g.turn=(seat+1)%g.players.length;
+  return true;
+}
+// Effektive Eigenschaften einer gespielten Karte im Stich
+function stEff(e){
+  const c=e.c;
+  if(stNum(c))return {kind:'num',suit:stSuit(c),val:stVal(c)};
+  if(c===JUGGLER)return {kind:'num',suit:+e.as,val:7.5};
+  if(c===CLOUD)return {kind:'num',suit:+e.as,val:9.75};
+  if(stIsZ(c)||(c===SHIFT&&e.as==='Z'))return {kind:'Z'};
+  if(c===DRAGON)return {kind:'D'};
+  if(c===FAIRY)return {kind:'F'};
+  if(c===BOMB)return {kind:'B'};
+  return {kind:'N'}; // Narr, Gestaltwandler als Narr
+}
+// Farbe, die bedient werden muss (null = alles erlaubt)
+function stLead(g){
+  for(let i=0;i<g.trick.length;i++){const f=stEff(g.trick[i]);
+    if(f.kind==='num')return f.suit;
+    if(f.kind==='Z'||f.kind==='D')return null;                    // nach Zauberer/Drache ist alles frei
+    if((f.kind==='F'||f.kind==='B')&&i===0)return null;           // mit Fee/Bombe eroeffnet: wie Zauberer
+  }
+  return null;
+}
+const stFree=c=>!stNum(c); // Zauberer, Narren und Sonderkarten duerfen immer gespielt werden
+function stCanPlay(g,seat,c,as){
+  if(g.phase!=='play'||g.turn!==seat||!g.hands[seat].includes(c))return false;
+  if(c===SHIFT&&as!=='Z'&&as!=='N')return false;
+  if((c===JUGGLER||c===CLOUD)&&!(Number.isInteger(+as)&&+as>=0&&+as<4&&as!==''))return false;
+  if(stFree(c))return true;
+  const lead=stLead(g);if(lead==null)return true;
+  if(stSuit(c)===lead)return true;
+  // Bedienpflicht: nur wenn man keine Zahlkarte der Farbe hat (Sonderkarten zaehlen nicht als Farbe auf der Hand)
+  return !g.hands[seat].some(x=>stNum(x)&&stSuit(x)===lead);
+}
+// Gewinner eines (vollstaendigen oder teilweisen) Stichs: Index im Stich
+function stWinnerIdx(g,trick){
+  const ef=trick.map(stEff);
+  const di=ef.findIndex(f=>f.kind==='D'),fi=ef.findIndex(f=>f.kind==='F');
+  if(di>=0)return fi>=0?fi:di;
+  const zi=ef.findIndex(f=>f.kind==='Z');if(zi>=0)return zi;
+  let best=-1,bv=-1;const tr=g.trump;
+  if(tr>=0)ef.forEach((f,i)=>{if(f.kind==='num'&&f.suit===tr&&f.val>bv){bv=f.val;best=i}});
+  if(best>=0)return best;
+  let lead=null;for(const f of ef){if(f.kind==='num'){lead=f.suit;break}}
+  if(lead!=null){ef.forEach((f,i)=>{if(f.kind==='num'&&f.suit===lead&&f.val>bv){bv=f.val;best=i}});return best}
+  return 0; // nur Narren (bzw. Narren-artige Karten): der erste gewinnt
+}
+function stPlay(g,seat,c,as){
+  if(!stCanPlay(g,seat,c,as))return false;
+  g.hands[seat]=g.hands[seat].filter(x=>x!==c);
+  const e={s:seat,c};if(c===SHIFT||c===JUGGLER||c===CLOUD)e.as=c===SHIFT?as:+as;
+  g.trick.push(e);g.msg=nm(g,seat)+' spielt '+stCardName(c,e.as)+'.';
+  const n=g.players.length;
+  if(g.trick.length<n){g.turn=(seat+1)%n;return true}
+  // Stich auswerten
+  const wi=stWinnerIdx(g,g.trick),w=g.trick[wi].s,bomb=g.trick.some(x=>x.c===BOMB);
+  const hasCloud=g.trick.some(x=>x.c===CLOUD),hasJug=g.trick.some(x=>x.c===JUGGLER);
+  g.lastTrick={cards:g.trick,w,bomb};
+  if(bomb)g.msg='💣 Bombe! Der Stich zählt für niemanden – '+nm(g,w)+' spielt den nächsten Stich aus.';
+  else{g.won[w]++;g.msg=nm(g,w)+' gewinnt den Stich.'}
+  g.trick=[];g.leader=w;g.turn=w;
+  const handsLeft=g.hands[0].length;
+  if(hasCloud&&!bomb){g.phase='cloud';g.cloudBy=w;g.turn=w;g.msg+=' ☁️ Wolke: '+nm(g,w)+' ändert die Ansage um 1.';return true}
+  if(hasJug&&handsLeft>0){g.phase='juggle';g.jPick=Array(n).fill(null);g.msg+=' 🤹 Jongleur: Alle geben eine Karte nach links weiter.';return true}
+  if(handsLeft===0)stEndRound(g);
+  return true;
+}
+// Wolke: Ansage um +1 oder -1 aendern
+function stCloud(g,seat,d){
+  if(g.phase!=='cloud'||seat!==g.cloudBy||(d!==1&&d!==-1))return false;
+  if(d===-1&&g.bids[seat]<=0)return false;
+  g.bids[seat]+=d;g.msg=nm(g,seat)+' ändert die Ansage auf '+g.bids[seat]+'.';g.cloudBy=-1;
+  const hasJug=g.lastTrick&&g.lastTrick.cards.some(x=>x.c===JUGGLER);
+  if(hasJug&&g.hands[0].length>0){g.phase='juggle';g.jPick=Array(g.players.length).fill(null);g.msg+=' 🤹 Alle geben eine Karte weiter.';return true}
+  g.phase='play';g.turn=g.leader;if(g.hands[0].length===0)stEndRound(g);return true;
+}
+// Jongleur: jeder waehlt eine Karte, dann wird gleichzeitig nach links weitergegeben
+function stJugglePick(g,seat,c){
+  if(g.phase!=='juggle'||!g.hands[seat].includes(c)||g.jPick[seat]!=null)return false;
+  g.jPick[seat]=c;
+  if(g.jPick.every(x=>x!=null)){
+    const n=g.players.length;
+    for(let s=0;s<n;s++)g.hands[s]=g.hands[s].filter(x=>x!==g.jPick[s]);
+    for(let s=0;s<n;s++){g.hands[(s+1)%n].push(g.jPick[s]);g.hands[(s+1)%n].sort(stSort)}
+    g.jPick=null;g.phase='play';g.turn=g.leader;g.msg='Karten weitergegeben. '+nm(g,g.leader)+' spielt aus.';
+  }
+  return true;
+}
+function stEndRound(g){
+  const n=g.players.length,pts=[];
+  for(let s=0;s<n;s++){const d=Math.abs(g.bids[s]-g.won[s]);pts[s]=d===0?20+10*g.won[s]:-10*d;g.scores[s]+=pts[s]}
+  g.hist.push({r:g.round,bids:g.bids.slice(),won:g.won.slice(),pts});
+  g.phase=g.round>=g.total?'over':'rend';g.turn=-1;
+  g.msg='Runde '+g.round+' vorbei.';
+}
+function stNext(g){if(g.phase!=='rend')return false;stDeal(g);return true}
+function stStandings(g){return g.players.map((p,s)=>({s,name:p.name,pts:g.scores[s]})).sort((a,b)=>b.pts-a.pts)}
+function stPlaces(g){const st=stStandings(g),pl=[];st.forEach((x,i)=>{pl[x.s]=i>0&&x.pts===st[i-1].pts?pl[st[i-1].s]:i});return pl}
+
+// ----- Computergegner -----
+function stCardPower(g,c){
+  if(stIsZ(c)||c===DRAGON)return 1;
+  if(c===SHIFT)return .9;
+  if(stIsN(c)||c===FAIRY||c===BOMB)return 0;
+  if(c===JUGGLER||c===CLOUD)return .35;
+  const n=g.players.length,v=stVal(c),tr=stSuit(c)===g.trump;
+  if(tr)return v>=11?.85:v>=8?.55:v>=5?.3:.15;
+  return v===13?(n<=4?.6:.45):v===12?(n<=4?.3:.2):v===11?.12:0;
+}
+function stBotBid(g,s){
+  let e=g.hands[s].reduce((a,c)=>a+stCardPower(g,c),0);
+  let b=Math.max(0,Math.min(g.round,Math.round(e)));
+  const lvl=SR(g).bots;if(lvl==='easy'&&Math.random()<.4)b=Math.max(0,Math.min(g.round,b+(Math.random()<.5?-1:1)));
+  if(!stBidOk(g,s,b)){for(const d of [1,-1,2,-2,3,-3]){if(stBidOk(g,s,b+d)){b=b+d;break}}}
+  return b;
+}
+function stBotTrump(g,s){
+  const cnt=[0,0,0,0];g.hands[s].forEach(c=>{if(stNum(c))cnt[stSuit(c)]+=1+stVal(c)/13});
+  let best=0;cnt.forEach((x,i)=>{if(x>cnt[best])best=i});return best;
+}
+// Waehlt Karte (+ Zusatz fuer Sonderkarten), die einen Stich gewinnt bzw. verliert
+function stBotPlay(g,s){
+  const h=g.hands[s],need=g.bids[s]-g.won[s],opts=[];
+  for(const c of h){
+    if(c===SHIFT){opts.push([c,'Z'],[c,'N']);continue}
+    if(c===JUGGLER||c===CLOUD){for(let t=0;t<4;t++)opts.push([c,t]);continue}
+    opts.push([c,undefined]);
+  }
+  const legal=opts.filter(([c,as])=>stCanPlay(g,s,c,as));
+  if(!legal.length)return null;
+  const n=g.players.length,last=g.trick.length===n-1;
+  const res=legal.map(([c,as])=>{const t=g.trick.concat([{s,c,as}]);const wi=stWinnerIdx(g,t);const winsNow=t[wi].s===s;
+    return {c,as,win:winsNow,pow:stCardPower(g,c)+(c===SHIFT?(as==='Z'?.5:-.5):0)+(stNum(c)?stVal(c)/100:0)}});
+  const lvl=SR(g).bots;
+  if(lvl==='easy'&&Math.random()<.3)return res[Math.floor(Math.random()*res.length)];
+  if(need>0){
+    const w=res.filter(x=>x.win).sort((a,b)=>a.pow-b.pow);
+    if(w.length&&(last||lvl!=='hard'||w[0].pow>=.5||Math.random()<.7))return w[0];
+    return res.sort((a,b)=>a.pow-b.pow)[0];
+  }
+  const l=res.filter(x=>!x.win).sort((a,b)=>b.pow-a.pow);
+  if(l.length)return l[0];
+  return res.sort((a,b)=>a.pow-b.pow)[0];
+}
+function stBotCloud(g,s){const need=g.bids[s]-g.won[s];return (need<0||g.bids[s]<=0)?1:need>0?1:(g.hands[s].reduce((a,c)=>a+stCardPower(g,c),0)>.6?1:-1)}
+function stBotJuggle(g,s){const h=g.hands[s].slice().sort((a,b)=>stCardPower(g,a)-stCardPower(g,b));return h[0]}
+// Ein Computerzug fuer die aktuelle Phase; gibt true zurueck, wenn etwas passiert ist
+function stBotStep(g){
+  const ph=g.phase;
+  if(ph==='juggle'){let any=false;g.players.forEach((p,s)=>{if(p.bot&&g.jPick&&g.jPick[s]==null){stJugglePick(g,s,stBotJuggle(g,s));any=true}});return any}
+  const s=g.turn;if(s<0||!g.players[s]||!g.players[s].bot)return false;
+  if(ph==='trump')return stSetTrump(g,s,stBotTrump(g,s));
+  if(ph==='werwolf')return stSetTrump(g,s,stBotTrump(g,s));
+  if(ph==='bid')return stBid(g,s,stBotBid(g,s));
+  if(ph==='cloud')return stCloud(g,s,stBotCloud(g,s));
+  if(ph==='play'){const m=stBotPlay(g,s);return m?stPlay(g,s,m.c,m.as):false}
+  return false;
+}
+// Spielstand pruefen (Daten von anderen Geraeten)
+function cleanStich(g){
+  const I=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+  const PH=['lobby','closed','trump','werwolf','bid','play','cloud','juggle','rend','over'];
+  if(!PH.includes(g.phase))return null;
+  if('host' in g)g.host=S(g.host,64);
+  if('bots' in g)g.bots=I(g.bots,0,5)?g.bots:0;
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={mode:r.mode==='spezial'?'spezial':'basis',plusminus:!!r.plusminus,bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal'}}
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
+  if('msg' in g)g.msg=S(g.msg,400);
+  for(const k of ['round','total','match','dealer','turn','leader','trump','cloudBy'])if(k in g)g[k]=I(g[k],-1,1e5)?g[k]:-1;
+  if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
+  if(!Array.isArray(g.players)||g.players.length<3||g.players.length>6||!g.players.every(O))return null;
+  const n=g.players.length,seat=x=>I(x,0,n-1),okc=c=>I(c,0,51)||I(c,60,63)||I(c,70,73)||I(c,80,86);
+  g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
+  const hs=O(g.hands)||Array.isArray(g.hands)?g.hands:{};g.hands={};for(let i=0;i<n;i++)g.hands[i]=Array.isArray(hs[i])?hs[i].filter(okc).slice(0,25):[];
+  const nums=(a,lo,hi,len)=>{const r=Array.isArray(a)?a.slice(0,len).map(x=>x==null?null:I(x,lo,hi)?x:0):[];while(r.length<len)r.push(null);return r};
+  g.bids=nums(g.bids,0,25,n);g.won=nums(g.won,0,25,n).map(x=>x||0);g.scores=nums(g.scores,-10000,10000,n).map(x=>x||0);
+  if('jPick' in g)g.jPick=Array.isArray(g.jPick)?nums(g.jPick,0,86,n).map(x=>x!=null&&okc(x)?x:null):null;
+  const ce=e=>O(e)&&seat(e.s)&&okc(e.c)?Object.assign({s:e.s,c:e.c},'as' in e?{as:e.c===SHIFT?(e.as==='Z'?'Z':'N'):I(e.as,0,3)?e.as:0}:{}):null;
+  g.trick=Array.isArray(g.trick)?g.trick.map(ce).filter(Boolean).slice(0,n):[];
+  if('lastTrick' in g)g.lastTrick=O(g.lastTrick)&&Array.isArray(g.lastTrick.cards)?{cards:g.lastTrick.cards.map(ce).filter(Boolean).slice(0,n),w:seat(g.lastTrick.w)?g.lastTrick.w:0,bomb:!!g.lastTrick.bomb}:null;
+  if('tcard' in g)g.tcard=okc(g.tcard)?g.tcard:null;
+  if('hist' in g)g.hist=Array.isArray(g.hist)?g.hist.slice(0,25).filter(O).map(h=>({r:I(h.r,0,25)?h.r:0,bids:nums(h.bids,0,25,n),won:nums(h.won,0,25,n),pts:nums(h.pts,-1000,1000,n)})):[];
+  if(['trump','werwolf','bid','play','cloud'].includes(g.phase)&&!seat(g.turn))return null;
+  return g;
+}
+//STICH-END
+
+//DICE-START
+// ===== Würfelblock: 5 Würfel, 13 Felder (Regeln wie das bekannte Würfelspiel) =====
+const DC_CATS=['c1','c2','c3','c4','c5','c6','k3','k4','fh','ss','ls','kn','ch'];
+const DC_NAME={c1:'Einser',c2:'Zweier',c3:'Dreier',c4:'Vierer',c5:'Fünfer',c6:'Sechser',k3:'Dreierpasch',k4:'Viererpasch',fh:'Full House',ss:'Kleine Straße',ls:'Große Straße',kn:'Fünf Gleiche',ch:'Chance'};
+const DC_HINT={c1:'Summe der Einser',c2:'Summe der Zweier',c3:'Summe der Dreier',c4:'Summe der Vierer',c5:'Summe der Fünfer',c6:'Summe der Sechser',k3:'3 gleiche – Summe aller Augen',k4:'4 gleiche – Summe aller Augen',fh:'3 + 2 gleiche = 25',ss:'4 in Folge = 30',ls:'5 in Folge = 40',kn:'5 gleiche = 50',ch:'Summe aller Augen'};
+const DC_UPPER=['c1','c2','c3','c4','c5','c6'];
+const DC_RULES={mode:'roll',bots:'normal'};
+const DR=g=>Object.assign({},DC_RULES,g.rules||{});
+const dcSum=d=>d.reduce((a,x)=>a+x,0);
+function dcCounts(d){const c=[0,0,0,0,0,0,0];d.forEach(x=>c[x]++);return c}
+function dcRun(d){const s=new Set(d);let best=0,cur=0;for(let i=1;i<=6;i++){if(s.has(i)){cur++;best=Math.max(best,cur)}else cur=0}return best}
+// Punkte fuer ein Feld bei diesem Wurf
+function dcScoreOf(cat,d){
+  if(!d||d.length!==5||d.some(x=>!(x>=1&&x<=6)))return 0;
+  const c=dcCounts(d),mx=Math.max(...c);
+  if(cat[0]==='c'&&cat!=='ch'){const k=+cat[1];return c[k]*k}
+  switch(cat){
+    case 'k3':return mx>=3?dcSum(d):0;
+    case 'k4':return mx>=4?dcSum(d):0;
+    case 'fh':return c.includes(3)&&c.includes(2)?25:0;
+    case 'ss':return dcRun(d)>=4?30:0;
+    case 'ls':return dcRun(d)>=5?40:0;
+    case 'kn':return mx===5?50:0;
+    case 'ch':return dcSum(d);
+  }
+  return 0;
+}
+// Erlaubte Werte beim Eintragen mit echten Wuerfeln
+function dcAllowed(cat){
+  if(DC_UPPER.includes(cat)){const k=+cat[1];return [0,1,2,3,4,5].map(i=>i*k)}
+  if(cat==='k3'||cat==='k4'){const a=[0];const lo=cat==='k3'?5:5;for(let i=lo;i<=30;i++)a.push(i);return a}
+  if(cat==='ch'){const a=[];for(let i=5;i<=30;i++)a.push(i);return a}
+  return [0,{fh:25,ss:30,ls:40,kn:50}[cat]];
+}
+function dcTotals(sh){
+  sh=sh||{};const up=DC_UPPER.reduce((a,k)=>a+(sh[k]||0),0),bonus=up>=63?35:0;
+  const low=['k3','k4','fh','ss','ls','kn','ch'].reduce((a,k)=>a+(sh[k]||0),0);
+  return {up,bonus,low,total:up+bonus+low,filled:DC_CATS.filter(k=>sh[k]!=null).length};
+}
+function dcStart(g){
+  const n=g.players.length;g.sheet={};for(let s=0;s<n;s++)g.sheet[s]={};
+  g.match=(g.match|0)+1;g.turn=0;g.dice=[1,2,3,4,5];g.held=[false,false,false,false,false];g.rolls=0;g.round=1;g.phase='play';g.paused=null;
+  g.msg=DR(g).mode==='real'?'Würfelt mit echten Würfeln und tragt eure Ergebnisse ein.':nm(g,0)+' beginnt.';
+}
+const dcFull=g=>g.players.every((_,s)=>dcTotals(g.sheet[s]).filled===13);
+function dcRoll(g,seat){
+  if(DR(g).mode!=='roll'||g.phase!=='play'||g.turn!==seat||g.rolls>=3)return false;
+  if(g.rolls>0&&g.held.every(Boolean))return false;
+  g.dice=g.dice.map((x,i)=>g.rolls>0&&g.held[i]?x:1+Math.floor(Math.random()*6));
+  if(g.rolls===0)g.held=[false,false,false,false,false];
+  g.rolls++;g.rollId=(g.rollId|0)+1;g.msg=nm(g,seat)+' würfelt ('+g.rolls+'/3).';return true;
+}
+function dcHold(g,seat,i){
+  if(DR(g).mode!=='roll'||g.phase!=='play'||g.turn!==seat||g.rolls<1||g.rolls>=3||!(i>=0&&i<5))return false;
+  g.held[i]=!g.held[i];return true;
+}
+function dcScore(g,seat,cat){
+  if(DR(g).mode!=='roll'||g.phase!=='play'||g.turn!==seat||g.rolls<1||!DC_CATS.includes(cat)||g.sheet[seat][cat]!=null)return false;
+  const v=dcScoreOf(cat,g.dice);g.sheet[seat][cat]=v;
+  g.msg=nm(g,seat)+' trägt '+v+' bei '+DC_NAME[cat]+' ein.';
+  const n=g.players.length;g.rolls=0;g.held=[false,false,false,false,false];
+  if(dcFull(g)){g.phase='over';g.turn=-1;return true}
+  let t=seat;do{t=(t+1)%n}while(dcTotals(g.sheet[t]).filled===13);g.turn=t;
+  g.round=Math.min(13,Math.min(...g.players.map((_,s)=>dcTotals(g.sheet[s]).filled))+1);
+  return true;
+}
+// Echte Wuerfel: Wert eintragen (null = loeschen)
+function dcSet(g,seat,target,cat,val){
+  if(DR(g).mode!=='real'||g.phase!=='play'||!DC_CATS.includes(cat)||!g.sheet[target])return false;
+  if(!g.local&&seat!==target)return false;
+  if(val==null){delete g.sheet[target][cat];return true}
+  if(!dcAllowed(cat).includes(val))return false;
+  g.sheet[target][cat]=val;g.msg=nm(g,target)+': '+DC_NAME[cat]+' = '+val;
+  if(dcFull(g)){g.phase='over';g.turn=-1}
+  return true;
+}
+function dcStandings(g){return g.players.map((p,s)=>({s,name:p.name,pts:dcTotals(g.sheet[s]).total})).sort((a,b)=>b.pts-a.pts)}
+function dcPlaces(g){const st=dcStandings(g),pl=[];st.forEach((x,i)=>{pl[x.s]=i>0&&x.pts===st[i-1].pts?pl[st[i-1].s]:i});return pl}
+
+// ----- Computergegner (virtuelle Wuerfel) -----
+const DC_BASE={c1:2.1,c2:4.2,c3:6.3,c4:8.4,c5:10.5,c6:12.6,k3:15,k4:7,fh:9,ss:13,ls:8,kn:4,ch:22};
+function dcBestCat(g,s,d){
+  const sh=g.sheet[s],open=DC_CATS.filter(k=>sh[k]==null),up=dcTotals(sh).up;
+  let best=open[0],bv=-1e9;
+  for(const k of open){let v=dcScoreOf(k,d)-DC_BASE[k];
+    if(DC_UPPER.includes(k)){const f=+k[1],cnt=dcCounts(d)[f];if(up<63&&cnt>=3)v+=4+f;}
+    if(k==='kn'&&dcScoreOf(k,d)===50)v+=30;
+    if(v>bv){bv=v;best=k}}
+  return best;
+}
+function dcBotHolds(g,s){
+  const d=g.dice,c=dcCounts(d),sh=g.sheet[s],open=k=>sh[k]==null;
+  if(dcScoreOf('kn',d)===50&&open('kn'))return null; // sofort eintragen
+  if(dcRun(d)>=5&&open('ls'))return null;
+  if(dcScoreOf('fh',d)===25&&open('fh')&&g.rolls>=2)return null;
+  // Strasse verfolgen
+  if((open('ls')||open('ss'))&&dcRun(d)>=4){const s4=[[1,2,3,4],[2,3,4,5],[3,4,5,6]].find(r=>r.every(x=>d.includes(x)));
+    if(s4){if(!open('ls')&&open('ss'))return null;const used=new Set();return d.map((x)=>{if(s4.includes(x)&&!used.has(x)){used.add(x);return true}return false})}}
+  // haeufigste Zahl halten (bei Gleichstand die hoehere)
+  let f=6;for(let i=6;i>=1;i--)if(c[i]>c[f])f=i;
+  if(c[f]===1){const hi=d.map(x=>x>=5);return hi}
+  return d.map(x=>x===f);
+}
+function dcBotStep(g){
+  if(DR(g).mode!=='roll'||g.phase!=='play')return false;
+  const s=g.turn;if(s<0||!g.players[s]||!g.players[s].bot)return false;
+  if(g.rolls===0)return dcRoll(g,s);
+  if(g.rolls<3){const h=dcBotHolds(g,s);
+    if(h&&!(DR(g).bots==='easy'&&Math.random()<.3)){g.held=h.map(Boolean);if(!g.held.every(Boolean))return dcRoll(g,s)}}
+  return dcScore(g,s,DR(g).bots==='easy'&&Math.random()<.25?DC_CATS.filter(k=>g.sheet[s][k]==null)[0]:dcBestCat(g,s,g.dice));
+}
+function cleanDice(g){
+  const I=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+  if(!['lobby','closed','play','over'].includes(g.phase))return null;
+  if('host' in g)g.host=S(g.host,64);
+  if('bots' in g)g.bots=I(g.bots,0,7)?g.bots:0;
+  if('local' in g)g.local=!!g.local;
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={mode:r.mode==='real'?'real':'roll',bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal'}}
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
+  if('msg' in g)g.msg=S(g.msg,400);
+  if('names' in g)g.names=Array.isArray(g.names)?g.names.slice(0,8).map(x=>S(x,16)).filter(Boolean):[];
+  for(const k of ['round','match','turn','rolls','rollId'])if(k in g)g[k]=I(g[k],-1,1e6)?g[k]:0;
+  if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
+  if(!Array.isArray(g.players)||g.players.length<1||g.players.length>8||!g.players.every(O))return null;
+  const n=g.players.length;
+  g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
+  const src=O(g.sheet)?g.sheet:{};g.sheet={};
+  for(let s=0;s<n;s++){const o=O(src[s])?src[s]:{},r={};for(const k of Object.keys(o))if(DC_CATS.includes(k)&&dcAllowed(k).includes(o[k]))r[k]=o[k];g.sheet[s]=r}
+  g.dice=Array.isArray(g.dice)&&g.dice.length===5&&g.dice.every(x=>I(x,1,6))?g.dice:[1,2,3,4,5];
+  g.held=Array.isArray(g.held)&&g.held.length===5?g.held.map(Boolean):[false,false,false,false,false];
+  if(g.phase==='play'&&DR(g).mode==='roll'&&!I(g.turn,0,n-1))return null;
+  return g;
+}
+//DICE-END
+
 /* ---------- Grundlagen ---------- */
 const SB_URL='https://xatfnfirvkvoxnitysmj.supabase.co';
 const SB_KEY='sb_publishable_JV8pQLw5a7tLFJXZ1yZZPg_V8XN7K_4';
 const SLOT=new URLSearchParams(location.search).get('slot')||'';
 const LOW=/Android/i.test(navigator.userAgent)||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
-const BOTS=['Bot Anna','Bot Ben','Bot Cleo','Bot Dino','Bot Emil','Bot Fritzi','Bot Greta'];
+const BOTS=['Big Yaro','Big Snake','Hörgerät','Gundi','Boceta','Skebodi','Klangschalen Uschi'];
 const STATUS={home:'online',lobby:'in der Lobby',bots:'spielt gegen Bots',game:'im Spiel'};
 const $=s=>document.querySelector(s);
 const esc=s=>(typeof s==='string'?s:typeof s==='number'?String(s):'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -1027,9 +1586,9 @@ function questPanel(){
     return '<div class="qrow'+(d?' done':'')+'"><span class="qt">'+(d?'✅ ':'')+esc(QUEST_TXT[q.id]||q.id)+'</span><span class="qn">'+Math.min(+q.have||0,+q.need||0)+'/'+(+q.need||0)+'</span><div class="qb"><i style="width:'+(p*100).toFixed(0)+'%"></i></div></div>'}).join('')+
     '<p class="note" style="margin:8px 0 0">⭐ '+st+' Tagesstern'+(st===1?'':'e')+(st<5?' · ab 5 gibt es den Sternen-Kartenrücken':' · Sternen-Kartenrücken freigeschaltet')+'. Neue Aufgaben jeden Tag um Mitternacht.</p></div>';
 }
-let friends=[],friendsKey='',myGames=[],rankRows=null,profileData=null,lastStatus='',invQ=[],invShown=new Set(),modalOpen=false;
+let friends=[],friendsKey='',myGames=[],rankRows=null,profileData=null,gameStats=null,lastStatus='',invQ=[],invShown=new Set(),modalOpen=false;
 let endHold=0,turnStart=0,autoV=-1,boomT,boomUntil=0;
-let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0;
+let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0,chatTab='room',dmUnread={},dmWith=null,dmMsgs=null;
 const EMOTES=['😂','💣','😡','😎','😭','🤡','👑','💩'];
 const EKEY={'😂':'laugh','💣':'bomb','😡':'angry','😎':'cool','😭':'cry','🤡':'clown','👑':'crown','💩':'poop'};
 // Spezial-Emotes: [Praesident-Anzahl, Emoji, Name, Tisch-Freischaltung]
@@ -1092,8 +1651,8 @@ async function sbStore(){
   };
   S.kick=(c,u)=>rpc('kick_member',{p_code:c,p_uid:u});
   S.hide=c=>rpc('hide_game',{p_code:c});
-  S.listenUser=(onInv,onFr)=>{sb.channel('user:'+S.uid,{config:{private:true}})
-    .on('broadcast',{event:'invite'},m=>onInv(m.payload)).on('broadcast',{event:'friends'},()=>onFr()).subscribe()};
+  S.listenUser=(onInv,onFr,onD)=>{sb.channel('user:'+S.uid,{config:{private:true}})
+    .on('broadcast',{event:'invite'},m=>onInv(m.payload)).on('broadcast',{event:'friends'},()=>onFr()).on('broadcast',{event:'dm'},m=>onD&&onD(m.payload)).subscribe()};
   S.register=async(u,pw)=>{
     if(!await rpc('username_free',{p_name:u}))throw new Error('taken');
     let r=await sb.auth.updateUser({email:mail(u),password:pw});
@@ -1153,7 +1712,7 @@ function pickPhoto(){
 }
 
 /* ---------- Einstellungen ---------- */
-let SET={snd:true,vib:true,push:false,sfxVol:.8,musVol:.35,music:'chill'};
+let SET={snd:true,vib:true,shake:true,push:false,sfxVol:.8,musVol:.35,music:'chill'};
 try{Object.assign(SET,JSON.parse(ls.get('al_set')||'{}'))}catch(e){}
 function saveSet(){ls.set('al_set',JSON.stringify(SET))}
 
@@ -1345,9 +1904,9 @@ async function init(){
     if(me){
       myName=me.display;
       if(me.theme&&me.theme.surface){Object.assign(T,me.theme);ls.set('al_theme',JSON.stringify(T));applyTheme()}
-      store.listenUser(()=>pollInvites(),()=>loadFriends());
-      loadFriends();pollInvites();heartbeat();loadPres();loadQuests();
-      setInterval(()=>{if(document.hidden)return;heartbeat();pollInvites();if(!code||(G&&G.phase==='lobby'))loadFriends()},25000);
+      store.listenUser(()=>pollInvites(),()=>loadFriends(),p=>onDm(p));
+      loadFriends();pollInvites();loadDmUnread();heartbeat();loadPres();loadQuests();
+      setInterval(()=>{if(document.hidden)return;heartbeat();pollInvites();loadDmUnread();if(!code||(G&&G.phase==='lobby'))loadFriends()},25000);
       document.addEventListener('visibilitychange',()=>{if(!document.hidden){heartbeat();pollInvites()}else if(me)store.rpc('heartbeat',{p_status:'away'}).catch(()=>{})});
     }
     loadMyGames();
@@ -1402,16 +1961,16 @@ async function go(v,arg){
       monthWinner=l.length?{name:l[0].display,points:l[0].points,month:pm.toLocaleDateString('de-DE',{month:'long'})}:null}catch(e){monthWinner=null}
     render()}
   if(v==='ach'){profileData=null;try{profileData=await store.rpc('get_stats',{p_uid:myId});myStats=profileData}catch(e){profileData={err:1}}render()}
-  if(v==='profile'){profileData=null;try{profileData=await store.rpc('get_stats',{p_uid:arg||myId})}catch(e){profileData={err:1}}render()}
+  if(v==='profile'){profileData=null;gameStats=null;const pu=arg||myId;try{profileData=await store.rpc('get_stats',{p_uid:pu})}catch(e){profileData={err:1}}render();try{gameStats=await store.rpc('game_stats',{p_uid:pu});render()}catch(e){}}
   if(v==='home')loadMyGames();
 }
 
 /* ---------- Raeume ---------- */
 function grabName(){if(me){myName=me.display;return myName}myName=(drafts.name||'').trim().slice(0,16);if(myName)ls.set('al_name',myName);return myName}
 function needName(){if(grabName())return true;toast('Gib erst deinen Namen ein.');const i=$('#name');if(i)i.focus();return false}
-async function createRoom(){
-  if(!ready||busyUi||!needName())return;busyUi=true;
-  try{enter(await store.create(myName,{v:1,phase:'lobby',host:myId,bots:store.online?0:2,created:Date.now()}))}catch(e){if(/slow down/.test(String(e&&e.message)))toast('Du hast gerade sehr viele Räume erstellt – warte ein paar Minuten.');else writeErr(e)}
+async function createRoom(game){
+  if(!ready||busyUi||!needName())return;busyUi=true;closeModal();
+  try{enter(await store.create(myName,newRoomData(game||'arsch')))}catch(e){if(/slow down/.test(String(e&&e.message)))toast('Du hast gerade sehr viele Räume erstellt – warte ein paar Minuten.');else writeErr(e)}
   busyUi=false;
 }
 async function joinRoom(pre){
@@ -1423,13 +1982,13 @@ async function joinRoom(pre){
   catch(e){const m=String(e&&e.message||'');toast(/room full/.test(m)?'Der Raum ist voll.':/kicked/.test(m)?'Du wurdest aus diesem Raum entfernt.':/slow down/.test(m)?'Zu viele Versuche – warte kurz und probier es dann nochmal.':'Keine Verbindung – Raum konnte nicht geladen werden.')}
   busyUi=false;
 }
-function enter(c){
-  if(sub)sub.stop();
+function enter(c,st){
+  if(sub)sub.stop();rstore=st||null;
   try{history.replaceState(null,'','#'+c)}catch(e){}
   code=c;G=null;lobby=[];sel.clear();wishSel=[];seen={};stale=false;endHold=0;busy=false;commitTok++;
   chat=[];chatOpen=false;chatUnread=0;wheelOpen=false;
-  sub=store.subGame(c,onGame,l=>{lobby=l;if(G&&G.phase==='lobby')render()},onChat);
-  if(store.chatHistory)store.chatHistory(c).then(l=>{if(code!==c||!l)return;chat=l.map(x=>({uid:x.uid,name:x.name,kind:x.kind,body:x.body,at:x.created_at}));renderChat()}).catch(()=>{});
+  sub=RS().subGame(c,onGame,l=>{lobby=l;if(G&&G.phase==='lobby')render()},onChat);
+  if(!rstore&&store.chatHistory)store.chatHistory(c).then(l=>{if(code!==c||!l)return;chat=l.map(x=>({uid:x.uid,name:x.name,kind:x.kind,body:x.body,at:x.created_at}));renderChat()}).catch(()=>{});
   loadFriends();
   clearTimeout(loadTimer);loadTimer=setTimeout(()=>{if(!G){stale=true;render()}},10000);
   render();
@@ -1437,12 +1996,12 @@ function enter(c){
 function leave(){
   if(REC)micStop(true);
   if(sub)sub.stop();sub=null;clearTimeout(botTimer);botTimer=null;clearTimeout(loadTimer);
-  busy=false;commitTok++;code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';$('#chatui')._shell=null;
+  busy=false;commitTok++;const wasLocal=!!rstore;rstore=null;code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';$('#chatui')._shell=null;
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
-  closeModal();render();loadMyGames();lastStatus='home';heartbeat();
+  closeModal();render();if(!wasLocal)loadMyGames();lastStatus='home';heartbeat();
 }
 async function shareLink(){
-  const url=location.origin+location.pathname+'#'+code,text='Spiel Arschloch mit mir! Raumcode: '+code;
+  const url=location.origin+location.pathname+'#'+code,text='Spiel '+(GAMES[gameOf(G)]||GAMES.arsch).name+' mit mir! Raumcode: '+code;
   try{if(navigator.share){await navigator.share({title:'Arschloch',text,url});return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(text+' '+url);toast('Link kopiert – schick ihn deinen Freunden.')}catch(e){toast(url)}
 }
@@ -1464,6 +2023,7 @@ function onGame(g,force){
   if(G&&g.v<G.v&&!force)return;
   if(g.phase==='closed'){if(code){const h=g.host===myId;if(!h)toast('Der Host hat den Raum geschlossen.');const c=code;leave();store.hide&&store.hide(c).then(loadMyGames).catch(()=>{})}return}
   const prev=G;
+  if(gameOf(g)!=='arsch')return onGameOther(g,prev);
   if(prev&&g.pile&&g.pile.cards.length===4&&pileKey(g)!==pileKey(prev))boom(nm(g,g.pile.by)+' legt 4× '+RANKS[rk(g.pile.cards[0])]);
   else if(prev&&g.pile&&pileKey(g)!==pileKey(prev))sfx('card');
   else if(prev&&g.v!==prev.v&&g.phase==='play'&&g.passed&&prev.passed&&g.passed.length>prev.passed.length)sfx('pass');
@@ -1477,7 +2037,7 @@ function onGame(g,force){
   if(!prev||g.v!==prev.v||g.phase!==prev.phase)turnStart=Math.max(Date.now(),boomUntil);
   // Nach dem letzten Stich den Tisch noch kurz zeigen
   if(prev&&prev.phase==='play'&&g.phase==='end'){endHold=Math.max(Date.now()+2300,boomUntil+300);setTimeout(render,endHold-Date.now()+40)}
-  if(g.phase==='end'&&seen.rec!==code+':'+g.round){seen.rec=code+':'+g.round;const c=code;setTimeout(()=>{store.recordRound(c);setTimeout(()=>{loadPres();loadQuests(true)},2500)},1500)}
+  if(g.phase==='end'&&seen.rec!==code+':'+g.round){seen.rec=code+':'+g.round;const c=code;setTimeout(()=>{RS().recordRound(c);setTimeout(()=>{loadPres();loadQuests(true)},2500)},1500)}
   G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();tryLock();
   const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
 }
@@ -1495,11 +2055,12 @@ async function commit(g){
   s.local(g); // sofort anzeigen, Server bestaetigt im Hintergrund
   // Haengt die Verbindung, nach 10 s abbrechen und den Stand neu laden – sonst bliebe die App blockiert
   const to=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),10000));
-  try{const ok=await Promise.race([store.commit(c,g),to]);if(!ok)s.refetch()}catch(e){console.warn(e);s.refetch();if(String(e&&e.message)!=='timeout')writeErr(e)}
+  try{const ok=await Promise.race([RS().commit(c,g),to]);if(!ok)s.refetch()}catch(e){console.warn(e);s.refetch();if(String(e&&e.message)!=='timeout')writeErr(e)}
   if(tok===commitTok){busy=false;maybeBot();tryLock()}return true;
 }
-function running(){return G&&['wish','swap','stock','play'].includes(G.phase)}
+function running(){if(!G)return false;if(gameOf(G)!=='arsch')return otherRunning();return ['wish','swap','stock','play'].includes(G.phase)}
 function maybeBot(){
+  if(G&&gameOf(G)!=='arsch')return otherBot();
   if(!G||botTimer||G.paused||!running())return;
   const isHost=G.host===myId,me_=mySeat();
   if(!isHost&&me_<0)return;
@@ -1518,6 +2079,7 @@ function maybeBot(){
 }
 function tick(){
   const hg=$('#hg');
+  if(G&&gameOf(G)!=='arsch'){if(hg)hg.classList.remove('on');return}
   if(!G||G.phase!=='play'||G.paused||G.turn<0||!G.players[G.turn]||G.players[G.turn].bot||!turnSecs()){if(hg)hg.classList.remove('on');const t=$('#tm');if(t)t.textContent='';const bt=$('.tbar .tt');if(bt)bt.style.visibility='hidden';const bn=$('#tbarN');if(bn)bn.textContent='';return}
   const TURN=turnSecs();
   const me_=mySeat(),el=(Date.now()-turnStart)/1000,left=Math.max(0,Math.ceil(TURN-el)),mine=G.turn===me_;
@@ -1552,6 +2114,8 @@ function seatList(g){
 function onPresence(l){online=new Set(l);if(G&&code)render()}
 function onKicked(){toast('Du wurdest aus dem Raum entfernt.');leave()}
 function onChat(m){
+  if(m&&m.typing===true){if(typeof m.uid==='string'&&m.uid!==myId){typRoom[m.uid]={n:S2(m.name)||'Jemand',t:Date.now()};typTick()}return}
+  if(m&&typeof m.uid==='string')delete typRoom[m.uid];
   if(m.kind==='emote'){if(m.uid!==myId)showEmote(m.uid,m.body);return}
   chat.push(m);if(chat.length>80)chat.shift();
   if(!chatOpen&&m.uid!==myId){chatUnread++;bubble(m.uid,m.kind==='voice'?'🎤 Sprachnachricht':m.body);sfx('msg');render()}
@@ -1623,31 +2187,107 @@ async function send(kind,body){
 }
 function renderChat(){
   const box=$('#chatui');if(!box)return;
-  if(!code||!G){box.innerHTML='';box._shell=null;return}
+  const inRoom=!!(code&&G&&RS().online);
+  if(!inRoom&&!chatOpen){if(box.innerHTML){box.innerHTML='';box._shell=null}return}
+  if(!inRoom)chatTab='dm';
   let h='';
-  if(wheelOpen)h+='<div class="wheel" data-a="wheel">'+EMOTES.map((e,i)=>{const a=i/EMOTES.length*6.283-1.571;
+  if(inRoom&&wheelOpen)h+='<div class="wheel" data-a="wheel">'+EMOTES.map((e,i)=>{const a=i/EMOTES.length*6.283-1.571;
     return '<button class="we" data-a="emote" data-v="'+e+'" style="--x:'+(Math.cos(a)*108).toFixed(0)+'px;--y:'+(Math.sin(a)*108-40).toFixed(0)+'px;--i:'+i+'">'+e+'</button>'}).join('')+'<span class="wc">✕</span>'+
     '<div class="spstrip"><div class="sph">Spezial-Emotes · '+(me?'du warst '+presCount+'× Präsident':'nur mit Konto')+'</div><div class="spl">'+SPECIAL.map((x,i)=>{const ok=me&&specialUnlocked(i+1);
       return '<button class="spb'+(ok?'':' lock')+'" data-a="'+(ok?'emote':'splock')+'" data-v="sp'+(i+1)+'"><span>'+x[1]+'</span><small>'+(ok?esc(x[2]):'🔒 '+x[0]+'×')+'</small></button>'}).join('')+'</div></div></div>';
-  if(chatOpen)h+='<div class="chat"><div class="chead"><b>Chat</b><button class="iconbtn" data-a="chat">✕</button></div><div class="clist" id="clist">'+
-    (chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+
-    '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
-      '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>')+'</div>';
+  if(chatOpen){
+    const g=chatGeo(),dmN=dmTotal();
+    const tabs=(inRoom?'<button class="ctab'+(chatTab==='room'?' on':'')+'" data-a="ctab" data-v="room">Tisch</button>':'')+
+      '<button class="ctab'+(chatTab==='dm'?' on':'')+'" data-a="ctab" data-v="dm">Freunde'+(dmN?' <span class="badge">'+dmN+'</span>':'')+'</button>';
+    h+='<div class="chat" style="left:'+g.x+'px;top:'+g.y+'px;width:'+g.w+'px;height:'+g.h+'px"><div class="chead" title="Zum Verschieben ziehen"><span class="grip">⠿</span><div class="ctabs">'+tabs+'</div>'+
+      '<button class="iconbtn" data-a="chat" title="Schließen (Esc)">✕</button></div>';
+    if(chatTab==='room'){
+      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
+        '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
+        '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht an den Tisch …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>');
+    }else if(!me){
+      h+='<div class="clist" id="clist"><p class="note" style="text-align:center">Für den Privatchat mit Freunden brauchst du ein Konto.</p></div>';
+    }else if(!dmWith){
+      const fr=friends.filter(f=>f.rel==='friend').sort((a,b)=>(dmUnread[b.uid]||0)-(dmUnread[a.uid]||0)||(b.online-a.online)||a.display.localeCompare(b.display));
+      h+='<div class="clist dml" id="clist">'+(fr.length?fr.map(f=>'<button class="dmf ghost" data-a="dm-open" data-v="'+f.uid+'"><span class="avw">'+avatar(f.avatar,f.display,f.wins,34)+'<span class="dot'+(f.online?' on':'')+'"></span></span><b>'+esc(f.display)+'</b>'+(typing(typDm[f.uid])?'<span class="ttag">schreibt …</span>':'')+(dmUnread[f.uid]?'<span class="badge">'+dmUnread[f.uid]+'</span>':'')+'</button>').join(''):
+        '<p class="note" style="text-align:center">Noch keine Freunde. Füg sie unter „Freunde“ hinzu.</p>')+'</div>';
+    }else{
+      const f=friends.find(x=>x.uid===dmWith),nmF=f?f.display:'Freund';
+      h+='<div class="dmh"><button class="small ghost" data-a="dm-back">‹</button><b>'+esc(nmF)+'</b>'+(f&&f.online?'<span class="note">online</span>':'')+'</div>'+
+        '<div class="clist" id="clist">'+(dmMsgs==null?'<p class="note" style="text-align:center">Lade …</p>':dmMsgs.length?dmMsgs.map(m=>'<div class="cm'+(m.mine?' mine':'')+(m.fail?' fail':'')+'">'+esc(m.body)+'</div>').join(''):'<p class="note" style="text-align:center">Schreib '+esc(nmF)+' die erste Nachricht. 👋</p>')+(typing(typDm[dmWith])?'<div class="typing"><i></i><i></i><i></i><span>'+esc(nmF)+' schreibt gerade …</span></div>':'')+
+        '</div><div class="row cin"><input id="cmsg" data-k="dmsg" maxlength="300" placeholder="Nachricht an '+esc(nmF)+' …" autocomplete="off" value="'+esc(drafts.dmsg||'')+'"><button style="flex:0 0 auto;width:auto" data-a="dsend">Senden</button></div>';
+    }
+    h+='<span class="cresize" title="Größe ändern"></span></div>';
+  }
   // Nur neu aufbauen, wenn sich der Aufbau geaendert hat (sonst startet die Animation neu und auf Android
   // geht beim Tippen die Tastatur zu). Neue Nachrichten tauschen nur die Liste aus, das Eingabefeld bleibt.
-  let list='',shell=h.replace(/ value="[^"]*"/,'');
+  let list='',shell=h.replace(/ value="[^"]*"/,'').replace(/ style="left:[^"]*"/,'');
   const a=h.indexOf('id="clist">'),b=h.indexOf('</div><div class="row cin');
   if(a>=0&&b>a){list=h.slice(a+11,b);shell=shell.replace(list,'')}
   if(box._shell===shell&&box.innerHTML){
     if(box._list!==list){box._list=list;const l=$('#clist');if(l){l.innerHTML=list;l.scrollTop=l.scrollHeight}}
     return;
   }
+  const anim=!box._shell||!/class="chat"/.test(box._shell);
   box._shell=shell;box._list=list;
   const hadFocus=document.activeElement&&document.activeElement.id==='cmsg';
   box.innerHTML=h;
+  const c=box.querySelector('.chat');if(c&&!anim)c.classList.add('still');
   const l=$('#clist');if(l)l.scrollTop=l.scrollHeight;
   if(hadFocus){const i=$('#cmsg');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}
 }
+// ----- „schreibt gerade …“ -----
+const typRoom={},typDm={};let typT=0,typSent=0,typTo='';
+const typing=t=>t&&Date.now()-t<4500;
+function typRoomHtml(){const l=Object.values(typRoom).filter(x=>typing(x.t)).map(x=>x.n);if(!l.length)return '';
+  return '<div class="typing"><i></i><i></i><i></i><span>'+esc(l.length>2?l.length+' Leute schreiben':l.join(' und ')+(l.length>1?' schreiben':' schreibt'))+' gerade …</span></div>'}
+function typTick(){renderChat();clearTimeout(typT);typT=setTimeout(()=>{renderChat()},4600)}
+function typSend(k){if(!me||!store.online)return;const to=k==='dmsg'?dmWith:null,c=k==='cmsg'&&code&&G&&RS()===store?code:null;if(!to&&!c)return;
+  const key=to||c;if(key===typTo&&Date.now()-typSent<2500)return;typTo=key;typSent=Date.now();store.rpc('chat_typing',{p_code:c,p_to:to}).catch(()=>{})}
+// ----- Privatchat -----
+const dmTotal=()=>Object.values(dmUnread).reduce((a,x)=>a+(x||0),0);
+async function loadDmUnread(){if(!me)return;try{const l=await store.rpc('dm_unread')||[];const o={};l.forEach(x=>{o[x.uid]=x.n});
+  const ch=JSON.stringify(o)!==JSON.stringify(dmUnread);dmUnread=o;if(ch){render();renderChat()}}catch(e){}}
+async function dmOpen(uid){dmWith=uid;dmMsgs=null;chatTab='dm';chatOpen=true;renderChat();
+  try{const l=await store.rpc('dm_history',{p_with:uid})||[];if(dmWith!==uid)return;dmMsgs=l;delete dmUnread[uid];render()}catch(e){if(dmWith===uid)dmMsgs=[]}
+  renderChat();focusChat()}
+function onDm(p){if(!p||typeof p!=='object'||typeof p.from!=='string')return;
+  if(p.typing===true){typDm[p.from]=Date.now();typTick();return}
+  delete typDm[p.from];
+  if(chatOpen&&chatTab==='dm'&&dmWith===p.from&&!document.hidden){
+    (dmMsgs=dmMsgs||[]).push({id:p.id,mine:false,body:S2(p.body)});store.rpc('dm_history',{p_with:p.from}).catch(()=>{});sfx('msg');renderChat();return}
+  dmUnread[p.from]=(dmUnread[p.from]||0)+1;sfx('msg');toast('💬 '+S2(p.name)+': '+S2(p.body).slice(0,80));render();renderChat()}
+const S2=x=>typeof x==='string'?x:'';
+async function dmSend(){const t=(drafts.dmsg||'').trim(),to=dmWith;if(!t||!to)return;typSent=0;drafts.dmsg='';const i=$('#cmsg');if(i)i.value='';
+  const m={mine:true,body:t.slice(0,300)};(dmMsgs=dmMsgs||[]).push(m);renderChat();
+  try{await store.rpc('send_dm',{p_to:to,p_body:m.body})}catch(e){m.fail=1;toast('Nachricht konnte nicht gesendet werden.');renderChat()}}
+function focusChat(){if('ontouchstart' in window)return;setTimeout(()=>{const i=$('#cmsg');i&&i.focus()},30)}
+// ----- Chatfenster: Position, Verschieben, Größe -----
+let chatG=null;try{chatG=JSON.parse(ls.get('al_chatwin')||'null')}catch(e){}
+function chatDefault(){const W=innerWidth,H=innerHeight,ar=$('#app').getBoundingClientRect();
+  if(W-ar.right>=300){const w=Math.min(400,W-ar.right-24);return {x:ar.right+12,y:16,w,h:Math.min(H-32,600)}}
+  if(ar.left>=300){const w=Math.min(400,ar.left-24);return {x:ar.left-12-w,y:16,w,h:Math.min(H-32,600)}}
+  const w=Math.min(W-16,460);return {x:Math.round((W-w)/2),y:Math.round(Math.max(8,H*.07)),w,h:Math.round(Math.min(H*.42,380))}}
+function chatGeo(){const W=innerWidth,H=innerHeight;if(!chatG||typeof chatG!=='object')chatG=chatDefault();const g=Object.assign({},chatG);
+  g.w=Math.round(Math.max(240,Math.min(W-8,+g.w||320)));g.h=Math.round(Math.max(200,Math.min(H-8,+g.h||320)));
+  g.x=Math.round(Math.max(4,Math.min(W-g.w-4,+g.x||0)));g.y=Math.round(Math.max(4,Math.min(H-60,+g.y||0)));return g}
+let chatDrag=null;
+document.addEventListener('pointerdown',e=>{const c=e.target.closest('#chatui .chat');if(!c)return;
+  const rs=e.target.closest('.cresize'),hd=e.target.closest('.chead');if(!rs&&(!hd||e.target.closest('button')))return;
+  e.preventDefault();const g=chatGeo();chatDrag={rs:!!rs,px:e.clientX,py:e.clientY,g,c,id:e.pointerId};c.classList.add('drag');try{c.setPointerCapture(e.pointerId)}catch(x){}});
+document.addEventListener('pointermove',e=>{const d=chatDrag;if(!d||e.pointerId!==d.id)return;const dx=e.clientX-d.px,dy=e.clientY-d.py;
+  chatG=d.rs?{x:d.g.x,y:d.g.y,w:d.g.w+dx,h:d.g.h+dy}:{x:d.g.x+dx,y:d.g.y+dy,w:d.g.w,h:d.g.h};const g=chatGeo();
+  Object.assign(d.c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'})});
+function chatDragEnd(e){const d=chatDrag;if(!d||e.pointerId!==d.id)return;chatDrag=null;d.c.classList.remove('drag');chatG=chatGeo();ls.set('al_chatwin',JSON.stringify(chatG))}
+document.addEventListener('pointerup',chatDragEnd);document.addEventListener('pointercancel',chatDragEnd);
+window.addEventListener('resize',()=>{const c=$('#chatui .chat');if(!c)return;const g=chatGeo();Object.assign(c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'})});
+// T öffnet den Chat, Esc schließt ihn
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;
+  if(e.key==='Escape'&&chatOpen&&!modalOpen){e.preventDefault();act('chat');return}
+  if((e.key==='t'||e.key==='T')&&!/INPUT|TEXTAREA|SELECT/.test(tg||'')&&!modalOpen&&!e.repeat){
+    if(!chatOpen){e.preventDefault();act('chat')}else{const i=$('#cmsg');if(i){e.preventDefault();i.focus()}}}
+});
 
 /* ---------- Sprachnachrichten ---------- */
 let REC=null,vPlaying=null;const VCACHE={};
@@ -1728,7 +2368,10 @@ async function acctSubmit(kind){
 function act(a,v,el){
   switch(a){
     case 'go':return go(v,el&&el.dataset.u);
-    case 'create':return createRoom();
+    case 'create':return createRoom(v);
+    case 'newroom':if(!needName())return;return openNewRoom();
+    case 'create-local':return createLocalTable(false);
+    case 'resume-local':return createLocalTable(true);
     case 'join':return joinRoom();
     case 'resume':return enter(v);
     case 'leave':return leaveMenu();
@@ -1774,7 +2417,14 @@ function act(a,v,el){
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
     case 'splock':{const t=+v.slice(2),x=SPECIAL[t-1];toast(me?x[1]+' „'+x[2]+'“ gibt es ab '+x[0]+'× Präsident. Du hast '+presCount+'×.':'Spezial-Emotes gibt es nur mit Konto.');return}
-    case 'chat':if(REC)micStop(true);chatOpen=!chatOpen;wheelOpen=false;if(chatOpen&&chatUnread){chatUnread=0;render()}renderChat();if(chatOpen&&!('ontouchstart' in window)){const i=$('#cmsg');i&&i.focus()}return;
+    case 'chat':{if(REC)micStop(true);const inRoom=!!(code&&G&&RS().online);if(!inRoom&&!me&&!chatOpen){toast('Für den Privatchat brauchst du ein Konto.');return}
+      chatOpen=!chatOpen;wheelOpen=false;if(chatOpen){chatTab=inRoom?(chatTab==='dm'&&dmWith?'dm':'room'):'dm';if(!inRoom||chatTab==='dm')loadDmUnread()}
+      if(chatOpen&&chatTab==='room'&&chatUnread)chatUnread=0;render();renderChat();if(chatOpen)focusChat();return}
+    case 'ctab':chatTab=v==='room'?'room':'dm';if(chatTab==='room'){chatUnread=0}else if(!dmWith)loadDmUnread();render();renderChat();if(chatTab==='room'||dmWith)focusChat();return;
+    case 'dm-open':return dmOpen(v);
+    case 'dm-back':dmWith=null;dmMsgs=null;loadDmUnread();return renderChat();
+    case 'dsend':return dmSend();
+    case 'dm-to':if(!me)return;return dmOpen(v);
     case 'snd':return openSound();
     case 'ov':ovOpen=!ovOpen;return render();
     case 'mic':return micStart();
@@ -1800,6 +2450,7 @@ function act(a,v,el){
   if(busy){if(a==='lv-pause'){closeModal();return leave()}if(a!=='lv-end')toast('Einen Moment …');return}
   const g=clone(G);
   if(G.paused&&!['unpause','lv-end','next','endmatch','newmatch'].includes(a))return;
+  if(gameOf(G)!=='arsch'&&otherAct(a,v,el,g,s))return;
   switch(a){
     case 'rule':{if(G.host!==myId||G.phase!=='lobby')return;const k=el.dataset.k;g.rules=Object.assign({},DEFAULT_RULES,g.rules||{});
       g.rules[k]=v==='true'?true:v==='false'?false:isNaN(+v)?String(v):+v;commit(g);return}
@@ -1839,6 +2490,7 @@ function act(a,v,el){
   }
 }
 function leaveMenu(){
+  if(G&&G.local){leave();return}
   const s=mySeat();
   if(G&&G.phase==='lobby'&&store.online){
     if(G.host===myId){openModal('<h2>Lobby verlassen?</h2><div class="stack">'+
@@ -1862,14 +2514,14 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(b&&!b.disabled)act(b.dataset.a,b.dataset.v,b);
 });
 let volPrev=0;
-document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)drafts[ds.k]=e.target.value;
+document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)drafts[ds.k]=e.target.value;if((ds.k==='cmsg'||ds.k==='dmsg')&&e.target.value.trim())typSend(ds.k);
   if(ds.vol){const v=+e.target.value/100;ac();setVol(ds.vol,v);const o=document.getElementById('vv-'+ds.vol);if(o)o.textContent=Math.round(v*100);
     if(ds.vol==='sfxVol'&&Date.now()-volPrev>180){volPrev=Date.now();sfx('card')}}});
 document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea'))e.preventDefault()});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
-  if(k==='cmsg')act('csend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
-function openModal(h,sticky){modalOpen=true;const m=$('#modal');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
-function closeModal(){if(!modalOpen)return;modalOpen=false;soundOpen=false;invOpen=false;$('#modal').classList.remove('on');setTimeout(showNextInvite,300)}
+  if(k==='cmsg')act('csend');else if(k==='dmsg')act('dsend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
+function openModal(h,sticky){modalOpen=true;const m=$('#modal');clearTimeout(modalT);m.classList.remove('out');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
+let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
 
 /* ---------- Anzeige ---------- */
 const SPEC_UI={100:['🃏','Joker'],101:['🃏','Joker'],110:['🔄','Revolution'],120:['⏭️','Aussetzer'],130:['🔁','Wechsel']};
@@ -1886,19 +2538,62 @@ const HG='<div class="hgw" id="hg"><svg viewBox="0 0 100 140"><defs><clipPath id
   '<rect x="14" y="5" width="72" height="10" rx="3" fill="#8a5a2b"/><rect x="14" y="125" width="72" height="10" rx="3" fill="#8a5a2b"/></svg><b id="hgN"></b></div>';
 
 let rq=0;
+// ===== Sanftes Neuzeichnen: nur Geaendertes anfassen, damit Uebergaenge laufen koennen =====
+const LIVE=new Set(['hg','tbarI','tbarN','tm']);
+const TRIG=/(^|\s)(new|in|deal)(\s|$)/;
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)');
+function mkey(n){if(n.nodeType!==1)return null;const k=n.getAttribute('data-key');if(k)return 'k'+k;if(n.id)return '#'+n.id;
+  const a=n.getAttribute('data-a'),v=n.getAttribute('data-v');return a&&v!=null?a+':'+v:null}
+function mattrs(o,n){
+  for(const at of [...o.attributes])if(!n.hasAttribute(at.name)&&!(at.name==='open'&&o.tagName==='DETAILS'))o.removeAttribute(at.name);
+  for(const at of n.attributes)if(o.getAttribute(at.name)!==at.value)o.setAttribute(at.name,at.value);
+  if((o.tagName==='INPUT'||o.tagName==='TEXTAREA')&&o!==document.activeElement){
+    const v=n.getAttribute('value')||'';if(o.value!==v&&o.type!=='file')o.value=v;
+    if(o.type==='checkbox'||o.type==='radio')o.checked=n.hasAttribute('checked');}
+}
+function msame(o,n){return o.nodeType===n.nodeType&&o.nodeName===n.nodeName&&mkey(o)===mkey(n)}
+function mnode(o,n){
+  if(o.nodeType===3||o.nodeType===8){if(o.nodeValue!==n.nodeValue)o.nodeValue=n.nodeValue;return o}
+  if(LIVE.has(o.id))return o;
+  // Elemente mit Start-Animation neu erzeugen, wenn sie neu dazukommen oder sich der Inhalt aendert
+  const nc=n.getAttribute('class')||'';
+  if(TRIG.test(nc)&&(nc!==(o.getAttribute('class')||'')||o.textContent!==n.textContent)){o.replaceWith(n);return n}
+  mattrs(o,n);mkids(o,n);return o;
+}
+function mkids(op,np){
+  const olds=[...op.childNodes],keyed=new Map();
+  for(const c of olds){const k=mkey(c);if(k){if(!keyed.has(k))keyed.set(k,[]);keyed.get(k).push(c)}}
+  const used=new Set();let p=0;const news=[...np.childNodes];
+  news.forEach((n,i)=>{
+    let o=null;const k=mkey(n);
+    if(k){const l=keyed.get(k);while(l&&l.length){const c=l.shift();if(!used.has(c)&&c.nodeName===n.nodeName){o=c;break}}}
+    else{while(p<olds.length&&(used.has(olds[p])||mkey(olds[p])))p++;if(p<olds.length&&msame(olds[p],n))o=olds[p++]}
+    let r;if(o){used.add(o);r=mnode(o,n)}else r=n;
+    const at=op.childNodes[i];if(at!==r)op.insertBefore(r,at||null);
+  });
+  for(const c of olds)if(!used.has(c)&&c.parentNode===op)c.remove();
+}
+function setHTML(el,h){const t=document.createElement('template');t.innerHTML=h;
+  if(!el.firstChild){el.appendChild(t.content);return}
+  const wrap=document.createElement('div');wrap.appendChild(t.content);mkids(el,wrap)}
+// Handkarten gleiten nach, wenn sich die Hand veraendert
+const FLIPSEL='.hand>.card[data-v],.shand>.scard[data-key],.dice>.die';
+function flipPrep(root){const m=new Map();if(REDUCED.matches||document.body.classList.contains('low'))return m;root.querySelectorAll(FLIPSEL).forEach(e=>m.set(e,e.getBoundingClientRect()));return m}
+function flipRun(m){m.forEach((r,e)=>{if(!e.isConnected)return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
+  if(Math.abs(dx)<1&&Math.abs(dy)<1)return;try{e.animate([{translate:dx+'px '+dy+'px'},{translate:'0 0'}],{duration:340,easing:'cubic-bezier(.22,1,.36,1)'})}catch(x){}})}
 function render(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;doRender()})}
 // Hintergrund-Aktualisierungen nicht anzeigen, solange jemand tippt
 function renderSoft(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&$('#app').contains(a))return;render()}
 function doRender(){
-  const app=$('#app');draw();
+  const app=$('#app'),fl=flipPrep(app);draw();flipRun(fl);
   const k=code?(!G?'load':G.phase==='lobby'?'lobby':G.phase==='over'?'over':G.phase==='end'&&Date.now()>=endHold?'end'+G.round:'game'+G.round):'v:'+view;
   if(k!==seen.scr){seen.scr=k;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(enterT);enterT=setTimeout(()=>app.classList.remove('enter'),1500)}
 }
 function draw(){
   const app=$('#app');
   if(code){drawGame(app);renderChat();return}
-  if($('#chatui').innerHTML){$('#chatui').innerHTML='';$('#chatui')._shell=null}
-  app.innerHTML=({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount,settings:drawSettings,ach:drawAch}[view]||drawHome)();
+  renderChat();
+  setHTML(app,({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount,settings:drawSettings,ach:drawAch}[view]||drawHome)());
 }
 const backBtn='<button class="back" data-a="go" data-v="home">‹ Zurück</button>';
 function needAccount(what){return '<div class="panel"><p style="margin-top:0">Für '+what+' brauchst du ein Konto – nur Benutzername und Passwort, keine E-Mail.</p><button data-a="go" data-v="account">Konto erstellen</button></div>'}
@@ -1906,17 +2601,20 @@ function incomingCount(){return friends.filter(f=>f.rel==='incoming').length}
 
 function drawHome(){
   const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">'+avatar(me.avatar,me.display,presCount,24)+' '+esc(me.display)+'</button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
-  let h='<div class="head"><h1>Arschloch</h1>'+acct+'</div><p class="suits">♠<i>♥</i><i>♦</i>♣</p>';
+  const dmb=me?'<button class="iconbtn homechat" data-a="chat" title="Privatchat (T)">💬'+(dmTotal()?'<span class="badge">'+dmTotal()+'</span>':'')+'</button>':'';
+  let h='<div class="head"><h1>Spieleabend</h1><span class="row" style="flex:0 0 auto;gap:8px;align-items:center">'+dmb+acct+'</span></div><p class="suits">🃏 🧙 🎲</p>';
   if(!ready)return h+'<p class="note">Verbinde …</p>';
   if(!me)h+='<div class="panel"><label for="name">Dein Name</label><input id="name" data-k="name" maxlength="16" autocomplete="off" placeholder="z. B. Max" value="'+esc(drafts.name||'')+'"></div>';
   if(store.online){
-    h+='<div class="panel"><button data-a="create">Neuen Raum erstellen</button></div>'+
+    const tb=savedTable();
+    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Würfelblock</p></div>'+
+      (tb?'<div class="panel"><button class="ghost" data-a="resume-local">📝 Würfelblock am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button></div>':'')+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
     h+=questPanel()+friendsPlaying();
     if(myGames.length)h+='<div class="panel"><h3>Meine Partien</h3><ul class="plist">'+myGames.map((x,i)=>
-      '<li style="--i:'+i+'"><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px">'+esc(x.players||x.code)+'</b><span class="note">'+
+      '<li style="--i:'+i+'"><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px">'+((GAMES[x.game]||GAMES.arsch).icon)+' '+esc(x.players||x.code)+'</b><span class="note">'+
       (x.phase==='lobby'?'Lobby':'Runde '+x.round)+(x.paused?' · ⏸ pausiert':'')+'</span></span><span class="row" style="flex:0 0 auto;gap:6px"><button class="small" data-a="resume" data-v="'+esc(x.code)+'">'+(x.paused?'Fortsetzen':'Öffnen')+'</button><button class="small ghost" data-a="hide" data-v="'+esc(x.code)+'" title="Aus der Liste entfernen">✕</button></span></li>').join('')+'</ul></div>';
-  }else h+='<div class="panel"><button data-a="create">Gegen Computer spielen</button><p class="note" style="margin:12px 0 0">Gerade keine Verbindung zum Spielserver – prüf dein Internet und lade neu. Gegen Computergegner kannst du trotzdem spielen.</p></div>';
+  }else h+='<div class="panel"><button data-a="newroom">Gegen Computer spielen</button><p class="note" style="margin:12px 0 0">Gerade keine Verbindung zum Spielserver – prüf dein Internet und lade neu. Gegen Computergegner kannst du trotzdem spielen.</p></div>';
   const ic=incomingCount();
   h+='<div class="nav">'+
     '<button class="ghost" data-a="go" data-v="friends"><b>👥'+(ic?'<span class="badge">'+ic+'</span>':'')+'</b>Freunde</button>'+
@@ -1925,7 +2623,7 @@ function drawHome(){
     '<button class="ghost" data-a="go" data-v="ach"><b>🏅</b>Erfolge</button>'+
     '<button class="ghost" data-a="go" data-v="design"><b>🎨</b>Design</button>'+
     '<button class="ghost" data-a="go" data-v="settings"><b>⚙️</b>Einstellungen</button></div>';
-  h+='<div class="panel">'+RULES+'</div>'+
+  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div>'+
     (navigator.standalone||matchMedia('(display-mode: standalone)').matches?'':'<p class="note" style="text-align:center">Tipp: Über „Teilen“ → „Zum Home-Bildschirm“ (iPhone) bzw. Menü → „App installieren“ (Android) hast du das Spiel als App.</p>');
   return h;
 }
@@ -1957,7 +2655,7 @@ function friendsPlaying(){
   const l=friends.filter(f=>f.rel==='friend'&&fGames[f.uid]);if(!l.length)return '';
   return '<div class="panel"><h3>Freunde spielen gerade</h3><ul class="plist">'+l.map(f=>{const x=fGames[f.uid];
     return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,32)+'<span class="dot on"></span></span><span style="display:flex;flex-direction:column"><b>'+esc(f.display)+'</b><span class="note">'+
-      (x.phase==='lobby'?'wartet in der Lobby':'Runde '+(+x.round||1)+' · '+(+x.players||0)+' Spieler'+(+x.bots?' (davon '+(+x.bots)+' Computer)':''))+'</span></span></span>'+watchBtn(f.uid)+'</li>'}).join('')+'</ul></div>';
+      ((GAMES[x.game]||GAMES.arsch).icon+' '+(GAMES[x.game]||GAMES.arsch).name+' · ')+(x.phase==='lobby'?'wartet in der Lobby':'Runde '+(+x.round||1)+' · '+(+x.players||0)+' Spieler'+(+x.bots?' (davon '+(+x.bots)+' Computer)':''))+'</span></span></span>'+watchBtn(f.uid)+'</li>'}).join('')+'</ul></div>';
 }
 function drawFriends(){
   let h=backBtn+'<h2>Freunde</h2>';
@@ -1967,9 +2665,16 @@ function drawFriends(){
   const inc=friends.filter(f=>f.rel==='incoming'),out=friends.filter(f=>f.rel==='outgoing'),fr=friends.filter(f=>f.rel==='friend');
   if(inc.length)h+='<div class="panel"><h3>Anfragen</h3><ul class="plist">'+inc.map(f=>'<li><span>'+avatar(f.avatar,f.display,f.wins,32)+esc(f.display)+'</span><span class="row" style="flex:0 0 auto"><button class="small ghost" data-a="fr-no" data-v="'+f.uid+'">Ablehnen</button><button class="small" data-a="fr-yes" data-v="'+f.uid+'">Annehmen</button></span></li>').join('')+'</ul></div>';
   h+='<div class="panel"><h3>Deine Freunde ('+fr.length+')</h3>'+(fr.length?'<ul class="plist">'+fr.map((f,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,40)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
-    watchBtn(f.uid)+'<button class="small ghost" data-a="go" data-v="profile" data-u="'+f.uid+'">Profil</button></li>').join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde. Füg sie oben über ihren Benutzernamen hinzu.</p>')+'</div>';
+    watchBtn(f.uid)+'<button class="small ghost dmb" data-a="dm-to" data-v="'+f.uid+'" title="Privatchat">💬'+(dmUnread[f.uid]?'<span class="badge">'+dmUnread[f.uid]+'</span>':'')+'</button><button class="small ghost" data-a="go" data-v="profile" data-u="'+f.uid+'">Profil</button></li>').join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde. Füg sie oben über ihren Benutzernamen hinzu.</p>')+'</div>';
   if(out.length)h+='<div class="panel"><h3>Gesendet</h3><ul class="plist">'+out.map(f=>'<li><span>'+esc(f.display)+'</span><span class="tag">wartet</span></li>').join('')+'</ul></div>';
   return h;
+}
+function otherStatsHtml(){
+  const gs=gameStats&&typeof gameStats==='object'?gameStats:{};
+  return ['stich','dice'].map(k=>{const x=gs[k]||{},n=+x.played||0;
+    return '<h3 style="margin:18px 0 8px">'+GAMES[k].icon+' '+GAMES[k].name+'</h3><div class="stats">'+[
+      [n,'Partien'],[n?(+x.wins||0)+'×':'–','Gewonnen'],[n?+x.best:'–','Bestwert'],[n?+x.avg:'–','Punkteschnitt']
+    ].map(y=>'<div class="stat"><b>'+esc(y[0])+'</b><span>'+y[1]+'</span></div>').join('')+'</div>'}).join('');
 }
 function drawProfile(){
   let h=backBtn;
@@ -1983,7 +2688,7 @@ function drawProfile(){
   h+='<div class="panel tier"><div class="tb"><span class="te">'+(lv?SPECIAL[lv-1][1]:'🃏')+'</span><div><b>Präsident-Stufe '+lv+(lv?' · '+esc(SPECIAL[lv-1][2]):'')+'</b><span>'+(p.wins||0)+'× Präsident'+(nx?' · nächste Stufe bei '+nx[0]+'× ('+nx[1]+' '+esc(nx[2])+')':' · höchste Stufe erreicht!')+'</span></div></div>'+
     (nx?'<div class="bar"><i style="width:'+Math.min(100,Math.round(((p.wins||0)-(lv?SPECIAL[lv-1][0]:0))*100/(nx[0]-(lv?SPECIAL[lv-1][0]:0))))+'%"></i></div>':'')+
     '<div class="tl">'+SPECIAL.map((x,i)=>'<span class="'+(i<lv?'on':'')+'" title="'+esc(x[2])+'">'+x[1]+'<small>'+x[0]+'</small></span>').join('')+'</div></div>';
-  h+='<div class="stats">'+[
+  h+='<h3 style="margin:18px 0 8px">🃏 Arschloch</h3><div class="stats">'+[
     [r,'Runden gespielt'],[p.matches||0,'Partien'],
     [pct(p.wins,r),'Präsident ('+p.wins+'×)'],[pct(p.last,r),'Arschloch ('+p.last+'×)'],
     [r?p.avg+' %':'–','Punkteschnitt'],[p.points||0,'Punkte gesamt'],
@@ -1991,7 +2696,7 @@ function drawProfile(){
     [p.bombs||0,'Bomben gelegt'],[p.aceEnds||0,'Mit Ass beendet'],
     [p.timeouts||0,'Zeit abgelaufen'],[p.since?new Date(p.since).toLocaleDateString('de-DE',{month:'short',year:'numeric'}):'–','Dabei seit']
   ].map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('')+'</div>';
-  h+='<p class="note">Punkteschnitt: 100 % heißt immer Präsident, 0 % immer Arschloch. Gezählt werden nur Runden, die du mit Konto gespielt hast.</p>'+achHtml(p);
+  h+='<p class="note">Punkteschnitt: 100 % heißt immer Präsident, 0 % immer Arschloch. Gezählt werden nur Runden, die du mit Konto gespielt hast.</p>'+otherStatsHtml()+achHtml(p);
   if(!mine)h+='<button class="ghost" data-a="fr-del" data-v="'+esc(p.uid)+'">Freund entfernen</button>';
   return h;
 }
@@ -2064,7 +2769,7 @@ function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
   let h=backBtn+'<h2>Einstellungen</h2>'+
     '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
-    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+
+    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+tg('shake','Schütteln zum Würfeln','Im Würfelblock das Handy schütteln statt tippen')+
       (me?'<li><span style="display:flex;flex-direction:column"><b>Erinnerung an Tagesaufgaben</b><span class="note">Push-Nachricht am Abend, wenn noch Aufgaben offen sind'+(SET.push?'':' (braucht Benachrichtigungen)')+'</span></span><button class="sw2'+(me.quest_push!==false?' on':'')+'" data-a="qpush" aria-label="Erinnerung an Tagesaufgaben"><i></i></button></li>':'')+'</ul></div>';
   let push;
   if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
@@ -2086,10 +2791,10 @@ function rulesText(r){
   return ({classic:'Klassisch',chaos:'Chaos-Modus',team:'Team-Modus'}[r.mode]||'Klassisch')+' · '+(r.turn?r.turn+' s pro Zug':'ohne Zeitlimit')+' · Bomben '+(r.bombs?'an':'aus')+' · Stock '+(r.stock?'an':'aus')+' · Ass-Ende = Arschloch '+(r.aceRule?'an':'aus')+' · Weiterlegen '+(r.solo?'an':'aus')+(r.target?' · bis '+r.target+' Punkte':'');
 }
 function topBar(){
-  const s=mySeat(),canPause=running()&&s>=0&&store.online&&!G.paused;
-  return '<div class="top"><span class="rinfo"><b>'+esc(code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
-    (store.online?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat" style="position:relative">💬'+(chatUnread?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+chatUnread+'</span>':'')+'</button>':'')+
-    (store.online&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
+  const s=mySeat(),on=RS().online,canPause=running()&&s>=0&&on&&!G.paused;
+  return '<div class="top"><span class="rinfo">'+(G&&GAMES[gameOf(G)]?GAMES[gameOf(G)].icon+' ':'')+'<b>'+esc(G&&G.local?'Tisch':code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
+    (on?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat (T)" style="position:relative">💬'+(chatUnread+dmTotal()?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+(chatUnread+dmTotal())+'</span>':'')+'</button>':'')+
+    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
@@ -2099,8 +2804,9 @@ function pointsTable(g,compact){
     st.map((x,i)=>'<tr class="'+(g.players[x.s].id===myId?'me':'')+'"><td>'+(i+1)+'</td><td>'+(isTeam(g)?'<span class="tdot t'+(x.s%2)+'"></span>':'')+esc(x.name)+'</td><td><b>'+x.m.pts+'</b></td><td>'+(x.m.pl[0]||0)+'</td><td>'+(x.m.pl[n-1]||0)+'</td></tr>').join('')+'</table>';
 }
 function drawGame(app){
-  if(!G){app.innerHTML='<div class="top"><span>Raum <b>'+esc(code)+'</b></span><button class="linkbtn" data-a="leave">Verlassen</button></div><p class="note">'+(stale?'Das Spiel ist gerade nicht erreichbar. Ich versuche es weiter …':'Lade Spiel …')+'</p>';return}
+  if(!G){setHTML(app,'<div class="top"><span>Raum <b>'+esc(code)+'</b></span><button class="linkbtn" data-a="leave">Verlassen</button></div><p class="note">'+(stale?'Das Spiel ist gerade nicht erreichbar. Ich versuche es weiter …':'Lade Spiel …')+'</p>');return}
   const host=G.host===myId,top=topBar(),me_=mySeat();
+  if(gameOf(G)!=='arsch')return drawOther(app,top,host||!!G.local);
 
   if(G.phase==='lobby'){
     const t=total();
@@ -2128,23 +2834,23 @@ function drawGame(app){
         return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
         '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen ✓':again?'Nochmal einladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
     }
-    app.innerHTML=top+'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<button class="ghost" data-a="share" style="margin-top:10px">Link teilen</button>':'')+'</div>'+
+    setHTML(app,top+'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<button class="ghost" data-a="share" style="margin-top:10px">Link teilen</button>':'')+'</div>'+
       '<div class="panel"><label>Am Tisch ('+t+' von 3–8)</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul></div>'+
       (host?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=8?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+(G.bots>0?'':'disabled')+'>− Computer</button></div>'+
         '<button data-a="start" '+(t>=3&&(r.mode!=='team'||t===4)?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<3?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens 3 Spieler.</p>':'')
-      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+modeBox+rules+fr;
+      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+modeBox+rules+fr);
     return;
   }
   const n=(G.players||[]).length;
   if(G.phase==='over'){
     const st=standings(G),aw=awards(G),medal=['🥇','🥈','🥉'];
     const rounds=Math.max(0,...st.map(x=>x.m.rounds));
-    app.innerHTML=top+'<h1 style="margin-top:6px">Partie vorbei</h1><p class="sub">'+rounds+' Runde'+(rounds===1?'':'n')+' gespielt'+(st[0]&&rounds?' – '+esc(st[0].name)+' gewinnt die Partie!':'')+'</p>'+
+    setHTML(app,top+'<h1 style="margin-top:6px">Partie vorbei</h1><p class="sub">'+rounds+' Runde'+(rounds===1?'':'n')+' gespielt'+(st[0]&&rounds?' – '+esc(st[0].name)+' gewinnt die Partie!':'')+'</p>'+
       '<div class="panel"><h3>Endstand</h3>'+st.map((x,i)=>{const r=x.m.rounds||0;
         return '<div class="pcard" style="--i:'+i+'"><span class="place">'+(medal[i]||i+1)+'</span>'+avOf(G.players[x.s].id,x.name,x.bot)+'<div style="min-width:0"><b>'+(i===0&&rounds?'<span class="crown">👑</span> ':'')+esc(x.name)+(G.players[x.s].id===myId?' (du)':'')+'</b>'+
         '<div class="det">Präsident '+pct(x.m.pl[0]||0,r)+' · '+(x.m.pl[n-1]||0)+'× Arschloch · '+x.m.aces+' Asse'+(x.m.bombs?' · '+x.m.bombs+' 💣':'')+'</div></div><span class="pts">'+x.m.pts+'</span></div>'}).join('')+'</div>'+
       (aw.length?'<div class="panel"><h3>Auszeichnungen</h3>'+aw.map(a=>'<div class="award"><span class="e">'+a.e+'</span><div><b>'+esc(a.t)+'</b><span>'+esc(a.who.join(', '))+' – '+esc(a.d)+'</span></div></div>').join('')+'</div>':'')+
-      (me_>=0?'<button data-a="newmatch" style="margin-bottom:10px">Neue Partie mit denselben Spielern</button>':'')+'<button class="ghost" data-a="lv-just">Zur Startseite</button>';
+      (me_>=0?'<button data-a="newmatch" style="margin-bottom:10px">Neue Partie mit denselben Spielern</button>':'')+'<button class="ghost" data-a="lv-just">Zur Startseite</button>');
     return;
   }
   if(G.phase==='end'&&Date.now()>=endHold){
@@ -2153,10 +2859,10 @@ function drawGame(app){
     if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
     const cd=Math.max(0,3-Math.floor((Date.now()-seen.endAt)/1000));
     if(cd>0)setTimeout(render,(Date.now()-seen.endAt)%1000?1000-(Date.now()-seen.endAt)%1000+20:1000);
-    app.innerHTML=top+'<h1 style="margin-top:6px">'+(G.final?'🏁 Entschieden!':'Runde '+G.round+' vorbei')+'</h1><p class="sub">'+(G.final?esc(lead.name)+' hat '+lead.m.pts+' Punkte erreicht und gewinnt die Partie. ':'')+esc(nm(G,G.order[0]))+' ist Präsident, '+esc(nm(G,G.order[n-1]))+' ist das Arschloch.</p>'+
+    setHTML(app,top+'<h1 style="margin-top:6px">'+(G.final?'🏁 Entschieden!':'Runde '+G.round+' vorbei')+'</h1><p class="sub">'+(G.final?esc(lead.name)+' hat '+lead.m.pts+' Punkte erreicht und gewinnt die Partie. ':'')+esc(nm(G,G.order[0]))+' ist Präsident, '+esc(nm(G,G.order[n-1]))+' ist das Arschloch.</p>'+
       '<div class="panel"><ul class="plist">'+li+'</ul></div><div class="panel"><h3>Stand der Partie'+(R(G).target?' · Ziel '+R(G).target+' P':'')+'</h3>'+pointsTable(G)+'</div>'+
       (G.paused?'<p class="note" style="text-align:center">⏸ Pausiert von '+esc(G.paused.by)+(G.paused.uid&&G.paused.uid!==myId?' – nur '+esc(G.paused.by)+' kann mit „Nächste Runde“ weitermachen.':' – mit „Nächste Runde“ geht es weiter.')+'</p>':'')+
-      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px" '+(cd>0||(G.paused&&G.paused.uid&&G.paused.uid!==myId)?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
+      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px" '+(cd>0||(G.paused&&G.paused.uid&&G.paused.uid!==myId)?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>'));
     return;
   }
 
@@ -2238,15 +2944,306 @@ function drawGame(app){
   // Fest einloggen: Karten vorab festlegen, sie werden automatisch gelegt, sobald man dran ist
   const lockable=me_>=0&&G.phase==='play'&&G.turn!==me_&&!G.paused&&sel.size>0;
   const ov='<div class="ov'+(ovOpen?' on':'')+'"><button class="ovb" data-a="ov">'+(ovOpen?'▴':'▾')+' Punktestand</button>'+(ovOpen?'<div class="ovp">'+pointsTable(G)+'</div>':'')+'</div>';
-  app.innerHTML=top+ov+'<div class="opps'+(n>5?' many':'')+'">'+opps+'</div>'+
+  setHTML(app,top+ov+'<div class="opps'+(n>5?' many':'')+'">'+opps+'</div>'+
     '<div class="table'+(wishUi?' small':'')+'"><div class="pile'+pcls+'">'+pile+'</div><div class="msg'+(msgNew?' new':'')+'">'+esc(G.msg||'')+'</div>'+(G.rev||G.dir===-1?'<div class="fx">'+(G.rev?'<span>🔄 Revolution</span>':'')+(G.dir===-1?'<span>🔁 andersrum</span>':'')+'</div>':'')+(showHg?HG:'')+pauseBox+'</div>'+
     (wishUi?stHtml+wishUi+meHtml+handHtml:
-      stHtml+meHtml+handHtml+(me_>=0&&G.hands[me_].length&&G.phase!=='end'?'<div class="actions">'+left+(lockable?(lockOn?'<button class="lockbtn on" data-a="unlock">🔒 Eingeloggt</button>':'<button class="lockbtn" data-a="lock" '+(lockOk([...sel])?'':'disabled')+'>🔒 Einloggen</button>'):'<button id="do" data-a="do" '+(goOk?'':'disabled')+'>'+goLabel+'</button>')+'</div>':''));
+      stHtml+meHtml+handHtml+(me_>=0&&G.hands[me_].length&&G.phase!=='end'?'<div class="actions">'+left+(lockable?(lockOn?'<button class="lockbtn on" data-a="unlock">🔒 Eingeloggt</button>':'<button class="lockbtn" data-a="lock" '+(lockOk([...sel])?'':'disabled')+'>🔒 Einloggen</button>'):'<button id="do" data-a="do" '+(goOk?'':'disabled')+'>'+goLabel+'</button>')+'</div>':'')));
   tick();
 }
 window.addEventListener('hashchange',()=>{const h=(location.hash||'').slice(1).toUpperCase();if(ready&&store.online&&/^[A-Z]{4}$/.test(h)&&h!==code){if(myName){if(code)leave();joinRoom(h)}else{drafts.code=h;render()}}});
 init();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+/* ===================== Spieleabend: Spielauswahl, Wizard, Würfelblock ===================== */
+const GAMES={
+  arsch:{name:'Arschloch',icon:'🃏',min:3,max:8,desc:'Präsident oder Arschloch – wer zuerst alle Karten los ist, gewinnt.'},
+  stich:{name:'Wizard',icon:'🧙',min:3,max:6,desc:'Sag an, wie viele Stiche du holst – mit Zauberern, Narren und auf Wunsch 7 Sonderkarten.'},
+  dice:{name:'Würfelblock',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'}};
+const gameOf=g=>g&&GAMES[g.game]?g.game:'arsch';
+let rstore=null,trickHold=0,diceAnim=0;
+const RS=()=>rstore||store;
+
+// ----- Raum anlegen -----
+function openNewRoom(){
+  const off=!store.online;
+  openModal('<h2>Was wollt ihr spielen?</h2><div class="gpick">'+Object.entries(GAMES).map(([k,x])=>
+    '<button class="gcard" data-a="create" data-v="'+k+'"><span class="gi">'+x.icon+'</span><span class="gt"><b>'+x.name+'</b><small>'+x.desc+'</small></span></button>').join('')+
+    '<button class="gcard ghost" data-a="create-local"><span class="gi">📝</span><span class="gt"><b>Würfelblock am Tisch</b><small>Ein Handy für alle – ohne Raum, perfekt mit echten Würfeln.</small></span></button></div>'+
+    (off?'<p class="note">Gerade offline – es wird gegen Computer gespielt.</p>':'')+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Abbrechen</button>');
+}
+function newRoomData(game){
+  const d={v:1,phase:'lobby',host:myId,created:Date.now()};
+  if(game==='stich'){d.game='stich';d.rules=Object.assign({},ST_RULES);d.bots=store.online?0:2}
+  else if(game==='dice'){d.game='dice';d.rules=Object.assign({},DC_RULES);d.bots=store.online?0:1}
+  else d.bots=store.online?0:2;
+  return d;
+}
+async function createLocalTable(resume){
+  const ls0=localTableStore();
+  if(!resume)await ls0.create('Tisch',{v:1,phase:'lobby',game:'dice',local:true,host:'me',rules:{mode:'real',bots:'normal'},names:me?[me.display]:(myName?[myName]:[]),bots:0,created:Date.now()});
+  closeModal();enter('TISCH',ls0);
+}
+// Lokaler Spielstand fuer "ein Handy fuer alle" (bleibt auf dem Geraet gespeichert)
+function localTableStore(){
+  let st=null;try{st=JSON.parse(ls.get('al_table')||'null')}catch(e){st=null}
+  const save=()=>ls.set('al_table',JSON.stringify(st));
+  return {online:false,local:true,uid:'me',
+    async create(name,d){st=clone(d);st.v=1;save();return 'TISCH'},
+    subGame(c,f,onM){if(st)setTimeout(()=>f(clone(st)));onM([{id:'me',name:'Tisch',t:1}]);return{local:d=>{st=clone(d);save();f(clone(d))},refetch(){},stop(){}}},
+    async sendChat(){},async chatHistory(){return[]},async commit(){return true},async recordRound(){},async hide(){ls.set('al_table','')},async kick(){}};
+}
+function savedTable(){try{const s=JSON.parse(ls.get('al_table')||'null');return s&&s.phase!=='over'&&s.phase!=='closed'?s:null}catch(e){return null}}
+
+// ----- Laufende Partien: Hilfen -----
+function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':false}
+// Welcher Sitz wird von diesem Geraet gesteuert? (am Tisch-Handy: jeder menschliche Spieler)
+function ctrlSeat(){
+  if(!G||!G.players)return -1;
+  if(G.local){const t=G.turn;return t>=0&&G.players[t]&&!G.players[t].bot?t:-1}
+  return mySeat();
+}
+function onGameOther(g,prev){
+  const k=gameOf(g);
+  if(k==='stich'&&prev&&prev.trick&&g.trick){
+    if(g.trick.length>prev.trick.length)sfx('card');
+    if(prev.trick.length>0&&g.trick.length===0&&g.lastTrick){trickHold=Date.now()+1700;setTimeout(render,1750);if(g.lastTrick.bomb)boom('💣 Bombe!')}
+  }
+  if(k==='stich'&&prev&&g.round!==prev.round)sfx('deal');
+  if(k==='dice'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
+  const cs=(()=>{const t=G;G=g;const r=ctrlSeat();G=t;return r})();
+  if(prev&&g.v!==prev.v&&g.turn!==prev.turn&&cs>=0&&g.turn===cs&&!g.local)setTimeout(()=>sfx('turn'),250);
+  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
+  if(g.phase==='over'&&!g.local&&store.online&&seen.recG!==code+':'+g.match){seen.recG=code+':'+g.match;const c=code;setTimeout(()=>store.rpc&&store.rpc('record_game',{p_code:c}).catch(()=>{}),1200)}
+  G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();
+  const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
+}
+// Computergegner fuer die neuen Spiele (der Host bzw. das Tisch-Handy zieht fuer sie)
+function otherBot(){
+  if(!G||botTimer||G.paused||!otherRunning())return;
+  const k=gameOf(G),isHost=G.host===myId||G.local,me_=mySeat();
+  if(!isHost&&me_<0)return;
+  const need=k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
+  if(!need)return;
+  const v=G.v,delay=(k==='dice'?750:950)+(trickHold>Date.now()?trickHold-Date.now():0)+(isHost?0:7000+Math.max(0,me_)*1500);
+  botTimer=setTimeout(()=>{botTimer=null;if(!G||G.paused)return;if(G.v!==v){maybeBot();return}if(busy){setTimeout(maybeBot,300);return}
+    const g=clone(G);const ok=k==='stich'?stBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
+}
+function othersTotal(){return G.local?(G.names||[]).length+(G.bots||0):Math.min(lobby.length,8)+(G.bots||0)}
+
+// ----- Aktionen -----
+function otherAct(a,v,el,g,s){
+  const k=gameOf(G),host=G.host===myId||G.local,info=GAMES[k];
+  switch(a){
+    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:DC_RULES,g.rules||{});
+      g.rules[key]=v==='true'?true:v==='false'?false:v;if(k==='dice'&&key==='mode'&&v==='real')g.bots=0;commit(g);return true}
+    case 'bot+':if(host&&othersTotal()<info.max&&!(k==='dice'&&DR(G).mode==='real')){g.bots=(g.bots||0)+1;commit(g)}return true;
+    case 'bot-':if(host&&g.bots>0){g.bots--;commit(g)}return true;
+    case 'botlvl':return true;
+    case 'ln-add':{const nmv=(drafts.ln||'').trim().slice(0,16);if(!nmv||!G.local)return true;g.names=(g.names||[]).concat([nmv]).slice(0,8);drafts.ln='';commit(g);return true}
+    case 'ln-del':if(G.local){g.names=(g.names||[]).filter((_,i)=>i!==+v);commit(g)}return true;
+    case 'start':{if(!host)return true;const t=othersTotal();if(t<info.min||t>info.max)return true;
+      const pl=G.local?(G.names||[]).map((x,i)=>({id:'L'+i,name:x,bot:false})):lobby.slice(0,8).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
+      for(let i=0;i<(g.bots||0);i++)pl.push({id:'bot'+i,name:BOTS[i],bot:true});
+      g.players=pl;if(k==='stich')stStart(g);else dcStart(g);commit(g);return true}
+    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else dcStart(g);commit(g)}return true;
+    case 'next':if(k==='stich'&&G.phase==='rend'&&(s>=0||G.local)&&Date.now()-(seen.endAt||0)>=2500){stNext(g);commit(g)}return true;
+    case 'lv-end':closeModal();if(s>=0||G.local){g.phase='over';g.paused=null;g.turn=-1;if(k==='stich'&&G.phase!=='rend'&&G.phase!=='over'){/* Runde abbrechen */}commit(g)}return true;
+    // Wizard
+    case 'st-trump':{const c=ctrlSeat();if(stSetTrump(g,c,+v))commit(g);return true}
+    case 'st-bid':{const c=ctrlSeat();if(stBid(g,c,+v))commit(g);return true}
+    case 'st-sel':{if(G.phase!=='play'&&G.phase!=='juggle')return true;const c=+v;sel.has(c)?sel.clear():(sel.clear(),sel.add(c));render();return true}
+    case 'st-play':{const c=ctrlSeat(),card=[...sel][0];if(card==null)return true;
+      if(card===SHIFT){openModal('<h2>🎭 Gestaltwandler</h2><p class="note">Als was spielst du ihn?</p><div class="row"><button data-a="st-as" data-v="Z">🧙 Zauberer</button><button class="ghost" data-a="st-as" data-v="N">🤡 Narr</button></div>');return true}
+      if(card===JUGGLER||card===CLOUD){openModal('<h2>'+(card===JUGGLER?'🤹 Jongleur (7½)':'☁️ Wolke (9¾)')+'</h2><p class="note">Welche Farbe soll die Karte haben?</p><div class="suitpick">'+ST_SUITS.map((x,i)=>'<button class="sp'+i+'" data-a="st-as" data-v="'+i+'">'+x+(i===G.trump?' (Trumpf)':'')+'</button>').join('')+'</div>');return true}
+      if(stPlay(g,c,card)){sel.clear();commit(g)}else toast('Diese Karte darfst du gerade nicht spielen – du musst bedienen.');return true}
+    case 'st-as':{closeModal();const c=ctrlSeat(),card=[...sel][0];if(card==null)return true;const as=card===SHIFT?v:+v;if(stPlay(g,c,card,as)){sel.clear();commit(g)}else toast('Das geht gerade nicht.');return true}
+    case 'st-cloud':{const c=G.local?G.cloudBy:mySeat();if(stCloud(g,c,+v))commit(g);return true}
+    case 'st-jug':{const card=[...sel][0];if(card==null)return true;let c=mySeat();
+      if(G.local){c=G.players.findIndex((p,i)=>!p.bot&&G.jPick&&G.jPick[i]==null)}
+      if(stJugglePick(g,c,card)){sel.clear();commit(g)}return true}
+    case 'st-block':openModal('<h2>📒 Block</h2>'+stBlock(G)+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Schließen</button>');return true;
+    // Wuerfelblock
+    case 'dc-roll':{askMotion();const c=ctrlSeat();if(dcRoll(g,c))commit(g);return true}
+    case 'dc-hold':{const c=ctrlSeat();if(dcHold(g,c,+v))commit(g);return true}
+    case 'dc-score':{const c=ctrlSeat();if(dcScore(g,c,v))commit(g);return true}
+    case 'dc-cell':{const [t,cat]=String(v).split(':');const tt=+t;if(DR(G).mode!=='real'||G.phase!=='play')return true;if(!G.local&&tt!==mySeat())return true;
+      const cur=G.sheet[tt]&&G.sheet[tt][cat];
+      openModal('<h2>'+esc(DC_NAME[cat])+'</h2><p class="note">'+esc(G.players[tt].name)+' · '+esc(DC_HINT[cat])+'</p><div class="vpick">'+dcAllowed(cat).map(x=>'<button class="'+(x===cur?'on':'')+'" data-a="dc-set" data-v="'+tt+':'+cat+':'+x+'">'+(x===0?'0 ✗':x)+'</button>').join('')+'</div>'+
+        (cur!=null?'<button class="ghost" data-a="dc-set" data-v="'+tt+':'+cat+':x" style="margin-top:10px">Eintrag löschen</button>':'')+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Abbrechen</button>');return true}
+    case 'dc-set':{closeModal();const [t,cat,x]=String(v).split(':');const c=G.local?+t:mySeat();if(dcSet(g,c,+t,cat,x==='x'?null:+x))commit(g);return true}
+  }
+  return false;
+}
+
+// ----- Anzeige -----
+function drawOther(app,top,host){
+  const k=gameOf(G);
+  if(G.phase==='lobby')return drawOtherLobby(app,top,host,k);
+  if(k==='stich')return drawStich(app,top);
+  return drawDice(app,top);
+}
+function drawOtherLobby(app,top,host,k){
+  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
+  const seg=(key,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[key])===String(v)?'on':'')+'" data-a="rule" data-k="'+key+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
+  let li='';
+  if(G.local){li=(G.names||[]).map((x,i)=>'<li><span>'+avatar({e:'🎲',c:hashCol(x)},x,0,34)+esc(x)+'</span><button class="small ghost" data-a="ln-del" data-v="'+i+'">✕</button></li>').join('')}
+  else li=lobby.slice(0,8).map((p,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(p.av,p.name,p.wins,34)+'<span class="dot'+(online.has(p.id)||p.id===myId?' on':'')+'"></span></span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+
+      (p.id===G.host?'<span class="tag gold">Host</span>':host&&store.online?'<button class="small ghost" data-a="kick" data-v="'+esc(p.id)+'" title="Entfernen">✕</button>':'')+'</li>').join('');
+  for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[r.bots||'normal']+'</span></li>';
+  const canBots=!(k==='dice'&&r.mode==='real');
+  let set='';
+  if(k==='stich')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
+    '<div class="rl"><span>Karten<small>Basis: 60 Karten mit 4 Zauberern und 4 Narren. Spezial: dazu Gestaltwandler, Drache, Fee, Bombe, Werwolf, Jongleur und Wolke.</small></span>'+seg('mode',[['basis','Basis'],['spezial','Spezial ✨']])+'</div>'+
+    '<div class="rl"><span>Plus/Minus 1<small>Die Summe aller Ansagen darf nicht genau der Stichzahl entsprechen (gilt für den Geber).</small></span>'+seg('plusminus',[[false,'aus'],[true,'an']])+'</div>'+
+    ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
+    :'<p class="note" style="margin:0">'+(r.mode==='spezial'?'Spezial-Karten':'Basis-Karten')+(r.plusminus?' · Plus/Minus 1':'')+'</p>')+'</div>';
+  else set='<div class="panel"><h3>Einstellungen</h3>'+(host?
+    '<div class="rl"><span>Würfel<small>Am Handy würfeln oder mit echten Würfeln würfeln und nur die Punkte eintragen.</small></span>'+seg('mode',[['roll','📱 am Handy'],['real','🎲 echte Würfel']])+'</div>'+
+    (canBots&&(G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
+    :'<p class="note" style="margin:0">'+(r.mode==='real'?'Mit echten Würfeln – jeder trägt seine Punkte selbst ein.':'Gewürfelt wird am Handy.')+'</p>')+'</div>';
+  const nameAdd=G.local?'<div class="row" style="margin-top:10px"><input data-k="ln" maxlength="16" placeholder="Name hinzufügen" autocomplete="off" value="'+esc(drafts.ln||'')+'"><button style="flex:0 0 auto;width:auto" data-a="ln-add">+ Spieler</button></div>':'';
+  const okStart=t>=info.min&&t<=info.max;
+  setHTML(app,top+'<div class="panel gamehead"><span class="gi">'+info.icon+'</span><span><b>'+info.name+'</b><small>'+info.desc+'</small></span></div>'+
+    (G.local?'':'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<div class="row" style="margin-top:10px"><button class="ghost" data-a="share">Link teilen</button>'+(me?'<button class="ghost" data-a="inv-open">👥 Einladen</button>':'')+'</div>':'')+'</div>')+
+    '<div class="panel"><label>'+(G.local?'Wer spielt mit?':'Am Tisch')+' ('+t+' von '+info.min+'–'+info.max+')</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul>'+nameAdd+'</div>'+
+    (host?(canBots?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=info.max?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+((G.bots||0)>0?'':'disabled')+'>− Computer</button></div>':'')+
+      '<button data-a="start" '+(okStart?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<info.min?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens '+info.min+' Spieler.</p>':'')
+      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:DC_RULES_TXT)+'</div>');
+}
+
+// ----- Wizard-Ansicht -----
+const ST_GEM=['🔷','🔴','🟢','🟡'];
+function stCardHtml(c,cls,attrs,as){
+  let inner,kind;
+  if(stNum(c)){kind='n s'+stSuit(c);inner='<span class="v">'+stVal(c)+'</span><span class="gm">'+ST_GEM[stSuit(c)]+'</span><span class="v2">'+stVal(c)+'</span>'}
+  else if(stIsZ(c)){kind='z';inner='<span class="v">Z</span><span class="em">🧙</span><span class="lb">Zauberer</span>'}
+  else if(stIsN(c)){kind='nr';inner='<span class="v">N</span><span class="em">🤡</span><span class="lb">Narr</span>'}
+  else{const E={80:'🎭',81:'🐉',82:'🧚',83:'💣',84:'🐺',85:'🤹',86:'☁️'};kind='sp';
+    inner='<span class="v">'+(c===JUGGLER?'7½':c===CLOUD?'9¾':'')+'</span><span class="em">'+E[c]+'</span><span class="lb">'+ST_SPEC_NAME[c]+'</span>'+
+      (as!=null&&(c===JUGGLER||c===CLOUD)?'<span class="asg">'+ST_GEM[+as]+'</span>':'')+(c===SHIFT&&as?'<span class="asg">'+(as==='Z'?'🧙':'🤡')+'</span>':'')}
+  return '<div class="scard '+kind+(cls?' '+cls:'')+'" '+(attrs||'')+'>'+inner+'</div>';
+}
+function stBlock(g){
+  const n=g.players.length;
+  return '<div class="blockw"><table class="rk block"><tr><th>R</th>'+g.players.map(p=>'<th>'+esc(p.name.slice(0,7))+'</th>').join('')+'</tr>'+
+    (g.hist||[]).map(h=>'<tr><td>'+h.r+'</td>'+h.pts.map((x,s)=>'<td class="'+(x>0?'pos':'neg')+'">'+h.bids[s]+'/'+h.won[s]+'<br><b>'+(x>0?'+':'')+x+'</b></td>').join('')+'</tr>').join('')+
+    '<tr class="sum"><td>Σ</td>'+g.scores.map(x=>'<td><b>'+x+'</b></td>').join('')+'</tr></table></div>';
+}
+function drawStich(app,top){
+  const n=G.players.length,cs=ctrlSeat(),me_=G.local?cs:mySeat(),viewS=G.local?(cs>=0?cs:-1):me_;
+  if(G.phase==='over'){
+    const st=stStandings(G),medal=['🥇','🥈','🥉'],pl=stPlaces(G);
+    setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><div class="panel"><ul class="plist">'+st.map(x=>'<li><span>'+(medal[pl[x.s]]||'')+' '+esc(x.name)+'</span><b>'+x.pts+' Punkte</b></li>').join('')+'</ul></div>'+
+      '<div class="panel"><h3>Block</h3>'+stBlock(G)+'</div>'+((me_>=0||G.local)?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');
+    return;
+  }
+  if(G.phase==='rend'){
+    const h=G.hist[G.hist.length-1],ek=code+':'+G.match+':'+G.round;
+    if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
+    const cd=Math.max(0,3-Math.ceil((Date.now()-seen.endAt)/1000));if(cd>0)setTimeout(render,400);
+    setHTML(app,top+'<h1 style="margin-top:6px">Runde '+G.round+' von '+G.total+'</h1><div class="panel"><ul class="plist">'+G.players.map((p,s)=>'<li><span>'+esc(p.name)+'<span class="note" style="margin-left:6px">Ansage '+h.bids[s]+' · Stiche '+h.won[s]+'</span></span><b class="'+(h.pts[s]>0?'pos':'neg')+'">'+(h.pts[s]>0?'+':'')+h.pts[s]+'</b></li>').join('')+'</ul></div>'+
+      '<div class="panel"><h3>Zwischenstand</h3>'+stStandings(G).map((x,i)=>'<div class="rlist"><span>'+(i+1)+'. '+esc(x.name)+'</span><b>'+x.pts+'</b></div>').join('')+'</div>'+
+      ((me_>=0||G.local||mySeat()>=0)?'<button data-a="next" '+(cd>0?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button>':'<p class="note" style="text-align:center">Gleich geht es weiter …</p>'));
+    return;
+  }
+  const trumpTxt=G.trump>=0?ST_GEM[G.trump]+' '+ST_SUITS[G.trump]:'kein Trumpf';
+  let opps='';
+  for(let i=1;i<=n;i++){const s=((viewS<0?0:viewS)+i)%n;if(s===viewS)continue;const p=G.players[s];
+    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n">'+(p.bot?avOf(p.id,p.name,true):avOf(p.id,p.name,false))+(s===G.dealer?'<span title="Geber">🎴</span>':'')+esc(p.name)+'</div>'+
+      '<div class="r">'+(G.bids[s]==null?'Ansage …':'Ansage '+G.bids[s]+' · Stiche '+G.won[s])+'</div><div class="c">'+G.hands[s].length+' Karten · '+G.scores[s]+' P</div></div>'}
+  const showLast=!G.trick.length&&G.lastTrick&&trickHold>Date.now();
+  const tr=showLast?G.lastTrick.cards:G.trick;
+  const wi=showLast?G.lastTrick.cards.findIndex(e=>e.s===G.lastTrick.w):-1;
+  const pile=tr.length?'<div class="strick">'+tr.map((e,i)=>'<div class="te'+(i===wi?' win':'')+'" data-key="t'+e.c+'">'+stCardHtml(e.c,'',' style="--i:'+i+'"',e.as)+'<span>'+esc(nm(G,e.s))+'</span></div>').join('')+'</div>':'<div class="empty">'+(G.phase==='play'?esc(nm(G,G.turn))+' spielt aus':'')+'</div>';
+  const tcard=G.tcard!=null?stCardHtml(G.tcard,'mini'):'<div class="scard mini none">–</div>';
+  const table='<div class="table stable"><div class="tinfo"><span class="tc">'+tcard+'</span><span><small>Trumpf</small><b>'+trumpTxt+'</b></span><span class="rd"><small>Runde</small><b>'+G.round+'/'+G.total+'</b></span></div>'+pile+'<div class="msg">'+esc(G.msg||'')+'</div></div>';
+  // Aktion je nach Phase
+  let panel='',hand='';const myTurn=cs>=0&&G.turn===cs;
+  const hs=viewS>=0?G.hands[viewS]:[];
+  if(G.phase==='trump'||G.phase==='werwolf'){
+    panel=myTurn?'<div class="panel act"><b>'+(G.phase==='werwolf'?'🐺 Werwolf: Bestimme den Trumpf':'Bestimme den Trumpf')+'</b><div class="suitpick">'+ST_SUITS.map((x,i)=>'<button class="sp'+i+'" data-a="st-trump" data-v="'+i+'">'+ST_GEM[i]+' '+x+'</button>').join('')+(G.phase==='werwolf'?'<button class="ghost" data-a="st-trump" data-v="-1">Kein Trumpf</button>':'')+'</div></div>'
+      :'<p class="note" style="text-align:center">'+esc(nm(G,G.turn))+' bestimmt den Trumpf …</p>';
+  }else if(G.phase==='bid'){
+    if(myTurn){const sum=G.bids.reduce((a,x)=>a+(x||0),0);
+      panel='<div class="panel act"><b>Wie viele Stiche holst du?</b><span class="note">Bisher angesagt: '+sum+' von '+G.round+'</span><div class="bidpick">'+[...Array(G.round+1).keys()].map(b=>'<button data-a="st-bid" data-v="'+b+'" '+(stBidOk(G,cs,b)?'':'disabled')+'>'+b+'</button>').join('')+'</div></div>'}
+    else panel='<p class="note" style="text-align:center">'+esc(nm(G,G.turn))+' sagt an …</p>';
+  }else if(G.phase==='cloud'){
+    const cb=G.cloudBy;panel=(G.local?!G.players[cb].bot:cb===mySeat())?'<div class="panel act"><b>☁️ Wolke: Ändere deine Ansage ('+G.bids[cb]+')</b><div class="row"><button data-a="st-cloud" data-v="-1" '+(G.bids[cb]>0?'':'disabled')+'>−1</button><button data-a="st-cloud" data-v="1">+1</button></div></div>':'<p class="note" style="text-align:center">'+esc(nm(G,cb))+' ändert die Ansage …</p>';
+  }else if(G.phase==='juggle'){
+    const js=G.local?G.players.findIndex((p,i)=>!p.bot&&G.jPick&&G.jPick[i]==null):mySeat();
+    const mine=js>=0&&G.jPick&&G.jPick[js]==null;
+    panel=mine?'<div class="panel act"><b>🤹 '+(G.local?esc(nm(G,js))+': ':'')+'Wähle eine Karte, die du nach links weitergibst</b><button data-a="st-jug" '+(sel.size?'':'disabled')+'>Weitergeben</button></div>':'<p class="note" style="text-align:center">Warte, bis alle eine Karte gewählt haben …</p>';
+    if(G.local&&js>=0){const h2=G.hands[js];hand='<div class="shand">'+h2.map(c=>stCardHtml(c,sel.has(c)?'sel':'','data-key="h'+c+'" data-a="st-sel" data-v="'+c+'"')).join('')+'</div>'}
+  }else if(G.phase==='play'&&myTurn){
+    const card=[...sel][0],ok=card!=null&&(card===SHIFT||card===JUGGLER||card===CLOUD?true:stCanPlay(G,cs,card));
+    panel='<div class="actions"><button class="ghost" data-a="st-block">📒 Block</button><button data-a="st-play" '+(ok?'':'disabled')+'>Ausspielen</button></div>';
+  }else panel='<div class="actions"><button class="ghost" data-a="st-block">📒 Block</button></div>';
+  if(!hand&&viewS>=0){
+    const can=c=>G.phase==='play'&&myTurn&&(c===SHIFT?(stCanPlay(G,cs,c,'Z')):c===JUGGLER||c===CLOUD?stCanPlay(G,cs,c,0):stCanPlay(G,cs,c));
+    const selectable=(G.phase==='play'&&myTurn)||(G.phase==='juggle'&&G.jPick&&G.jPick[viewS]==null);
+    hand='<div class="shand">'+hs.map(c=>stCardHtml(c,(sel.has(c)?'sel':'')+(G.phase==='play'&&myTurn?(can(c)?' ok':' no'):''),'data-key="h'+c+'" '+(selectable?'data-a="st-sel" data-v="'+c+'"':''))).join('')+'</div>';
+  }
+  const meB=viewS>=0?'<div class="mebar"><span>'+(G.local?'🎲 ':'')+esc(nm(G,viewS))+(viewS===G.dealer?' 🎴':'')+'</span><span>'+(G.bids[viewS]==null?'Ansage …':'Ansage '+G.bids[viewS]+' · Stiche '+G.won[viewS])+' · '+G.scores[viewS]+' P</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+((mySeat()>=0||G.local)&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  setHTML(app,top+'<div class="opps'+(n>4?' many':'')+'">'+opps+'</div>'+table+pz+meB+(G.local&&cs>=0&&G.phase!=='juggle'?'<p class="note" style="text-align:center;margin:4px 0">📱 Gib das Handy an <b>'+esc(nm(G,cs))+'</b></p>':'')+hand+panel);
+}
+
+// ----- Würfelblock-Ansicht -----
+const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+function dieHtml(v,cls,attrs){return '<div class="die'+(cls?' '+cls:'')+'" '+(attrs||'')+'>'+[...Array(9).keys()].map(i=>'<i class="'+(PIPS[v]&&PIPS[v].includes(i)?'p':'')+'"></i>').join('')+'</div>'}
+function drawDice(app,top){
+  const n=G.players.length,real=DR(G).mode==='real',cs=ctrlSeat(),myTurn=!real&&cs>=0&&G.turn===cs,me_=mySeat();
+  const tot=G.players.map((_,s)=>dcTotals(G.sheet[s]));
+  const rolling=diceAnim>Date.now();
+  const canEdit=s=>real&&G.phase==='play'&&(G.local||s===me_);
+  const cell=(s,k)=>{const v=G.sheet[s][k];
+    if(v!=null)return '<td class="f'+(canEdit(s)?' ed':'')+'" '+(canEdit(s)?'data-a="dc-cell" data-v="'+s+':'+k+'"':'')+'>'+(v===0?'<span class="z">✗</span>':v)+'</td>';
+    if(!real&&myTurn&&s===cs&&G.rolls>0&&!rolling){const p=dcScoreOf(k,G.dice);return '<td class="pot'+(p?'':' zero')+'" data-a="dc-score" data-v="'+k+'">'+(p||'0')+'</td>'}
+    if(canEdit(s))return '<td class="ed empty" data-a="dc-cell" data-v="'+s+':'+k+'">+</td>';
+    return '<td></td>'};
+  const head='<tr><th></th>'+G.players.map((p,s)=>'<th class="'+(!real&&G.turn===s&&G.phase==='play'?'cur':'')+'">'+esc(p.name.slice(0,8))+'</th>').join('')+'</tr>';
+  const row=k=>'<tr><td class="cn">'+DC_NAME[k]+'</td>'+G.players.map((_,s)=>cell(s,k)).join('')+'</tr>';
+  const sum=(lbl,f,cls)=>'<tr class="'+(cls||'sum')+'"><td class="cn">'+lbl+'</td>'+tot.map(f).join('')+'</tr>';
+  const sheet='<div class="blockw"><table class="dsheet">'+head+DC_UPPER.map(row).join('')+
+    sum('Summe oben',x=>'<td>'+x.up+'</td>')+sum('Bonus (ab 63)',x=>'<td>'+(x.bonus?'+35':x.up>=63?'+35':'<small>'+Math.max(0,63-x.up)+' fehlen</small>')+'</td>')+
+    ['k3','k4','fh','ss','ls','kn','ch'].map(row).join('')+sum('Gesamt',x=>'<td><b>'+x.total+'</b></td>','total')+'</table></div>';
+  if(G.phase==='over'){
+    const st=dcStandings(G),pl=dcPlaces(G),medal=['🥇','🥈','🥉'];
+    setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><div class="panel"><ul class="plist">'+st.map(x=>'<li><span>'+(n>1?(medal[pl[x.s]]||''):'🎲')+' '+esc(x.name)+'</span><b>'+x.pts+' Punkte</b></li>').join('')+'</ul></div>'+
+      '<div class="panel">'+sheet+'</div>'+((me_>=0||G.local)?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');
+    if(G.local)ls.set('al_table','');
+    return;
+  }
+  let area='';
+  if(!real){
+    const who=G.players[G.turn];
+    const dice=G.dice.map((v,i)=>dieHtml(rolling&&!G.held[i]?1+Math.floor(Math.random()*6):v,(G.held[i]&&G.rolls>0?'held':'')+(rolling&&!G.held[i]?' roll':''),myTurn&&G.rolls>0&&G.rolls<3?'data-a="dc-hold" data-v="'+i+'"':'')).join('');
+    area='<div class="panel dicebox"><div class="dturn">'+(myTurn?(G.local?'📱 '+esc(who.name)+' ist dran':'Du bist dran'):esc(who?who.name:'')+' ist dran')+' · Wurf '+G.rolls+'/3</div>'+
+      '<div class="dice">'+(G.rolls>0?dice:'<span class="note">Noch nicht gewürfelt</span>')+'</div>'+
+      (myTurn?'<button data-a="dc-roll" '+(G.rolls<3&&!(G.rolls>0&&G.held.every(Boolean))?'':'disabled')+'>🎲 Würfeln'+(G.rolls>0&&G.rolls<3?' ('+(3-G.rolls)+' übrig)':'')+'</button>'+
+        (G.rolls>0?'<p class="note" style="margin:8px 0 0;text-align:center">'+(G.rolls<3?'Tippe Würfel an, um sie festzuhalten. ':'')+'Trag deinen Wurf unten in ein Feld ein.</p>':'')+shakeHint():'')+'</div>';
+  }else area='<div class="panel"><p class="note" style="margin:0">🎲 Würfelt mit echten Würfeln. '+(G.local?'Tippt in die Spalte des Spielers, um seine Punkte einzutragen.':'Tippe in deine Spalte, um deine Punkte einzutragen.')+'</p></div>';
+  const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+((mySeat()>=0||G.local)&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  setHTML(app,top+pz+area+'<div class="panel" style="padding:8px">'+sheet+'</div>');
+}
+
+const ST_RULES_TXT='<details><summary>Regeln Wizard</summary>Jede Runde bekommt jeder eine Karte mehr (Runde 1: 1 Karte). Die oberste Karte des Rests bestimmt den Trumpf: Zahl = deren Farbe, Narr = kein Trumpf, Zauberer = der Geber wählt. In der letzten Runde ohne Rest gibt es keinen Trumpf.<br><br>Dann sagt jeder an, wie viele Stiche er holt. Farbe muss bedient werden; Zauberer, Narren und Sonderkarten dürfen immer gespielt werden. Der erste Zauberer gewinnt den Stich, sonst der höchste Trumpf, sonst die höchste Karte der ausgespielten Farbe. Narren verlieren immer (liegen nur Narren, gewinnt der erste).<br><br><b>Punkte:</b> Ansage genau getroffen: 20 + 10 pro Stich. Sonst −10 pro Stich Abweichung.<br><br><b>Sonderkarten (Spezial):</b> 🎭 Gestaltwandler – als Zauberer oder Narr spielbar. 🐉 Drache – schlägt alles, auch Zauberer, nur nicht die Fee. 🧚 Fee – verliert sonst wie ein Narr, schlägt aber den Drachen. 💣 Bombe – der Stich zählt für niemanden, wer ihn bekommen hätte, spielt aus. 🐺 Werwolf – wer ihn bekommt, tauscht ihn vor den Ansagen gegen die Trumpfkarte und bestimmt den Trumpf. 🤹 Jongleur (7½) – Farbe frei wählbar; nach dem Stich gibt jeder eine Karte nach links weiter. ☁️ Wolke (9¾) – Farbe frei wählbar; wer den Stich gewinnt, ändert seine Ansage um +1 oder −1.</details>';
+const DC_RULES_TXT='<details><summary>Regeln Würfelblock</summary>Jeder hat pro Zug bis zu 3 Würfe mit 5 Würfeln. Nach jedem Wurf kannst du Würfel festhalten. Danach trägst du das Ergebnis in ein freies Feld ein – passt nichts, streichst du ein Feld (0 Punkte).<br><br><b>Oben:</b> Einser bis Sechser zählen die Augen der jeweiligen Zahl. Ab 63 Punkten oben gibt es 35 Bonuspunkte.<br><b>Unten:</b> Dreierpasch und Viererpasch (Summe aller Augen), Full House (25), Kleine Straße (4 in Folge, 30), Große Straße (5 in Folge, 40), Fünf Gleiche (50), Chance (Summe aller Augen).<br><br>Nach 13 Runden gewinnt, wer die meisten Punkte hat. Mit echten Würfeln würfelt ihr am Tisch und tragt nur die Punkte ein.</details>';
+
+// ----- Schütteln zum Würfeln -----
+let shakeLast=0,motionAsked=false;
+const motionNeedsAsk=()=>!!(window.DeviceMotionEvent&&typeof DeviceMotionEvent.requestPermission==='function');
+let motionOk=!motionNeedsAsk();
+function askMotion(){if(motionOk||motionAsked||!motionNeedsAsk())return;motionAsked=true;
+  try{DeviceMotionEvent.requestPermission().then(r=>{motionOk=r==='granted';render()}).catch(()=>{})}catch(e){}}
+function shakeHint(){if(!SET.shake||!('ontouchstart' in window)||!window.DeviceMotionEvent||!G||G.rolls>=3)return '';
+  return '<p class="note shk">📳 '+(motionOk?'Oder einfach das Handy schütteln':'Nach dem ersten Tippen kannst du auch schütteln')+'</p>'}
+function canShakeRoll(){if(!SET.shake||!G||gameOf(G)!=='dice'||G.phase!=='play'||G.paused||DR(G).mode!=='roll'||modalOpen||document.hidden)return false;
+  const c=ctrlSeat();return c>=0&&G.turn===c&&!(G.players[c]&&G.players[c].bot)&&G.rolls<3&&!(G.rolls>0&&G.held.every(Boolean))}
+window.addEventListener('devicemotion',e=>{const a=e.acceleration&&e.acceleration.x!=null?e.acceleration:null,g=e.accelerationIncludingGravity;
+  let m;if(a)m=Math.hypot(a.x||0,a.y||0,a.z||0);else if(g&&g.x!=null)m=Math.abs(Math.hypot(g.x||0,g.y||0,g.z||0)-9.81);else return;
+  if(m<15)return;const now=Date.now();if(now-shakeLast<1400||!canShakeRoll())return;shakeLast=now;
+  if(SET.vib)try{navigator.vibrate&&navigator.vibrate(40)}catch(x){}act('dc-roll')});
 </script>
 </body>
 </html>
