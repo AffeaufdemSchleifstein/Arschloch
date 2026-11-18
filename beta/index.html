@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ElAZ99P9aYvNJUjztdBN18N2WeshYhlSTO0xHpOTiwo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-wXjSTsW6rgZkqr6ZMvf2u0v3Tiby+VYOUm9NKXUS9hI=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -745,6 +745,14 @@ body.low #app.enter>.panel,body.low #app.enter>.nav,body.low .strick .te.win .sc
 .homechat .badge,.dmb .badge{position:absolute;top:-7px;right:-8px;margin:0;min-width:18px;height:18px;font-size:11px}
 .dmb{margin-right:6px;flex:0 0 auto}
 @media (prefers-reduced-motion:reduce){#chatui .chat,#chatui .cm{animation:none}}
+/* „schreibt gerade …“ und Schüttel-Hinweis */
+#chatui .typing{display:flex;align-items:center;gap:4px;align-self:flex-start;padding:6px 10px;border-radius:14px;background:rgba(255,255,255,.06);font-size:12.5px;color:var(--mute);animation:msgIn .3s var(--e-out)}
+#chatui .typing span{margin-left:5px}
+#chatui .typing i{width:6px;height:6px;border-radius:50%;background:var(--mute);animation:tdot 1.1s ease-in-out infinite}
+#chatui .typing i:nth-child(2){animation-delay:.15s}#chatui .typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+#chatui .ttag{font-size:11.5px;color:#5fe08a;font-weight:600;flex:none}
+.note.shk{margin:6px 0 0;text-align:center;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -1704,7 +1712,7 @@ function pickPhoto(){
 }
 
 /* ---------- Einstellungen ---------- */
-let SET={snd:true,vib:true,push:false,sfxVol:.8,musVol:.35,music:'chill'};
+let SET={snd:true,vib:true,shake:true,push:false,sfxVol:.8,musVol:.35,music:'chill'};
 try{Object.assign(SET,JSON.parse(ls.get('al_set')||'{}'))}catch(e){}
 function saveSet(){ls.set('al_set',JSON.stringify(SET))}
 
@@ -2106,6 +2114,8 @@ function seatList(g){
 function onPresence(l){online=new Set(l);if(G&&code)render()}
 function onKicked(){toast('Du wurdest aus dem Raum entfernt.');leave()}
 function onChat(m){
+  if(m&&m.typing===true){if(typeof m.uid==='string'&&m.uid!==myId){typRoom[m.uid]={n:S2(m.name)||'Jemand',t:Date.now()};typTick()}return}
+  if(m&&typeof m.uid==='string')delete typRoom[m.uid];
   if(m.kind==='emote'){if(m.uid!==myId)showEmote(m.uid,m.body);return}
   chat.push(m);if(chat.length>80)chat.shift();
   if(!chatOpen&&m.uid!==myId){chatUnread++;bubble(m.uid,m.kind==='voice'?'🎤 Sprachnachricht':m.body);sfx('msg');render()}
@@ -2192,19 +2202,19 @@ function renderChat(){
     h+='<div class="chat" style="left:'+g.x+'px;top:'+g.y+'px;width:'+g.w+'px;height:'+g.h+'px"><div class="chead" title="Zum Verschieben ziehen"><span class="grip">⠿</span><div class="ctabs">'+tabs+'</div>'+
       '<button class="iconbtn" data-a="chat" title="Schließen (Esc)">✕</button></div>';
     if(chatTab==='room'){
-      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+
+      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg" data-a="vplay" data-v="'+esc(m.body)+'">▶ 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
         '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
         '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht an den Tisch …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>');
     }else if(!me){
       h+='<div class="clist" id="clist"><p class="note" style="text-align:center">Für den Privatchat mit Freunden brauchst du ein Konto.</p></div>';
     }else if(!dmWith){
       const fr=friends.filter(f=>f.rel==='friend').sort((a,b)=>(dmUnread[b.uid]||0)-(dmUnread[a.uid]||0)||(b.online-a.online)||a.display.localeCompare(b.display));
-      h+='<div class="clist dml" id="clist">'+(fr.length?fr.map(f=>'<button class="dmf ghost" data-a="dm-open" data-v="'+f.uid+'"><span class="avw">'+avatar(f.avatar,f.display,f.wins,34)+'<span class="dot'+(f.online?' on':'')+'"></span></span><b>'+esc(f.display)+'</b>'+(dmUnread[f.uid]?'<span class="badge">'+dmUnread[f.uid]+'</span>':'')+'</button>').join(''):
+      h+='<div class="clist dml" id="clist">'+(fr.length?fr.map(f=>'<button class="dmf ghost" data-a="dm-open" data-v="'+f.uid+'"><span class="avw">'+avatar(f.avatar,f.display,f.wins,34)+'<span class="dot'+(f.online?' on':'')+'"></span></span><b>'+esc(f.display)+'</b>'+(typing(typDm[f.uid])?'<span class="ttag">schreibt …</span>':'')+(dmUnread[f.uid]?'<span class="badge">'+dmUnread[f.uid]+'</span>':'')+'</button>').join(''):
         '<p class="note" style="text-align:center">Noch keine Freunde. Füg sie unter „Freunde“ hinzu.</p>')+'</div>';
     }else{
       const f=friends.find(x=>x.uid===dmWith),nmF=f?f.display:'Freund';
       h+='<div class="dmh"><button class="small ghost" data-a="dm-back">‹</button><b>'+esc(nmF)+'</b>'+(f&&f.online?'<span class="note">online</span>':'')+'</div>'+
-        '<div class="clist" id="clist">'+(dmMsgs==null?'<p class="note" style="text-align:center">Lade …</p>':dmMsgs.length?dmMsgs.map(m=>'<div class="cm'+(m.mine?' mine':'')+(m.fail?' fail':'')+'">'+esc(m.body)+'</div>').join(''):'<p class="note" style="text-align:center">Schreib '+esc(nmF)+' die erste Nachricht. 👋</p>')+
+        '<div class="clist" id="clist">'+(dmMsgs==null?'<p class="note" style="text-align:center">Lade …</p>':dmMsgs.length?dmMsgs.map(m=>'<div class="cm'+(m.mine?' mine':'')+(m.fail?' fail':'')+'">'+esc(m.body)+'</div>').join(''):'<p class="note" style="text-align:center">Schreib '+esc(nmF)+' die erste Nachricht. 👋</p>')+(typing(typDm[dmWith])?'<div class="typing"><i></i><i></i><i></i><span>'+esc(nmF)+' schreibt gerade …</span></div>':'')+
         '</div><div class="row cin"><input id="cmsg" data-k="dmsg" maxlength="300" placeholder="Nachricht an '+esc(nmF)+' …" autocomplete="off" value="'+esc(drafts.dmsg||'')+'"><button style="flex:0 0 auto;width:auto" data-a="dsend">Senden</button></div>';
     }
     h+='<span class="cresize" title="Größe ändern"></span></div>';
@@ -2226,6 +2236,14 @@ function renderChat(){
   const l=$('#clist');if(l)l.scrollTop=l.scrollHeight;
   if(hadFocus){const i=$('#cmsg');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}
 }
+// ----- „schreibt gerade …“ -----
+const typRoom={},typDm={};let typT=0,typSent=0,typTo='';
+const typing=t=>t&&Date.now()-t<4500;
+function typRoomHtml(){const l=Object.values(typRoom).filter(x=>typing(x.t)).map(x=>x.n);if(!l.length)return '';
+  return '<div class="typing"><i></i><i></i><i></i><span>'+esc(l.length>2?l.length+' Leute schreiben':l.join(' und ')+(l.length>1?' schreiben':' schreibt'))+' gerade …</span></div>'}
+function typTick(){renderChat();clearTimeout(typT);typT=setTimeout(()=>{renderChat()},4600)}
+function typSend(k){if(!me||!store.online)return;const to=k==='dmsg'?dmWith:null,c=k==='cmsg'&&code&&G&&RS()===store?code:null;if(!to&&!c)return;
+  const key=to||c;if(key===typTo&&Date.now()-typSent<2500)return;typTo=key;typSent=Date.now();store.rpc('chat_typing',{p_code:c,p_to:to}).catch(()=>{})}
 // ----- Privatchat -----
 const dmTotal=()=>Object.values(dmUnread).reduce((a,x)=>a+(x||0),0);
 async function loadDmUnread(){if(!me)return;try{const l=await store.rpc('dm_unread')||[];const o={};l.forEach(x=>{o[x.uid]=x.n});
@@ -2234,11 +2252,13 @@ async function dmOpen(uid){dmWith=uid;dmMsgs=null;chatTab='dm';chatOpen=true;ren
   try{const l=await store.rpc('dm_history',{p_with:uid})||[];if(dmWith!==uid)return;dmMsgs=l;delete dmUnread[uid];render()}catch(e){if(dmWith===uid)dmMsgs=[]}
   renderChat();focusChat()}
 function onDm(p){if(!p||typeof p!=='object'||typeof p.from!=='string')return;
+  if(p.typing===true){typDm[p.from]=Date.now();typTick();return}
+  delete typDm[p.from];
   if(chatOpen&&chatTab==='dm'&&dmWith===p.from&&!document.hidden){
     (dmMsgs=dmMsgs||[]).push({id:p.id,mine:false,body:S2(p.body)});store.rpc('dm_history',{p_with:p.from}).catch(()=>{});sfx('msg');renderChat();return}
   dmUnread[p.from]=(dmUnread[p.from]||0)+1;sfx('msg');toast('💬 '+S2(p.name)+': '+S2(p.body).slice(0,80));render();renderChat()}
 const S2=x=>typeof x==='string'?x:'';
-async function dmSend(){const t=(drafts.dmsg||'').trim(),to=dmWith;if(!t||!to)return;drafts.dmsg='';const i=$('#cmsg');if(i)i.value='';
+async function dmSend(){const t=(drafts.dmsg||'').trim(),to=dmWith;if(!t||!to)return;typSent=0;drafts.dmsg='';const i=$('#cmsg');if(i)i.value='';
   const m={mine:true,body:t.slice(0,300)};(dmMsgs=dmMsgs||[]).push(m);renderChat();
   try{await store.rpc('send_dm',{p_to:to,p_body:m.body})}catch(e){m.fail=1;toast('Nachricht konnte nicht gesendet werden.');renderChat()}}
 function focusChat(){if('ontouchstart' in window)return;setTimeout(()=>{const i=$('#cmsg');i&&i.focus()},30)}
@@ -2494,7 +2514,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(b&&!b.disabled)act(b.dataset.a,b.dataset.v,b);
 });
 let volPrev=0;
-document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)drafts[ds.k]=e.target.value;
+document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)drafts[ds.k]=e.target.value;if((ds.k==='cmsg'||ds.k==='dmsg')&&e.target.value.trim())typSend(ds.k);
   if(ds.vol){const v=+e.target.value/100;ac();setVol(ds.vol,v);const o=document.getElementById('vv-'+ds.vol);if(o)o.textContent=Math.round(v*100);
     if(ds.vol==='sfxVol'&&Date.now()-volPrev>180){volPrev=Date.now();sfx('card')}}});
 document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea'))e.preventDefault()});
@@ -2749,7 +2769,7 @@ function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
   let h=backBtn+'<h2>Einstellungen</h2>'+
     '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
-    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+
+    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+tg('shake','Schütteln zum Würfeln','Im Würfelblock das Handy schütteln statt tippen')+
       (me?'<li><span style="display:flex;flex-direction:column"><b>Erinnerung an Tagesaufgaben</b><span class="note">Push-Nachricht am Abend, wenn noch Aufgaben offen sind'+(SET.push?'':' (braucht Benachrichtigungen)')+'</span></span><button class="sw2'+(me.quest_push!==false?' on':'')+'" data-a="qpush" aria-label="Erinnerung an Tagesaufgaben"><i></i></button></li>':'')+'</ul></div>';
   let push;
   if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
@@ -3043,7 +3063,7 @@ function otherAct(a,v,el,g,s){
       if(stJugglePick(g,c,card)){sel.clear();commit(g)}return true}
     case 'st-block':openModal('<h2>📒 Block</h2>'+stBlock(G)+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Schließen</button>');return true;
     // Wuerfelblock
-    case 'dc-roll':{const c=ctrlSeat();if(dcRoll(g,c))commit(g);return true}
+    case 'dc-roll':{askMotion();const c=ctrlSeat();if(dcRoll(g,c))commit(g);return true}
     case 'dc-hold':{const c=ctrlSeat();if(dcHold(g,c,+v))commit(g);return true}
     case 'dc-score':{const c=ctrlSeat();if(dcScore(g,c,v))commit(g);return true}
     case 'dc-cell':{const [t,cat]=String(v).split(':');const tt=+t;if(DR(G).mode!=='real'||G.phase!=='play')return true;if(!G.local&&tt!==mySeat())return true;
@@ -3201,7 +3221,7 @@ function drawDice(app,top){
     area='<div class="panel dicebox"><div class="dturn">'+(myTurn?(G.local?'📱 '+esc(who.name)+' ist dran':'Du bist dran'):esc(who?who.name:'')+' ist dran')+' · Wurf '+G.rolls+'/3</div>'+
       '<div class="dice">'+(G.rolls>0?dice:'<span class="note">Noch nicht gewürfelt</span>')+'</div>'+
       (myTurn?'<button data-a="dc-roll" '+(G.rolls<3&&!(G.rolls>0&&G.held.every(Boolean))?'':'disabled')+'>🎲 Würfeln'+(G.rolls>0&&G.rolls<3?' ('+(3-G.rolls)+' übrig)':'')+'</button>'+
-        (G.rolls>0?'<p class="note" style="margin:8px 0 0;text-align:center">'+(G.rolls<3?'Tippe Würfel an, um sie festzuhalten. ':'')+'Trag deinen Wurf unten in ein Feld ein.</p>':''):'')+'</div>';
+        (G.rolls>0?'<p class="note" style="margin:8px 0 0;text-align:center">'+(G.rolls<3?'Tippe Würfel an, um sie festzuhalten. ':'')+'Trag deinen Wurf unten in ein Feld ein.</p>':'')+shakeHint():'')+'</div>';
   }else area='<div class="panel"><p class="note" style="margin:0">🎲 Würfelt mit echten Würfeln. '+(G.local?'Tippt in die Spalte des Spielers, um seine Punkte einzutragen.':'Tippe in deine Spalte, um deine Punkte einzutragen.')+'</p></div>';
   const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+((mySeat()>=0||G.local)&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
   setHTML(app,top+pz+area+'<div class="panel" style="padding:8px">'+sheet+'</div>');
@@ -3209,6 +3229,21 @@ function drawDice(app,top){
 
 const ST_RULES_TXT='<details><summary>Regeln Wizard</summary>Jede Runde bekommt jeder eine Karte mehr (Runde 1: 1 Karte). Die oberste Karte des Rests bestimmt den Trumpf: Zahl = deren Farbe, Narr = kein Trumpf, Zauberer = der Geber wählt. In der letzten Runde ohne Rest gibt es keinen Trumpf.<br><br>Dann sagt jeder an, wie viele Stiche er holt. Farbe muss bedient werden; Zauberer, Narren und Sonderkarten dürfen immer gespielt werden. Der erste Zauberer gewinnt den Stich, sonst der höchste Trumpf, sonst die höchste Karte der ausgespielten Farbe. Narren verlieren immer (liegen nur Narren, gewinnt der erste).<br><br><b>Punkte:</b> Ansage genau getroffen: 20 + 10 pro Stich. Sonst −10 pro Stich Abweichung.<br><br><b>Sonderkarten (Spezial):</b> 🎭 Gestaltwandler – als Zauberer oder Narr spielbar. 🐉 Drache – schlägt alles, auch Zauberer, nur nicht die Fee. 🧚 Fee – verliert sonst wie ein Narr, schlägt aber den Drachen. 💣 Bombe – der Stich zählt für niemanden, wer ihn bekommen hätte, spielt aus. 🐺 Werwolf – wer ihn bekommt, tauscht ihn vor den Ansagen gegen die Trumpfkarte und bestimmt den Trumpf. 🤹 Jongleur (7½) – Farbe frei wählbar; nach dem Stich gibt jeder eine Karte nach links weiter. ☁️ Wolke (9¾) – Farbe frei wählbar; wer den Stich gewinnt, ändert seine Ansage um +1 oder −1.</details>';
 const DC_RULES_TXT='<details><summary>Regeln Würfelblock</summary>Jeder hat pro Zug bis zu 3 Würfe mit 5 Würfeln. Nach jedem Wurf kannst du Würfel festhalten. Danach trägst du das Ergebnis in ein freies Feld ein – passt nichts, streichst du ein Feld (0 Punkte).<br><br><b>Oben:</b> Einser bis Sechser zählen die Augen der jeweiligen Zahl. Ab 63 Punkten oben gibt es 35 Bonuspunkte.<br><b>Unten:</b> Dreierpasch und Viererpasch (Summe aller Augen), Full House (25), Kleine Straße (4 in Folge, 30), Große Straße (5 in Folge, 40), Fünf Gleiche (50), Chance (Summe aller Augen).<br><br>Nach 13 Runden gewinnt, wer die meisten Punkte hat. Mit echten Würfeln würfelt ihr am Tisch und tragt nur die Punkte ein.</details>';
+
+// ----- Schütteln zum Würfeln -----
+let shakeLast=0,motionAsked=false;
+const motionNeedsAsk=()=>!!(window.DeviceMotionEvent&&typeof DeviceMotionEvent.requestPermission==='function');
+let motionOk=!motionNeedsAsk();
+function askMotion(){if(motionOk||motionAsked||!motionNeedsAsk())return;motionAsked=true;
+  try{DeviceMotionEvent.requestPermission().then(r=>{motionOk=r==='granted';render()}).catch(()=>{})}catch(e){}}
+function shakeHint(){if(!SET.shake||!('ontouchstart' in window)||!window.DeviceMotionEvent||!G||G.rolls>=3)return '';
+  return '<p class="note shk">📳 '+(motionOk?'Oder einfach das Handy schütteln':'Nach dem ersten Tippen kannst du auch schütteln')+'</p>'}
+function canShakeRoll(){if(!SET.shake||!G||gameOf(G)!=='dice'||G.phase!=='play'||G.paused||DR(G).mode!=='roll'||modalOpen||document.hidden)return false;
+  const c=ctrlSeat();return c>=0&&G.turn===c&&!(G.players[c]&&G.players[c].bot)&&G.rolls<3&&!(G.rolls>0&&G.held.every(Boolean))}
+window.addEventListener('devicemotion',e=>{const a=e.acceleration&&e.acceleration.x!=null?e.acceleration:null,g=e.accelerationIncludingGravity;
+  let m;if(a)m=Math.hypot(a.x||0,a.y||0,a.z||0);else if(g&&g.x!=null)m=Math.abs(Math.hypot(g.x||0,g.y||0,g.z||0)-9.81);else return;
+  if(m<15)return;const now=Date.now();if(now-shakeLast<1400||!canShakeRoll())return;shakeLast=now;
+  if(SET.vib)try{navigator.vibrate&&navigator.vibrate(40)}catch(x){}act('dc-roll')});
 </script>
 </body>
 </html>
