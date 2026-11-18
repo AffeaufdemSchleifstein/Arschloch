@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dkDrES8KXCFdB2ttOHvPBlJRcJL4NLS98KSFS+AnTus=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XgUg97FJ7yg4IRBM0DHhXslJMp2dFbuTgcwpnyvZbJE=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -1284,7 +1284,7 @@ async function joinRoom(pre){
 function enter(c){
   if(sub)sub.stop();
   try{history.replaceState(null,'','#'+c)}catch(e){}
-  code=c;G=null;lobby=[];sel.clear();wishSel=[];seen={};stale=false;endHold=0;
+  code=c;G=null;lobby=[];sel.clear();wishSel=[];seen={};stale=false;endHold=0;busy=false;commitTok++;
   chat=[];chatOpen=false;chatUnread=0;wheelOpen=false;
   sub=store.subGame(c,onGame,l=>{lobby=l;if(G&&G.phase==='lobby')render()},onChat);
   if(store.chatHistory)store.chatHistory(c).then(l=>{if(code!==c||!l)return;chat=l.map(x=>({uid:x.uid,name:x.name,kind:x.kind,body:x.body,at:x.created_at}));renderChat()}).catch(()=>{});
@@ -1295,7 +1295,7 @@ function enter(c){
 function leave(){
   if(REC)micStop(true);
   if(sub)sub.stop();sub=null;clearTimeout(botTimer);botTimer=null;clearTimeout(loadTimer);
-  code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';$('#chatui')._h='';
+  busy=false;commitTok++;code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';$('#chatui')._h='';
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
   closeModal();render();loadMyGames();lastStatus='home';heartbeat();
 }
@@ -1330,7 +1330,7 @@ function onGame(g,force){
   if(prev&&prev.phase==='play'&&g.phase==='end'){const ms=mySeatOf(g);if(ms>=0)setTimeout(()=>sfx(g.order[0]===ms?'win':g.order[g.order.length-1]===ms?'lose':'mid'),Math.max(600,boomUntil-Date.now()+200))}
   // Vorausgewaehlte Karten bleiben beim Zugwechsel erhalten (nur neue Phase/Runde leert die Auswahl)
   if(!prev||g.phase!==prev.phase||g.round!==prev.round){sel.clear();wishSel=[]}
-  else{if(g.turn!==prev.turn)wishSel=[];const s=g.players.findIndex(p=>p.id===myId),h=s>=0?g.hands[s]:[];for(const c of [...sel])if(!h.includes(c))sel.delete(c)}
+  else{if(g.turn!==prev.turn)wishSel=[];const s=g.players&&g.hands?g.players.findIndex(p=>p.id===myId):-1,h=s>=0&&g.hands[s]||[];for(const c of [...sel])if(!h.includes(c))sel.delete(c)}
   if(!prev||g.v!==prev.v||g.phase!==prev.phase)turnStart=Math.max(Date.now(),boomUntil);
   // Nach dem letzten Stich den Tisch noch kurz zeigen
   if(prev&&prev.phase==='play'&&g.phase==='end'){endHold=Math.max(Date.now()+2300,boomUntil+300);setTimeout(render,endHold-Date.now()+40)}
@@ -1338,11 +1338,14 @@ function onGame(g,force){
   G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();
   const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
 }
+let commitTok=0;
 async function commit(g){
-  if(busy||!sub)return false;busy=true;g.v=(g.v||0)+1;const s=sub,c=code;
+  if(busy||!sub)return false;busy=true;g.v=(g.v||0)+1;const s=sub,c=code,tok=++commitTok;
   s.local(g); // sofort anzeigen, Server bestaetigt im Hintergrund
-  try{const ok=await store.commit(c,g);if(!ok)s.refetch()}catch(e){console.warn(e);s.refetch();writeErr(e)}
-  busy=false;maybeBot();return true;
+  // Haengt die Verbindung, nach 10 s abbrechen und den Stand neu laden – sonst bliebe die App blockiert
+  const to=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),10000));
+  try{const ok=await Promise.race([store.commit(c,g),to]);if(!ok)s.refetch()}catch(e){console.warn(e);s.refetch();if(String(e&&e.message)!=='timeout')writeErr(e)}
+  if(tok===commitTok){busy=false;maybeBot()}return true;
 }
 function running(){return G&&['wish','swap','stock','play'].includes(G.phase)}
 function maybeBot(){
