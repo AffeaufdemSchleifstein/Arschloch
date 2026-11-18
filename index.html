@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-wXjSTsW6rgZkqr6ZMvf2u0v3Tiby+VYOUm9NKXUS9hI=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dde/5PIKkNqRQJ4qGDVGB2T0ysTu5Wfa2OL8vueHOFw=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -753,6 +753,25 @@ body.low #app.enter>.panel,body.low #app.enter>.nav,body.low .strick .te.win .sc
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
 #chatui .ttag{font-size:11.5px;color:#5fe08a;font-weight:600;flex:none}
 .note.shk{margin:6px 0 0;text-align:center;font-size:12.5px}
+/* Kopfzeile Startseite: nie breiter als der Bildschirm */
+.head>h1{min-width:0;flex:0 1 auto;font-size:clamp(28px,9vw,38px)}
+.hbtns{display:flex;gap:8px;align-items:center;flex:0 1 auto;min-width:0}
+.hbtns .homechat{flex:none}
+.hbtns .acct{min-width:0;max-width:44vw;overflow:hidden;text-overflow:ellipsis}
+html,body{overflow-x:hidden;overflow-x:clip}
+/* Würfelblock: bei vielen Spielern seitlich wischen, Feldnamen bleiben stehen */
+.blockw{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+table.dsheet th{max-width:62px;overflow:hidden;text-overflow:ellipsis}
+table.dsheet td.cn,table.dsheet tr>th:first-child{position:sticky;left:0;z-index:1;background:#2a1a0f}
+.head>h1{font-size:clamp(26px,7.6vw,38px);white-space:nowrap}
+.hbtns .acct{max-width:30vw;display:inline-flex}
+.hbtns .acct .an{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Listen: Namen kürzen statt Knöpfe zu überdecken */
+ul.plist li>span:first-child{flex:1 1 auto;min-width:0}
+ul.plist li>span:first-child>span:last-child{min-width:0}
+ul.plist li>span:first-child b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ul.plist li>button,ul.plist li>.row{flex:0 0 auto}
+@media (max-width:420px){.wl{display:none}}
 </style>
 </head>
 <body>
@@ -2268,9 +2287,9 @@ function chatDefault(){const W=innerWidth,H=innerHeight,ar=$('#app').getBounding
   if(W-ar.right>=300){const w=Math.min(400,W-ar.right-24);return {x:ar.right+12,y:16,w,h:Math.min(H-32,600)}}
   if(ar.left>=300){const w=Math.min(400,ar.left-24);return {x:ar.left-12-w,y:16,w,h:Math.min(H-32,600)}}
   const w=Math.min(W-16,460);return {x:Math.round((W-w)/2),y:Math.round(Math.max(8,H*.07)),w,h:Math.round(Math.min(H*.42,380))}}
-function chatGeo(){const W=innerWidth,H=innerHeight;if(!chatG||typeof chatG!=='object')chatG=chatDefault();const g=Object.assign({},chatG);
+function chatGeo(){const vv=window.visualViewport,W=innerWidth,H=Math.round(vv&&vv.height>100?Math.min(innerHeight,vv.height):innerHeight);if(!chatG||typeof chatG!=='object')chatG=chatDefault();const g=Object.assign({},chatG);
   g.w=Math.round(Math.max(240,Math.min(W-8,+g.w||320)));g.h=Math.round(Math.max(200,Math.min(H-8,+g.h||320)));
-  g.x=Math.round(Math.max(4,Math.min(W-g.w-4,+g.x||0)));g.y=Math.round(Math.max(4,Math.min(H-60,+g.y||0)));return g}
+  g.x=Math.round(Math.max(4,Math.min(W-g.w-4,+g.x||0)));g.y=Math.round(Math.max(4,Math.min(H-g.h-4,+g.y||0)));return g}
 let chatDrag=null;
 document.addEventListener('pointerdown',e=>{const c=e.target.closest('#chatui .chat');if(!c)return;
   const rs=e.target.closest('.cresize'),hd=e.target.closest('.chead');if(!rs&&(!hd||e.target.closest('button')))return;
@@ -2280,7 +2299,8 @@ document.addEventListener('pointermove',e=>{const d=chatDrag;if(!d||e.pointerId!
   Object.assign(d.c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'})});
 function chatDragEnd(e){const d=chatDrag;if(!d||e.pointerId!==d.id)return;chatDrag=null;d.c.classList.remove('drag');chatG=chatGeo();ls.set('al_chatwin',JSON.stringify(chatG))}
 document.addEventListener('pointerup',chatDragEnd);document.addEventListener('pointercancel',chatDragEnd);
-window.addEventListener('resize',()=>{const c=$('#chatui .chat');if(!c)return;const g=chatGeo();Object.assign(c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'})});
+function chatFit(){const c=$('#chatui .chat');if(!c||chatDrag)return;const g=chatGeo();Object.assign(c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'});const l=$('#clist');if(l)l.scrollTop=l.scrollHeight}
+window.addEventListener('resize',chatFit);if(window.visualViewport)visualViewport.addEventListener('resize',chatFit);
 // T öffnet den Chat, Esc schließt ihn
 document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;
@@ -2600,9 +2620,9 @@ function needAccount(what){return '<div class="panel"><p style="margin-top:0">F�
 function incomingCount(){return friends.filter(f=>f.rel==='incoming').length}
 
 function drawHome(){
-  const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">'+avatar(me.avatar,me.display,presCount,24)+' '+esc(me.display)+'</button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
+  const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">'+avatar(me.avatar,me.display,presCount,24)+'<span class="an">'+esc(me.display)+'</span></button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
   const dmb=me?'<button class="iconbtn homechat" data-a="chat" title="Privatchat (T)">💬'+(dmTotal()?'<span class="badge">'+dmTotal()+'</span>':'')+'</button>':'';
-  let h='<div class="head"><h1>Spieleabend</h1><span class="row" style="flex:0 0 auto;gap:8px;align-items:center">'+dmb+acct+'</span></div><p class="suits">🃏 🧙 🎲</p>';
+  let h='<div class="head"><h1>Spieleabend</h1><span class="hbtns">'+dmb+acct+'</span></div><p class="suits">🃏 🧙 🎲</p>';
   if(!ready)return h+'<p class="note">Verbinde …</p>';
   if(!me)h+='<div class="panel"><label for="name">Dein Name</label><input id="name" data-k="name" maxlength="16" autocomplete="off" placeholder="z. B. Max" value="'+esc(drafts.name||'')+'"></div>';
   if(store.online){
@@ -2649,8 +2669,15 @@ function drawAccount(){
   return h;
 }
 // Zuschauen bzw. beitreten, wenn ein Freund gerade in einer Partie ist
+function friendInvitePanel(){
+  if(!me||!store.online||!code||(G&&G.local))return '';
+      const inLobby=new Set(lobby.map(p=>p.id)),on=friends.filter(f=>f.rel==='friend'&&!inLobby.has(f.uid)).sort((a,b)=>b.online-a.online);
+      return '<div class="panel"><h3>Freunde einladen</h3>'+(on.length?'<ul class="plist">'+on.map(f=>{const sent=seen['inv'+f.uid]&&Date.now()-seen['inv'+f.uid]<5000,again=!!seen['inv'+f.uid];
+        return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
+        '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen ✓':again?'Nochmal einladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
+}
 function watchBtn(uid){const x=fGames[uid];if(!x||x.code===code)return '';
-  return '<button class="small" style="margin-right:6px;white-space:nowrap;flex:0 0 auto;width:auto" data-a="watch" data-v="'+esc(x.code)+'">'+(x.phase==='lobby'?'Beitreten':'👀 Zuschauen')+'</button>'}
+  return '<button class="small" style="margin-right:6px;white-space:nowrap;flex:0 0 auto;width:auto" data-a="watch" data-v="'+esc(x.code)+'">'+(x.phase==='lobby'?'Beitreten':'👀<span class="wl"> Zuschauen</span>')+'</button>'}
 function friendsPlaying(){
   const l=friends.filter(f=>f.rel==='friend'&&fGames[f.uid]);if(!l.length)return '';
   return '<div class="panel"><h3>Freunde spielen gerade</h3><ul class="plist">'+l.map(f=>{const x=fGames[f.uid];
@@ -2827,13 +2854,7 @@ function drawGame(app){
         '<div class="rl"><span>Partie endet bei</span>'+seg('target',[[0,'offen'],[10,'10 P'],[20,'20 P'],[30,'30 P']])+'</div>'+
         ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span><div class="seg">'+[['easy','leicht'],['normal','normal'],['hard','schwer']].map(([v,l])=>'<button class="'+((G.botLevel||'normal')===v?'on':'')+'" data-a="botlvl" data-v="'+v+'">'+l+'</button>').join('')+'</div></div>':'')+'</div>'
       :'<div class="panel"><h3>Hausregeln</h3><p class="note" style="margin:0">'+esc(rulesText(r))+((G.bots||0)?' · Computer '+LV[G.botLevel||'normal']:'')+'</p></div>';
-    let fr='';
-    if(me&&store.online){
-      const inLobby=new Set(lobby.map(p=>p.id)),on=friends.filter(f=>f.rel==='friend'&&!inLobby.has(f.uid)).sort((a,b)=>b.online-a.online);
-      fr='<div class="panel"><h3>Freunde einladen</h3>'+(on.length?'<ul class="plist">'+on.map(f=>{const sent=seen['inv'+f.uid]&&Date.now()-seen['inv'+f.uid]<5000,again=!!seen['inv'+f.uid];
-        return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
-        '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen ✓':again?'Nochmal einladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
-    }
+    const fr=friendInvitePanel();
     setHTML(app,top+'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<button class="ghost" data-a="share" style="margin-top:10px">Link teilen</button>':'')+'</div>'+
       '<div class="panel"><label>Am Tisch ('+t+' von 3–8)</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul></div>'+
       (host?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=8?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+(G.bots>0?'':'disabled')+'>− Computer</button></div>'+
@@ -3105,7 +3126,7 @@ function drawOtherLobby(app,top,host,k){
   const okStart=t>=info.min&&t<=info.max;
   setHTML(app,top+'<div class="panel gamehead"><span class="gi">'+info.icon+'</span><span><b>'+info.name+'</b><small>'+info.desc+'</small></span></div>'+
     (G.local?'':'<div class="panel"><label style="text-align:center">Raumcode</label><div class="code">'+esc(code)+'</div>'+(store.online?'<div class="row" style="margin-top:10px"><button class="ghost" data-a="share">Link teilen</button>'+(me?'<button class="ghost" data-a="inv-open">👥 Einladen</button>':'')+'</div>':'')+'</div>')+
-    '<div class="panel"><label>'+(G.local?'Wer spielt mit?':'Am Tisch')+' ('+t+' von '+info.min+'–'+info.max+')</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul>'+nameAdd+'</div>'+
+    '<div class="panel"><label>'+(G.local?'Wer spielt mit?':'Am Tisch')+' ('+t+' von '+info.min+'–'+info.max+')</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul>'+nameAdd+'</div>'+friendInvitePanel()+
     (host?(canBots?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=info.max?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+((G.bots||0)>0?'':'disabled')+'>− Computer</button></div>':'')+
       '<button data-a="start" '+(okStart?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<info.min?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens '+info.min+' Spieler.</p>':'')
       :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:DC_RULES_TXT)+'</div>');
