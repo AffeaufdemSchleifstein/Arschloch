@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8FU0C+HaBfCL2ApMg146TelYafSNEXZbwV0CJwlpcfU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-f9/Z/jDtmRpDFqMw+4l2KZ/0JNtk78+cRws3tWp5jSA=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -1625,7 +1625,7 @@ function act(a,v,el){
   if(a==='lv-pause'&&G.paused){closeModal();return leave()}
   if(busy){if(a==='lv-pause'){closeModal();return leave()}if(a!=='lv-end')toast('Einen Moment …');return}
   const g=clone(G);
-  if(G.paused&&a!=='unpause'&&a!=='lv-end')return;
+  if(G.paused&&!['unpause','lv-end','next','endmatch','newmatch'].includes(a))return;
   switch(a){
     case 'rule':{if(G.host!==myId||G.phase!=='lobby')return;const k=el.dataset.k;g.rules=Object.assign({},DEFAULT_RULES,g.rules||{});
       g.rules[k]=v==='true'?true:v==='false'?false:+v;commit(g);return}
@@ -1640,8 +1640,11 @@ function act(a,v,el){
       g.players=lobby.slice(0,5).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
       for(let i=0;i<(g.bots||0);i++)g.players.push({id:'bot'+i,name:BOTS[i],bot:true,level:g.botLevel||'normal'});
       startMatch(g);deal(g);return commit(g);
-    case 'next':if(G.phase==='end'&&s>=0&&!G.final&&Date.now()-(seen.endAt||0)>=3000){deal(g);commit(g)}return;
-    case 'endmatch':if(G.phase==='end'&&s>=0){g.phase='over';commit(g)}return;
+    case 'next':if(G.phase==='end'&&s>=0&&!G.final&&Date.now()-(seen.endAt||0)>=3000){
+        // Nach einer Pause am Rundenende geht es mit "Naechste Runde" weiter – aber nur durch den, der pausiert hat
+        if(G.paused&&G.paused.uid&&G.paused.uid!==myId){toast('Nur '+G.paused.by+' kann die Partie fortsetzen.');return}
+        g.paused=null;deal(g);commit(g)}return;
+    case 'endmatch':if(G.phase==='end'&&s>=0){g.paused=null;g.phase='over';commit(g)}return;
     case 'newmatch':if(G.phase==='over'&&s>=0){startMatch(g);deal(g);commit(g)}return;
     case 'pause':if(running()&&s>=0){g.paused={by:G.players[s].name,uid:myId};commit(g)}return;
     case 'unpause':if(G.paused&&s>=0){if(G.paused.uid&&G.paused.uid!==myId){toast('Nur '+G.paused.by+' kann die Partie fortsetzen.');return}g.paused=null;commit(g)}return;
@@ -1960,7 +1963,8 @@ function drawGame(app){
     if(cd>0)setTimeout(render,(Date.now()-seen.endAt)%1000?1000-(Date.now()-seen.endAt)%1000+20:1000);
     app.innerHTML=top+'<h1 style="margin-top:6px">'+(G.final?'🏁 Entschieden!':'Runde '+G.round+' vorbei')+'</h1><p class="sub">'+(G.final?esc(lead.name)+' hat '+lead.m.pts+' Punkte erreicht und gewinnt die Partie. ':'')+esc(nm(G,G.order[0]))+' ist Präsident, '+esc(nm(G,G.order[n-1]))+' ist das Arschloch.</p>'+
       '<div class="panel"><ul class="plist">'+li+'</ul></div><div class="panel"><h3>Stand der Partie'+(R(G).target?' · Ziel '+R(G).target+' P':'')+'</h3>'+pointsTable(G)+'</div>'+
-      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px" '+(cd>0?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
+      (G.paused?'<p class="note" style="text-align:center">⏸ Pausiert von '+esc(G.paused.by)+(G.paused.uid&&G.paused.uid!==myId?' – nur '+esc(G.paused.by)+' kann mit „Nächste Runde“ weitermachen.':' – mit „Nächste Runde“ geht es weiter.')+'</p>':'')+
+      (me_>=0?(G.final?'<button data-a="endmatch">Zur Auswertung</button>':'<button data-a="next" style="margin-bottom:10px" '+(cd>0||(G.paused&&G.paused.uid&&G.paused.uid!==myId)?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button><button class="ghost" data-a="endmatch">Partie beenden & auswerten</button>'):'<p class="note" style="text-align:center">Gleich geht es weiter …</p>');
     return;
   }
 
