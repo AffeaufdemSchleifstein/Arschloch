@@ -8,7 +8,7 @@ Das Kartenspiel Arschloch fürs Handy – jeder spielt auf seinem eigenen Gerät
 
 1. Link öffnen, Namen eingeben, **Neuen Raum erstellen**.
 2. **Link teilen** oder den 4-Buchstaben-Code sagen – mit Konto auch Freunde direkt einladen.
-3. Bei 3–5 Spielern auf **Spiel starten**. Fehlende Plätze kann man mit Computergegnern (leicht, normal, schwer) füllen.
+3. Bei 3–8 Spielern auf **Spiel starten**. Fehlende Plätze kann man mit Computergegnern (leicht, normal, schwer) füllen.
 
 Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. Android → Chrome → Menü → *App installieren*.
 
@@ -21,6 +21,13 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 - Eigenes Design: Tische, Filzfarben, Hintergründe, Kartenvorder- und -rückseiten, Avatare oder eigenes Foto
 - Sounds und Hintergrundmusik (Pop, Ruhig, Lounge) mit getrennter Lautstärke
 - Hausregeln in der Lobby: Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel
+
+## Spielmodi
+
+- **Klassisch** – das normale Arschloch.
+- **Chaos** – zusätzlich 2 Joker und die Aktionskarten Revolution (Rangfolge dreht sich um), Aussetzer und Richtungswechsel.
+- **Team** – 4 Spieler, 2 gegen 2; gegenüber sitzende Spieler sind ein Team.
+- **Mehr Spieler** – ab 6 Spielern (bis 8) wird automatisch mit 52 Karten (2 bis Ass) gespielt.
 
 ## Regeln
 
