@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Z1o6CU7VjcWMhhqEvBR5dqdcJwv1QdX5pcc28rBA+nA=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dykd7H0AaVElbg8qRW62hJHpP6CfyKjBZvXLCDdkiJU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -3049,7 +3049,7 @@ function onGameOther(g,prev){
   const k=gameOf(g);
   if(k==='stich'&&prev&&prev.trick&&g.trick){
     if(g.trick.length>prev.trick.length)sfx('card');
-    if(prev.trick.length>0&&g.trick.length===0&&g.lastTrick){trickHold=Date.now()+1700;setTimeout(render,1750);if(g.lastTrick.bomb)boom('💣 Bombe!')}
+    if(prev.trick.length>0&&g.trick.length===0&&g.lastTrick){trickHold=Date.now()+2000;setTimeout(render,2050);if(g.lastTrick.bomb)boom('💣 Bombe!')}
   }
   if(k==='stich'&&prev&&g.round!==prev.round)sfx('deal');
   if(k==='dice'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
@@ -3175,13 +3175,14 @@ function stBlock(g){
 }
 function drawStich(app,top){
   const n=G.players.length,cs=ctrlSeat(),me_=G.local?cs:mySeat(),viewS=G.local?(cs>=0?cs:-1):me_;
-  if(G.phase==='over'){
+  const holdEnd=(G.phase==='rend'||G.phase==='over')&&G.lastTrick&&trickHold>Date.now();
+  if(G.phase==='over'&&!holdEnd){
     const st=stStandings(G),medal=['🥇','🥈','🥉'],pl=stPlaces(G);
     setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><div class="panel"><ul class="plist">'+st.map(x=>'<li><span>'+(medal[pl[x.s]]||'')+' '+esc(x.name)+'</span><b>'+x.pts+' Punkte</b></li>').join('')+'</ul></div>'+
       '<div class="panel"><h3>Block</h3>'+stBlock(G)+'</div>'+((me_>=0||G.local)?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');
     return;
   }
-  if(G.phase==='rend'){
+  if(G.phase==='rend'&&!holdEnd){
     const h=G.hist[G.hist.length-1],ek=code+':'+G.match+':'+G.round;
     if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
     const cd=Math.max(0,3-Math.ceil((Date.now()-seen.endAt)/1000));if(cd>0)setTimeout(render,400);
