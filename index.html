@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-7KbFTK84sXbplFkAmlfpNYUVa7SCEyvY0qq7r21/gY4=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-GnPiaq543VXh9MJtYobzg5TQ7rj8/WUV5b1fS0mBajk=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Arschloch – Kartenspiel</title>
 <meta name="theme-color" content="#2a170c">
@@ -581,6 +581,20 @@
 .opps.many .opp{flex:1 1 30%;padding:6px 7px}
 .opps.many .opp .n{font-size:12.5px}
 .opps.many .opp .r{font-size:11px}
+
+/* Letzte Karte */
+.opp.lastc{border-color:#ff4d4d!important;animation:lastc 1s ease-in-out infinite}
+@keyframes lastc{0%,100%{box-shadow:0 0 0 0 rgba(255,77,77,.0)}50%{box-shadow:0 0 0 4px rgba(255,77,77,.45),0 0 18px rgba(255,77,77,.5)}}
+.lcflash{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:60;pointer-events:none;background:linear-gradient(180deg,#ff5a4d,#c91f1f);color:#fff;font-weight:900;font-size:22px;padding:14px 22px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.5);white-space:nowrap;animation:lcf 1.9s ease forwards}
+@keyframes lcf{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}22%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-62%) scale(.96)}}
+/* Tagesaufgaben */
+.quests .qrow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:8px 0}
+.quests .qt{font-size:14px}.quests .qn{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.quests .qb{grid-column:1/-1;height:7px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.quests .qb i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.quests .qrow.done .qb i{background:#5fe08a}.quests .qrow.done .qt{color:#9df0b8}
+/* Sternen-Kartenruecken */
+.mini.cb-star,body[data-back=star] .card.back{background:radial-gradient(circle at 25% 30%,#fff 0 1.5px,transparent 2.5px),radial-gradient(circle at 70% 60%,#fff 0 1.5px,transparent 2.5px),radial-gradient(circle at 45% 80%,#ffe28a 0 2px,transparent 3px),radial-gradient(circle at 80% 20%,#ffe28a 0 2px,transparent 3px),linear-gradient(160deg,#1b2a6b,#0b1030)}
 </style>
 </head>
 <body>
@@ -986,13 +1000,33 @@ const $=s=>document.querySelector(s);
 const esc=s=>(typeof s==='string'?s:typeof s==='number'?String(s):'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const ls={get(k){try{return localStorage.getItem(k+SLOT)}catch(e){return null}},set(k,v){try{localStorage.setItem(k+SLOT,v)}catch(e){}}};
 const pct=(a,b)=>b?Math.round(a*100/b)+' %':'–';
+// Letzte Karte: grosser Hinweis fuer alle
+function lastCardFlash(g,s){const mine=g.players[s].id===myId,el=document.createElement('div');el.className='lcflash';
+  el.textContent=mine?'⚠️ Du hast nur noch 1 Karte!':'⚠️ '+String(g.players[s].name||'').slice(0,16)+': Letzte Karte!';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1900);sfx('tick2')}
+// Krone fuer den Praesidenten, Klobrille fuer das Arschloch (aus der letzten Runde)
+function crownOf(g,s){if(!g.roles||g.roles[s]==null||!(g.round>1))return '';const n=g.players.length;return g.roles[s]===0?'👑 ':g.roles[s]===n-1?'🚽 ':''}
 let toastT;function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),4200)}
 function writeErr(e){toast(navigator.onLine===false?'Keine Internetverbindung.':'Verbindung hakt gerade – bitte nochmal versuchen.')}
 
 let store=null,ready=false,offlineMode=false,me=null,myId=null,myName='',hashCode='';
 let view='home',viewArg=null,drafts={},acctTab='register',acctErr='',busyUi=false;
 let code=null,G=null,lobby=[],sub=null,sel=new Set(),wishSel=[],seen={},busy=false,botTimer=null,stale=false,loadTimer=null,enterT;
-let rankMode='all',monthWinner=null,ovOpen=false,fGames={},lockOn=false,lockV=-1;
+let rankMode='all',monthWinner=null,ovOpen=false,fGames={},lockOn=false,lockV=-1,quests=null;
+const QUEST_TXT={play3:'Spiele 3 Runden',play5:'Spiele 5 Runden',pres1:'Werde 1× Präsident',pres2:'Werde 2× Präsident',bomb1:'Lege eine Bombe',notlast3:'Werde 3× nicht Arschloch',aces3:'Bekomm 3 Asse auf die Hand',top2:'Lande 2× auf Platz 1 oder 2'};
+const qDone=q=>(+q.have||0)>=(+q.need||1);
+async function loadQuests(announce){
+  if(!me||!store||!store.online)return;let n;try{n=await store.rpc('daily_quests')}catch(e){return}if(!n||!Array.isArray(n.quests))return;
+  if(announce&&quests&&quests.day===n.day){n.quests.forEach((q,i)=>{const o=quests.quests[i];if(o&&!qDone(o)&&qDone(q))setTimeout(()=>toast('✅ Tagesaufgabe geschafft: '+(QUEST_TXT[q.id]||q.id)),i*1600)});
+    if(n.quests.every(qDone)&&!quests.quests.every(qDone))setTimeout(()=>toast('⭐ Alle Tagesaufgaben geschafft – du bekommst einen Tagesstern!'),3500)}
+  quests=n;if(!code)render();
+}
+function questPanel(){
+  if(!me)return '';if(!quests)return '';const st=+quests.stars||0;
+  return '<div class="panel quests"><h3>📅 Tagesaufgaben</h3>'+quests.quests.map(q=>{const d=qDone(q),p=Math.min(1,(+q.have||0)/(+q.need||1));
+    return '<div class="qrow'+(d?' done':'')+'"><span class="qt">'+(d?'✅ ':'')+esc(QUEST_TXT[q.id]||q.id)+'</span><span class="qn">'+Math.min(+q.have||0,+q.need||0)+'/'+(+q.need||0)+'</span><div class="qb"><i style="width:'+(p*100).toFixed(0)+'%"></i></div></div>'}).join('')+
+    '<p class="note" style="margin:8px 0 0">⭐ '+st+' Tagesstern'+(st===1?'':'e')+(st<5?' · ab 5 gibt es den Sternen-Kartenrücken':' · Sternen-Kartenrücken freigeschaltet')+'. Neue Aufgaben jeden Tag um Mitternacht.</p></div>';
+}
 let friends=[],friendsKey='',myGames=[],rankRows=null,profileData=null,lastStatus='',invQ=[],invShown=new Set(),modalOpen=false;
 let endHold=0,turnStart=0,autoV=-1,boomT,boomUntil=0;
 let chat=[],chatOpen=false,chatUnread=0,wheelOpen=false,lastSend=0;
@@ -1282,9 +1316,9 @@ const SURF=[['felt','Filz','🟩'],['desk','Schreibtisch','🗄️'],['wood','Ho
 const FELT={green:['Grün','#2c8a55','#17603a','#0c3d22'],blue:['Blau','#2f6fb0','#1b4a80','#0e2a4d'],red:['Rot','#b0413b','#7d2622','#4a1311'],
   purple:['Lila','#7a4bb0','#53307f','#2e1a4a'],teal:['Türkis','#24a098','#147068','#0a403b'],black:['Schwarz','#4a4a4a','#2a2a2a','#111']};
 const FRONTS=[['classic','Klassisch'],['dark','Dunkel'],['vintage','Vintage'],['gold','Gold',40],['neon','Neon',100],['diamond','Diamant',300]];
-const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',20],['flame','Flammen','bob'],['legend','Legende',200]];
-function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return presCount>=req;return !!(myStats&&myStats[req]>=1)}
-function reqText(req){return typeof req==='number'?'🔒 '+req+'× Präsident':'🔒 Erfolg „Bombe auf Bombe“'}
+const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',20],['flame','Flammen','bob'],['star','Sterne','stars5'],['legend','Legende',200]];
+function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return presCount>=req;if(req==='stars5')return !!(quests&&quests.stars>=5);return !!(myStats&&myStats[req]>=1)}
+function reqText(req){return typeof req==='number'?'🔒 '+req+'× Präsident':req==='stars5'?'🔒 5 Tagessterne':'🔒 Erfolg „Bombe auf Bombe“'}
 const BGS=[['bar','Bar','#5a3820'],['night','Nacht','#1a2550'],['living','Wohnzimmer','#6b5442'],['neon','Neon','#5a1a6d'],['concrete','Beton','#4a4d52']];
 const ACC={gold:['Gold','#f2c14e','#2b2100'],mint:['Mint','#5fe0b5','#06281c'],pink:['Pink','#ff7ab6','#3a0820'],sky:['Himmelblau','#6cc4ff','#06243a'],orange:['Orange','#ff9b42','#3a1a00'],white:['Weiß','#f2f2f2','#1a1a1a']};
 let T={surface:'felt',felt:'green',bg:'bar',accent:'gold',cards:'classic',back:'red'};
@@ -1312,7 +1346,7 @@ async function init(){
       myName=me.display;
       if(me.theme&&me.theme.surface){Object.assign(T,me.theme);ls.set('al_theme',JSON.stringify(T));applyTheme()}
       store.listenUser(()=>pollInvites(),()=>loadFriends());
-      loadFriends();pollInvites();heartbeat();loadPres();
+      loadFriends();pollInvites();heartbeat();loadPres();loadQuests();
       setInterval(()=>{if(document.hidden)return;heartbeat();pollInvites();if(!code||(G&&G.phase==='lobby'))loadFriends()},25000);
       document.addEventListener('visibilitychange',()=>{if(!document.hidden){heartbeat();pollInvites()}else if(me)store.rpc('heartbeat',{p_status:'away'}).catch(()=>{})});
     }
@@ -1434,6 +1468,7 @@ function onGame(g,force){
   else if(prev&&g.pile&&pileKey(g)!==pileKey(prev))sfx('card');
   else if(prev&&g.v!==prev.v&&g.phase==='play'&&g.passed&&prev.passed&&g.passed.length>prev.passed.length)sfx('pass');
   if(prev&&g.round!==prev.round)sfx('deal');
+  if(prev&&prev.phase==='play'&&g.phase==='play'&&prev.hands&&g.players.length===prev.players.length)g.players.forEach((p,s)=>{if(prev.hands[s]&&prev.hands[s].length>1&&g.hands[s].length===1)lastCardFlash(g,s)});
   if(prev&&g.v!==prev.v&&(g.turn!==prev.turn||g.phase!==prev.phase)&&g.turn===mySeatOf(g)&&['play','wish','swap','stock'].includes(g.phase)&&!g.paused)setTimeout(()=>sfx('turn'),250);
   if(prev&&prev.phase==='play'&&g.phase==='end'){const ms=mySeatOf(g);if(ms>=0)setTimeout(()=>sfx(g.order[0]===ms?'win':g.order[g.order.length-1]===ms?'lose':'mid'),Math.max(600,boomUntil-Date.now()+200))}
   // Vorausgewaehlte Karten bleiben beim Zugwechsel erhalten (nur neue Phase/Runde leert die Auswahl)
@@ -1442,7 +1477,7 @@ function onGame(g,force){
   if(!prev||g.v!==prev.v||g.phase!==prev.phase)turnStart=Math.max(Date.now(),boomUntil);
   // Nach dem letzten Stich den Tisch noch kurz zeigen
   if(prev&&prev.phase==='play'&&g.phase==='end'){endHold=Math.max(Date.now()+2300,boomUntil+300);setTimeout(render,endHold-Date.now()+40)}
-  if(g.phase==='end'&&seen.rec!==code+':'+g.round){seen.rec=code+':'+g.round;const c=code;setTimeout(()=>{store.recordRound(c);setTimeout(loadPres,2500)},1500)}
+  if(g.phase==='end'&&seen.rec!==code+':'+g.round){seen.rec=code+':'+g.round;const c=code;setTimeout(()=>{store.recordRound(c);setTimeout(()=>{loadPres();loadQuests(true)},2500)},1500)}
   G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();tryLock();
   const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
 }
@@ -1718,6 +1753,7 @@ function act(a,v,el){
       return store.rpc('invite_friend',{p_to:v,p_code:code}).then(()=>{toast('Einladung verschickt.');render();setTimeout(()=>{render();if(invOpen)openInvite()},5100)})
         .catch(e=>{delete seen['inv'+v];if(invOpen)openInvite();const m=String(e&&e.message);toast(/slow down/.test(m)?'Zu viele Einladungen – warte kurz.':/no account/.test(m)?'Nur Spieler mit Konto bekommen Einladungen – schick ihnen sonst den Link.':'Einladung ging nicht raus.')});
     case 'inv-open':return openInvite();
+    case 'qpush':if(!me)return;me.quest_push=me.quest_push===false;render();return store.rpc('set_quest_push',{p_on:me.quest_push}).catch(()=>{me.quest_push=!me.quest_push;render();toast('Hat nicht geklappt.')});
     case 'lock':if(G&&G.phase==='play'&&sel.size&&lockOk([...sel])){lockOn=true;sfx('msg');render()}return;
     case 'unlock':lockOn=false;return render();
     case 'watch':if(!/^[A-Z]{4}$/.test(v))return;if(code&&code!==v)leave();return joinRoom(v);
@@ -1876,7 +1912,7 @@ function drawHome(){
   if(store.online){
     h+='<div class="panel"><button data-a="create">Neuen Raum erstellen</button></div>'+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
-    h+=friendsPlaying();
+    h+=questPanel()+friendsPlaying();
     if(myGames.length)h+='<div class="panel"><h3>Meine Partien</h3><ul class="plist">'+myGames.map((x,i)=>
       '<li style="--i:'+i+'"><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px">'+esc(x.players||x.code)+'</b><span class="note">'+
       (x.phase==='lobby'?'Lobby':'Runde '+x.round)+(x.paused?' · ⏸ pausiert':'')+'</span></span><span class="row" style="flex:0 0 auto;gap:6px"><button class="small" data-a="resume" data-v="'+esc(x.code)+'">'+(x.paused?'Fortsetzen':'Öffnen')+'</button><button class="small ghost" data-a="hide" data-v="'+esc(x.code)+'" title="Aus der Liste entfernen">✕</button></span></li>').join('')+'</ul></div>';
@@ -2028,7 +2064,8 @@ function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
   let h=backBtn+'<h2>Einstellungen</h2>'+
     '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
-    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+'</ul></div>';
+    '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+
+      (me?'<li><span style="display:flex;flex-direction:column"><b>Erinnerung an Tagesaufgaben</b><span class="note">Push-Nachricht am Abend, wenn noch Aufgaben offen sind'+(SET.push?'':' (braucht Benachrichtigungen)')+'</span></span><button class="sw2'+(me.quest_push!==false?' on':'')+'" data-a="qpush" aria-label="Erinnerung an Tagesaufgaben"><i></i></button></li>':'')+'</ul></div>';
   let push;
   if(!me)push='<p class="note" style="margin:0">Benachrichtigungen gibt es nur mit Konto.</p><button class="ghost" style="margin-top:10px" data-a="go" data-v="account">Konto erstellen</button>';
   else if(!pushSupported())push='<p class="note" style="margin:0">'+(IOS&&!STANDALONE?'Auf dem iPhone gehen Benachrichtigungen nur, wenn das Spiel als App auf dem Home-Bildschirm liegt: Safari → Teilen → „Zum Home-Bildschirm“, dann die App von dort öffnen.':'Dein Browser unterstützt keine Benachrichtigungen.')+'</p>';
@@ -2133,7 +2170,7 @@ function drawGame(app){
     const st=lost?'Ass-Ende ✗':place>=0?'fertig ('+(place+1)+'.)':G.passed.includes(s)?'passt':'';
     const oh=open?'<div class="oh">'+G.hands[s].map(c=>isSpec(c)?'<span class="oc">'+SPEC_UI[c][0]+'</span>':'<span class="oc'+(su(c)===1||su(c)===2?' red':'')+'">'+RANKS[rk(c)]+'<i>'+SUITS[su(c)]+'</i></span>').join('')+'</div>':'';
     const conn=p.bot||!store.online||online.has(p.id);
-    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+(isTeam(G)?'<span class="tdot t'+(s%2)+'"></span>':'')+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(realOpen?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+' Karten')+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
+    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+(cnt===1&&G.phase==='play'?' lastc':'')+'" data-s="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+(isTeam(G)?'<span class="tdot t'+(s%2)+'"></span>':'')+crownOf(G,s)+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(realOpen?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+(cnt===1?' Karte':' Karten'))+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
   }
   const inStock=G.phase==='stock'&&G.stock&&G.stock.length===2;
   const pk=inStock?'stock'+G.round:pileKey(G);
@@ -2194,7 +2231,7 @@ function drawGame(app){
     const lbl=G.turn===me_?(G.solo?'Du legst allein weiter':'Du bist dran')+(R(G).aceRule&&G.hands[me_].length&&G.hands[me_].every(c=>rk(c)===ACE(G))?' · ⚠ Ass-Ende = letzter Platz':''):esc(nm(G,G.turn))+(G.solo?' legt allein weiter':' ist dran');
     stHtml='<div class="tbar'+(G.turn===me_?' me':'')+'"><span class="tl">'+lbl+'</span><div class="tt"><i id="tbarI"></i></div><b id="tbarN"></b></div>';
   }else if(G.phase==='play'||G.phase==='end')stHtml='';
-  const meHtml=me_>=0?'<div class="mebar"><span>'+(isTeam(G)?'<span class="tdot t'+(me_%2)+'"></span>':'')+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
+  const meHtml=me_>=0?'<div class="mebar"><span>'+(isTeam(G)?'<span class="tdot t'+(me_%2)+'"></span>':'')+crownOf(G,me_)+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
   const handHtml='<div class="hand'+(dealAnim?' deal':'')+(wishUi?' mini':'')+'">'+hand+'</div>';
   const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="'+(passOk?'passbtn'+(legalMoves(G,me_).length?'':' must'):'ghost')+'" data-a="pass" '+(passOk?'':'disabled')+'>'+(G.solo&&G.turn===me_?'Aufhören':'Passen')+'</button>';
   const showHg=G.phase==='play'&&G.turn===me_&&!G.paused;
