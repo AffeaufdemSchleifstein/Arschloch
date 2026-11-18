@@ -1,14 +1,14 @@
-# Arschloch
+# Spieleabend
 
-Das Kartenspiel Arschloch fürs Handy – jeder spielt auf seinem eigenen Gerät.
+Spiele-App fürs Handy mit **Arschloch**, **Stichraten** und **Würfelblock** – jeder spielt auf seinem eigenen Gerät.
 
 **Spielen:** https://affeaufdemschleifstein.github.io/Arschloch/
 
 ## So geht's
 
-1. Link öffnen, Namen eingeben, **Neuen Raum erstellen**.
+1. Link öffnen, Namen eingeben, **Neues Spiel starten** und das Spiel auswählen.
 2. **Link teilen** oder den 4-Buchstaben-Code sagen – mit Konto auch Freunde direkt einladen.
-3. Bei 3–8 Spielern auf **Spiel starten**. Fehlende Plätze kann man mit Computergegnern (leicht, normal, schwer) füllen.
+3. Auf **Spiel starten** (Arschloch 3–8, Stichraten 3–6, Würfelblock 1–8 Spieler). Fehlende Plätze kann man mit Computergegnern (leicht, normal, schwer) füllen.
 
 Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. Android → Chrome → Menü → *App installieren*.
 
@@ -22,7 +22,13 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 - Sounds und Hintergrundmusik (Pop, Ruhig, Lounge) mit getrennter Lautstärke
 - Hausregeln in der Lobby: Zeit pro Zug, Bomben, Stock, Ass-Regel, Weiterlegen, Punkteziel
 
-## Spielmodi
+## Spiele
+
+- **Arschloch** – Präsident oder Arschloch, mit den Modi unten.
+- **Stichraten** – Stiche ansagen und holen, mit 4 Zauberern und 4 Narren. Wahlweise mit den 7 Sonderkarten (Gestaltwandler, Drache, Fee, Bombe, Werwolf, Jongleur, Wolke) und der Plus/Minus-Regel.
+- **Würfelblock** – 5 Würfel, 3 Würfe, 13 Felder. Am Handy würfeln oder mit echten Würfeln nur zählen: online (jeder trägt bei sich ein) oder als **Würfelblock am Tisch** (ein Handy für alle, ohne Internet).
+
+## Spielmodi Arschloch
 
 - **Klassisch** – das normale Arschloch.
 - **Chaos** – zusätzlich 2 Joker und die Aktionskarten Revolution (Rangfolge dreht sich um), Aussetzer und Richtungswechsel.
