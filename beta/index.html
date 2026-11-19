@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UloBxneA6cT84YsshE4u5MogCYFPUJf2R+K1j4hnB5E=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Yqpg2ZD3ZmHEEsU/xZICCUHrShYJmHGUP3ND5Dx2HPQ=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -2230,13 +2230,13 @@ function onChat(m){
   renderChat();
 }
 function anchorFor(uid){
-  if(uid===myId)return document.querySelector('.mebar')||document.querySelector('.hand');
   const s=G&&G.players?G.players.findIndex(p=>p.id===uid):-1;
-  if(s>=0)return document.querySelector('.opp[data-s="'+s+'"]');
+  if(uid===myId){const m=document.querySelector('.mebar')||document.querySelector('.hand')||(s>=0&&document.querySelector('[data-ps="'+s+'"]'));if(m)return m}
+  if(s>=0)return document.querySelector('.opp[data-s="'+s+'"]')||document.querySelector('[data-ps="'+s+'"]')||document.querySelector('#app .table')||document.querySelector('#app .top');
   const i=lobby.findIndex(p=>p.id===uid);return i>=0?document.querySelectorAll('.lob li')[i]:null;
 }
 function floatAt(uid,html,cls,ms){
-  const a=anchorFor(uid);if(!a)return;const r=a.getBoundingClientRect(),el=document.createElement('div');
+  const a=anchorFor(uid)||document.querySelector('#app .table')||document.querySelector('#app');if(!a)return;const r=a.getBoundingClientRect(),el=document.createElement('div');
   el.className='float '+cls;el.innerHTML=html;el.style.left=Math.min(innerWidth-50,Math.max(50,r.left+r.width/2))+'px';
   const isOpp=a.classList.contains('opp');el.style.top=Math.max(cls==='bub'?60:96,isOpp?r.top+r.height*(cls==='bub'?.35:.95):r.top+4)+'px';
   document.body.appendChild(el);setTimeout(()=>el.remove(),ms);
@@ -3365,7 +3365,7 @@ function drawDice(app,top){
     if(!real&&myTurn&&s===cs&&G.rolls>0&&!rolling){const p=dcScoreOf(k,G.dice);return '<td class="pot'+(p?'':' zero')+'" data-a="dc-score" data-v="'+k+'">'+(p||'0')+'</td>'}
     if(canEdit(s))return '<td class="ed empty" data-a="dc-cell" data-v="'+s+':'+k+'">+</td>';
     return '<td></td>'};
-  const head='<tr><th></th>'+G.players.map((p,s)=>'<th class="'+(!real&&G.turn===s&&G.phase==='play'?'cur':'')+'">'+esc(p.name.slice(0,8))+'</th>').join('')+'</tr>';
+  const head='<tr><th></th>'+G.players.map((p,s)=>'<th data-ps="'+s+'" class="'+(!real&&G.turn===s&&G.phase==='play'?'cur':'')+'">'+esc(p.name.slice(0,8))+'</th>').join('')+'</tr>';
   const row=k=>'<tr><td class="cn">'+DC_NAME[k]+'</td>'+G.players.map((_,s)=>cell(s,k)).join('')+'</tr>';
   const sum=(lbl,f,cls)=>'<tr class="'+(cls||'sum')+'"><td class="cn">'+lbl+'</td>'+tot.map(f).join('')+'</tr>';
   const sheet='<div class="blockw"><table class="dsheet">'+head+DC_UPPER.map(row).join('')+
