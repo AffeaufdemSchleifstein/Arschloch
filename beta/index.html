@@ -2,8 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-7i2fdULg5l1/5ykvsK0WHkZzuanjFWDvnWz/vicr6DM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UloBxneA6cT84YsshE4u5MogCYFPUJf2R+K1j4hnB5E=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
 <meta name="description" content="Spieleabend – Arschloch, Wizard und Kniffel online mit Freunden, jeder auf seinem Handy.">
@@ -828,6 +828,10 @@ body[data-dice] .die.held{box-shadow:0 0 0 3px var(--gold),0 8px 16px rgba(0,0,0
 @keyframes peekbar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 .opt.peek{border-color:var(--gold);opacity:1}
 .peekb{position:relative;left:auto;top:auto;transform:none;margin:10px auto 0;width:fit-content;max-width:100%;white-space:normal;text-align:center}
+/* Wizard: eingeloggte Karte */
+.scard.locked{transform:translateY(-14px);box-shadow:0 0 0 3px var(--gold),0 10px 20px rgba(0,0,0,.5)}
+.scard.locked::after{content:'🔒';position:absolute;top:-10px;right:-8px;font-size:15px;background:var(--gold);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.note.lockn{text-align:center;margin:6px 0 0}
 </style>
 </head>
 <body>
@@ -2319,7 +2323,7 @@ function renderChat(){
     const g=chatGeo(),dmN=dmTotal();
     const tabs=(inRoom?'<button class="ctab'+(chatTab==='room'?' on':'')+'" data-a="ctab" data-v="room">Tisch</button>':'')+
       '<button class="ctab'+(chatTab==='dm'?' on':'')+'" data-a="ctab" data-v="dm">Freunde'+(dmN?' <span class="badge">'+dmN+'</span>':'')+'</button>';
-    h+='<div class="chat" style="left:'+g.x+'px;top:'+g.y+'px;width:'+g.w+'px;height:'+g.h+'px"><div class="chead" title="Zum Verschieben ziehen"><span class="grip">⠿</span><div class="ctabs">'+tabs+'</div>'+
+    h+='<div class="chat" style="left:'+g.sx+'px;top:'+g.sy+'px;width:'+g.w+'px;height:'+g.h+'px"><div class="chead" title="Zum Verschieben ziehen"><span class="grip">⠿</span><div class="ctabs">'+tabs+'</div>'+
       '<button class="iconbtn" data-a="chat" title="Schließen (Esc)">✕</button></div>';
     if(chatTab==='room'){
       h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg'+(vPlaying===m.body?' on':'')+'" data-a="vplay" data-v="'+esc(m.body)+'">'+(vPlaying===m.body?'⏹':'▶')+' 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
@@ -2390,18 +2394,18 @@ function chatDefault(){const W=innerWidth,H=innerHeight,ar=$('#app').getBounding
   const w=Math.min(W-16,460);return {x:Math.round((W-w)/2),y:Math.round(Math.max(8,H*.07)),w,h:Math.round(Math.min(H*.42,380))}}
 function chatGeo(){const vv=window.visualViewport,W=innerWidth,H=Math.round(vv&&vv.height>100?Math.min(innerHeight,vv.height):innerHeight);if(!chatG||typeof chatG!=='object')chatG=chatDefault();const g=Object.assign({},chatG);
   g.w=Math.round(Math.max(240,Math.min(W-8,+g.w||320)));g.h=Math.round(Math.max(200,Math.min(H-8,+g.h||320)));
-  g.x=Math.round(Math.max(4,Math.min(W-g.w-4,+g.x||0)));g.y=Math.round(Math.max(4,Math.min(H-g.h-4,+g.y||0)));return g}
+  g.x=Math.round(Math.max(4,Math.min(W-g.w-4,+g.x||0)));g.y=Math.round(Math.max(4,Math.min(H-g.h-4,+g.y||0)));const ox=vv?Math.round(vv.offsetLeft||0):0,oy=vv?Math.round(vv.offsetTop||0):0;g.sx=g.x+ox;g.sy=g.y+oy;return g}
 let chatDrag=null;
 document.addEventListener('pointerdown',e=>{const c=e.target.closest('#chatui .chat');if(!c)return;
   const rs=e.target.closest('.cresize'),hd=e.target.closest('.chead');if(!rs&&(!hd||e.target.closest('button')))return;
   e.preventDefault();const g=chatGeo();chatDrag={rs:!!rs,px:e.clientX,py:e.clientY,g,c,id:e.pointerId};c.classList.add('drag');try{c.setPointerCapture(e.pointerId)}catch(x){}});
 document.addEventListener('pointermove',e=>{const d=chatDrag;if(!d||e.pointerId!==d.id)return;const dx=e.clientX-d.px,dy=e.clientY-d.py;
   chatG=d.rs?{x:d.g.x,y:d.g.y,w:d.g.w+dx,h:d.g.h+dy}:{x:d.g.x+dx,y:d.g.y+dy,w:d.g.w,h:d.g.h};const g=chatGeo();
-  Object.assign(d.c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'})});
+  Object.assign(d.c.style,{left:g.sx+'px',top:g.sy+'px',width:g.w+'px',height:g.h+'px'})});
 function chatDragEnd(e){const d=chatDrag;if(!d||e.pointerId!==d.id)return;chatDrag=null;d.c.classList.remove('drag');chatG=chatGeo();ls.set('al_chatwin',JSON.stringify(chatG))}
 document.addEventListener('pointerup',chatDragEnd);document.addEventListener('pointercancel',chatDragEnd);
-function chatFit(){const c=$('#chatui .chat');if(!c||chatDrag)return;const g=chatGeo();Object.assign(c.style,{left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px'});const l=$('#clist');if(l)l.scrollTop=l.scrollHeight}
-window.addEventListener('resize',chatFit);if(window.visualViewport)visualViewport.addEventListener('resize',chatFit);
+function chatFit(){const c=$('#chatui .chat');if(!c||chatDrag)return;const g=chatGeo();Object.assign(c.style,{left:g.sx+'px',top:g.sy+'px',width:g.w+'px',height:g.h+'px'});const l=$('#clist');if(l)l.scrollTop=l.scrollHeight}
+window.addEventListener('resize',chatFit);if(window.visualViewport){visualViewport.addEventListener('resize',chatFit);visualViewport.addEventListener('scroll',chatFit)}
 // T öffnet den Chat, Esc schließt ihn
 document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;
@@ -3148,7 +3152,7 @@ function ctrlSeat(){
   return mySeat();
 }
 function onGameOther(g,prev){
-  const k=gameOf(g);
+  const k=gameOf(g);if(k==='stich')setTimeout(stLockCheck,0);
   if(k==='stich'&&prev&&prev.trick&&g.trick){
     if(g.trick.length>prev.trick.length)sfx('card');
     if(prev.trick.length>0&&g.trick.length===0&&g.lastTrick){trickHold=Date.now()+2000;setTimeout(render,2050);if(g.lastTrick.bomb)boom('💣 Bombe!')}
@@ -3196,12 +3200,18 @@ function otherAct(a,v,el,g,s){
     // Wizard
     case 'st-trump':{const c=ctrlSeat();if(stSetTrump(g,c,+v))commit(g);return true}
     case 'st-bid':{const c=ctrlSeat();if(stBid(g,c,+v))commit(g);return true}
-    case 'st-sel':{if(G.phase!=='play'&&G.phase!=='juggle')return true;const c=+v;sel.has(c)?sel.clear():(sel.clear(),sel.add(c));render();return true}
+    case 'st-sel':{if(G.phase!=='play'&&G.phase!=='juggle')return true;const c=+v;if(stLock){stLock=null}sel.has(c)?sel.clear():(sel.clear(),sel.add(c));render();return true}
     case 'st-play':{const c=ctrlSeat(),card=[...sel][0];if(card==null)return true;if(trickHold>Date.now())return true;
       if(card===SHIFT){openModal('<h2>🎭 Gestaltwandler</h2><p class="note">Als was spielst du ihn?</p><div class="row"><button data-a="st-as" data-v="Z">🧙 Zauberer</button><button class="ghost" data-a="st-as" data-v="N">🤡 Narr</button></div>');return true}
       if(card===JUGGLER||card===CLOUD){openModal('<h2>'+(card===JUGGLER?'🤹 Jongleur (7½)':'☁️ Wolke (9¾)')+'</h2><p class="note">Welche Farbe soll die Karte haben?</p><div class="suitpick">'+ST_SUITS.map((x,i)=>'<button class="sp'+i+'" data-a="st-as" data-v="'+i+'">'+x+(i===G.trump?' (Trumpf)':'')+'</button>').join('')+'</div>');return true}
       if(stPlay(g,c,card)){sel.clear();commit(g)}else toast('Diese Karte darfst du gerade nicht spielen – du musst bedienen.');return true}
     case 'st-as':{closeModal();const c=ctrlSeat(),card=[...sel][0];if(card==null)return true;const as=card===SHIFT?v:+v;if(stPlay(g,c,card,as)){sel.clear();commit(g)}else toast('Das geht gerade nicht.');return true}
+    case 'st-lock':{const card=[...sel][0];if(card==null||!stCanLock())return true;
+      if(card===SHIFT){openModal('<h2>🎭 Gestaltwandler einloggen</h2><p class="note">Als was soll er gespielt werden?</p><div class="row"><button data-a="st-lockas" data-v="Z">🧙 Zauberer</button><button class="ghost" data-a="st-lockas" data-v="N">🤡 Narr</button></div>');return true}
+      if(card===JUGGLER||card===CLOUD){openModal('<h2>'+(card===JUGGLER?'🤹 Jongleur':'☁️ Wolke')+' einloggen</h2><p class="note">Welche Farbe soll die Karte haben?</p><div class="suitpick">'+ST_SUITS.map((x,i)=>'<button class="sp'+i+'" data-a="st-lockas" data-v="'+i+'">'+x+(i===G.trump?' (Trumpf)':'')+'</button>').join('')+'</div>');return true}
+      stLock={c:card};sfx('msg');render();return true}
+    case 'st-lockas':{closeModal();const card=[...sel][0];if(card==null||!stCanLock())return true;stLock={c:card,as:card===SHIFT?v:+v};sfx('msg');render();return true}
+    case 'st-unlock':stLock=null;render();return true;
     case 'st-cloud':{const c=G.local?G.cloudBy:mySeat();if(stCloud(g,c,+v))commit(g);return true}
     case 'st-jug':{const card=[...sel][0];if(card==null)return true;let c=mySeat();
       if(G.local){c=G.players.findIndex((p,i)=>!p.bot&&G.jPick&&G.jPick[i]==null)}
@@ -3326,12 +3336,15 @@ function drawStich(app,top){
     const card=[...sel][0],ok=card!=null&&(card===SHIFT||card===JUGGLER||card===CLOUD?true:stCanPlay(G,cs,card));
     const hold=trickHold>Date.now();
     panel='<div class="actions"><button class="ghost" data-a="st-block">📒 Block</button><button data-a="st-play" '+(ok&&!hold?'':'disabled')+'>'+(hold?'Gleich …':'Ausspielen')+'</button></div>';
+  }else if(G.phase==='play'&&stCanLock()){
+    panel=stLock?'<div class="actions"><button class="ghost" data-a="st-block">📒 Block</button><button class="ghost" data-a="st-unlock">🔓 Lösen</button></div><p class="note lockn">🔒 Eingeloggt – wird gespielt, sobald du dran bist.</p>'
+      :'<div class="actions"><button class="ghost" data-a="st-block">📒 Block</button><button data-a="st-lock" '+(sel.size?'':'disabled')+'>🔒 Einloggen</button></div>'+(sel.size?'':'<p class="note lockn">Tipp: Wähl schon jetzt eine Karte und logg sie ein.</p>');
   }else panel='<div class="actions"><button class="ghost" data-a="st-block">📒 Block</button></div>';
   if(!hand&&viewS>=0){
     const can=c=>G.phase==='play'&&myTurn&&(c===SHIFT?(stCanPlay(G,cs,c,'Z')):c===JUGGLER||c===CLOUD?stCanPlay(G,cs,c,0):stCanPlay(G,cs,c));
-    const selectable=(G.phase==='play'&&myTurn)||(G.phase==='juggle'&&G.jPick&&G.jPick[viewS]==null);
-    hand='<div class="shand">'+hs.map(c=>blind?'<div class="scard back'+(sel.has(c)?' sel':'')+'" data-key="b'+c+'" '+(selectable?'data-a="st-sel" data-v="'+c+'"':'')+'><span class="em">❓</span><span class="lb">deine Karte</span></div>':
-      stCardHtml(c,(sel.has(c)?'sel':'')+(G.phase==='play'&&myTurn?(can(c)?' ok':' no'):''),'data-key="h'+c+'" '+(selectable?'data-a="st-sel" data-v="'+c+'"':''))).join('')+'</div>'+
+    const selectable=(G.phase==='play'&&(myTurn||stCanLock()))||(G.phase==='juggle'&&G.jPick&&G.jPick[viewS]==null);
+    hand='<div class="shand">'+hs.map(c=>blind?'<div class="scard back'+(sel.has(c)?' sel':'')+(stLock&&stLock.c===c?' locked':'')+'" data-key="b'+c+'" '+(selectable?'data-a="st-sel" data-v="'+c+'"':'')+'><span class="em">❓</span><span class="lb">deine Karte</span></div>':
+      stCardHtml(c,(sel.has(c)?'sel':'')+(stLock&&stLock.c===c?' locked':'')+(G.phase==='play'&&myTurn?(can(c)?' ok':' no'):''),'data-key="h'+c+'" '+(selectable?'data-a="st-sel" data-v="'+c+'"':''))).join('')+'</div>'+
       (blind?'<p class="note" style="text-align:center;margin:4px 0 0">🙈 Runde 1: Deine Karte siehst du nicht – aber die der anderen.</p>':'');
   }
   const meB=viewS>=0?'<div class="mebar"><span>'+(G.local?'🎲 ':'')+esc(nm(G,viewS))+(viewS===G.dealer?' 🎴':'')+'</span><span>'+(G.bids[viewS]==null?'Ansage …':'🎯 '+G.bids[viewS]+' · ✋ '+G.won[viewS])+' · '+G.scores[viewS]+' P</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
@@ -3395,6 +3408,21 @@ window.addEventListener('devicemotion',e=>{const a=e.acceleration&&e.acceleratio
   let m;if(a)m=Math.hypot(a.x||0,a.y||0,a.z||0);else if(g&&g.x!=null)m=Math.abs(Math.hypot(g.x||0,g.y||0,g.z||0)-9.81);else return;
   if(m<15)return;const now=Date.now();if(now-shakeLast<1400||!canShakeRoll())return;shakeLast=now;
   if(SET.vib)try{navigator.vibrate&&navigator.vibrate(40)}catch(x){}act('dc-roll')});
+
+// ----- Wizard: Karte vorab einloggen (wie bei Arschloch) -----
+let stLock=null,stLockT=0;
+function stCanLock(){if(!G||gameOf(G)!=='stich'||G.local||G.paused||G.phase!=='play')return false;const s=mySeat();return s>=0&&G.turn!==s&&G.hands[s]&&G.hands[s].length>0&&!(G.players[s]&&G.players[s].bot)}
+function stLockCheck(){
+  if(!stLock)return;if(!G||gameOf(G)!=='stich'){stLock=null;return}
+  if(G.phase!=='play'&&G.phase!=='cloud'&&G.phase!=='juggle'){stLock=null;return}
+  const s=mySeat();if(s<0||G.phase!=='play'||G.turn!==s||G.paused)return;
+  if(!G.hands[s].includes(stLock.c)){stLock=null;render();return}
+  const wait=Math.max(trickHold-Date.now(),0)+450;clearTimeout(stLockT);
+  stLockT=setTimeout(()=>{if(!stLock||!G||G.phase!=='play'||G.turn!==mySeat()||G.paused)return;if(busy||trickHold>Date.now())return stLockCheck();
+    const L=stLock,g=clone(G);stLock=null;
+    if(stPlay(g,s,L.c,L.as)){sel.clear();commit(g)}
+    else{toast('🔓 Deine eingeloggte Karte passt nicht – du musst bedienen. Wähle neu.');sel.clear();render()}},wait);
+}
 </script>
 </body>
 </html>
