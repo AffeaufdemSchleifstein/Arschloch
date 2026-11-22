@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZuJLZ82WQvSSGwKyWveV1hAGhsbKWKpY6ygbZozj6lg=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UX1HeeXapqVznyWeYm1xLSkxgR/Moe6z0No7utMy+8M=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1127,6 +1127,81 @@ body[data-bg=sunset]{background:#1d0f2b}
 body[data-bg=sunset]::before{background:radial-gradient(90% 45% at 50% 110%,rgba(255,140,80,.45),transparent 70%),linear-gradient(180deg,#1d0f2b,#5a1f4a 70%,#8a3a3a)}
 body[data-bg=midnight]{background:#000}
 body[data-bg=midnight]::before{background:radial-gradient(70% 40% at 50% -10%,rgba(255,255,255,.1),transparent 70%),#000}
+
+/* ===================== Spielauswahl kompakt ===================== */
+h2.gph{font-size:20px;margin:0 0 10px}
+.gpick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0}
+.gpick .gcard{flex-direction:column;align-items:flex-start;gap:4px;padding:10px 11px 9px;border-radius:16px;min-width:0}
+.gpick .gcard .gi{font-size:22px;line-height:1}
+.gpick .gcard .gt{gap:1px;min-width:0;width:100%}
+.gpick .gcard .gt b{font-size:14.5px;line-height:1.2}
+.gpick .gcard .gt small{font-size:11.5px;line-height:1.25;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gpick .gcard .gt em{font-style:normal;font-size:10.5px;font-weight:600;opacity:.6}
+.gpick .gcard.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px;padding:9px 12px}
+.gpick .gcard.wide .gi{font-size:20px}
+
+/* ===================== Flüssigkeit (120 Hz) =====================
+   Alle Bewegungen laufen nur über transform und opacity – das erledigt die Grafikkarte,
+   ohne dass der Browser neu zeichnen muss. Unschärfe-Animationen und bewegte Hintergründe entfallen. */
+@keyframes scr{from{opacity:0;transform:translate3d(0,10px,0) scale(.99)}to{opacity:1;transform:none}}
+@keyframes rowIn{from{opacity:0;transform:translate3d(0,12px,0) scale(.985)}to{opacity:1;transform:none}}
+#app.enter{animation:scr .42s var(--e-spring)}
+#app.enter>.panel,#app.enter>.nav{animation:rowIn .5s var(--e-spring) backwards}
+#app.enter>.panel:nth-child(2){animation-delay:25ms}#app.enter>.panel:nth-child(3){animation-delay:50ms}#app.enter>.panel:nth-child(4){animation-delay:75ms}
+#app.enter>.panel:nth-child(5),#app.enter>.nav{animation-delay:100ms}#app.enter>.panel:nth-child(n+6){animation-delay:120ms}
+#app.enter .plist li,#app.enter .pcard{animation:rowIn .45s var(--e-spring) backwards;animation-delay:calc(min(var(--i,0),8)*30ms + 60ms)}
+.gpick .gcard{animation:rowIn .42s var(--e-spring) backwards}
+.gpick .gcard:nth-child(2){animation-delay:25ms}.gpick .gcard:nth-child(3){animation-delay:50ms}.gpick .gcard:nth-child(4){animation-delay:75ms}
+.gpick .gcard:nth-child(5){animation-delay:100ms}.gpick .gcard:nth-child(6){animation-delay:125ms}.gpick .gcard:nth-child(7){animation-delay:150ms}
+/* Bildschirmwechsel: kurz, nur Deckkraft und Größe */
+::view-transition-group(root){animation-duration:.4s}
+::view-transition-old(root){animation:vtOut .2s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:vtIn .42s var(--e-spring) both}
+@keyframes vtOut{to{opacity:0;transform:scale(.985)}}
+@keyframes vtIn{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:none}}
+@keyframes vtInBack{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+/* Fenster: Unschärfe steht fest (wird nicht animiert), nur die Deckkraft blendet */
+#modal{transition:none}
+#modal.on{-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);animation:fadeIn .24s var(--e-soft)}
+#modal .box{animation:boxIn .5s var(--e-spring);will-change:transform}
+#modal .box>*{animation:rowIn .42s var(--e-spring) backwards}
+@keyframes boxIn{from{transform:translate3d(0,56px,0) scale(.96);opacity:0}to{transform:none;opacity:1}}
+@keyframes boxOut{to{transform:translate3d(0,40px,0) scale(.97);opacity:0}}
+#modal.out .box{animation:boxOut .2s cubic-bezier(.4,0,1,1) forwards}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* Glanz/Glühen: statt Schatten zu animieren nur sanft pulsieren lassen (Deckkraft/Größe) */
+.p10g.hit{box-shadow:0 0 0 2px rgba(255,214,90,.9),0 0 14px rgba(255,214,90,.45);animation:softp 1s ease-in-out infinite alternate}
+.qc.can{box-shadow:0 0 0 3px #111,0 0 12px rgba(255,255,255,.85);animation:softp .9s ease-in-out infinite alternate}
+.strick .te.win .scard{box-shadow:0 0 0 3px #ffd45a,0 0 18px rgba(255,212,90,.8);animation:winlift 1.2s ease-in-out infinite alternate}
+.opp.lastc{box-shadow:0 0 0 3px rgba(255,77,77,.45),0 0 16px rgba(255,77,77,.45);animation:softp 1s ease-in-out infinite alternate}
+.passbtn.must{box-shadow:0 0 0 4px rgba(255,122,48,.35),0 4px 16px rgba(232,87,27,.5);animation:passs 1.1s ease-in-out infinite alternate}
+@keyframes softp{from{opacity:.82}to{opacity:1}}
+@keyframes winlift{from{transform:none}to{transform:translate3d(0,-3px,0) scale(1.04)}}
+@keyframes passs{from{transform:none}to{transform:scale(1.035)}}
+/* Polarlicht-Tisch: Lichtschleier als eigene Ebene, die nur verschoben wird */
+body[data-surface=aurora] .table{animation:none;background:radial-gradient(ellipse at 50% 120%,#0d2c3f,#050b16 70%);isolation:isolate;overflow:hidden}
+body[data-surface=aurora] .table::after{content:"";position:absolute;inset:-25%;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at 30% 25%,rgba(80,255,190,.5),transparent 45%),radial-gradient(ellipse at 70% 30%,rgba(150,90,255,.5),transparent 45%);
+  animation:auroraT 12s ease-in-out infinite alternate;will-change:transform}
+@keyframes auroraT{from{transform:translate3d(-8%,-4%,0) rotate(-4deg)}to{transform:translate3d(8%,4%,0) rotate(4deg)}}
+/* Holo-Rücken: Farbwechsel über den Farbton (läuft auf der Grafikkarte) */
+.mini.cb-holo,body[data-back=holo] .card.back,body[data-back=holo] .scard.back,body[data-back=holo] .cbc.back,body[data-back=holo] .pc.back{background-size:100% 100%;animation:holoh 5s linear infinite}
+@keyframes holoh{to{filter:hue-rotate(360deg)}}
+body.low[data-surface=aurora] .table::after,body.low[data-back=holo] .card.back,body.low[data-back=holo] .scard.back,body.low[data-back=holo] .cbc.back{animation:none}
+/* Scrollen ohne Nachruckeln, Tippen ohne Verzögerung */
+@media (display-mode:standalone){html,body{overscroll-behavior-y:none}}
+button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touch-action:manipulation}
+@media (prefers-reduced-motion:reduce){body[data-surface=aurora] .table::after,.p10g.hit,.qc.can,.strick .te.win .scard,.opp.lastc,.passbtn.must,body[data-back=holo] .card.back{animation:none!important}}
+.gpick .gcard .gt small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.gpick~button.ghost{height:44px;font-size:15px}
+.gpick~.note{font-size:12.5px;margin:8px 0 0}
+#modal.still,#modal.still .box,#modal.still .box>*{animation:none!important}
+.dsq h3{margin:12px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.dsq h3:first-child{margin-top:4px}
+.dsq .opts{gap:6px}
+.peekq{margin:0 0 4px;color:var(--gold)}
+.dsqp{display:flex;justify-content:center;gap:8px;margin:2px 0 8px;position:sticky;top:-20px;z-index:2;padding:6px 0;background:#24170e}
+.dsqp .card{margin:0}
 </style>
 </head>
 <body>
@@ -2949,8 +3024,8 @@ function applyTheme(){
 var PEEK=null,peekT=0,peekEnd=0;
 function peekStart(k,v){const L={surface:SURF.map(x=>[x[0],x[1],x[3]]),cards:FRONTS,back:BACKS,dice:DICES}[k];const it=L&&L.find(x=>x[0]===v);if(!it)return;
   PEEK={k,v,label:it[1],req:it[2]};peekEnd=Date.now()+4000;applyTheme();clearTimeout(peekT);peekT=setTimeout(peekStop,4000);render();
-  try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}}
-function peekStop(){if(!PEEK)return;PEEK=null;clearTimeout(peekT);applyTheme();render()}
+  if(!(dsOpen&&modalOpen))try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}}
+function peekStop(){if(!PEEK)return;PEEK=null;clearTimeout(peekT);applyTheme();render();if(dsOpen&&modalOpen)openDesignQuick()}
 let themeT;function saveTheme(){ls.set('al_theme',JSON.stringify(T));applyTheme();clearTimeout(themeT);if(me)themeT=setTimeout(()=>store.rpc('set_theme',{p_theme:T}).catch(()=>{}),800)}
 
 /* ---------- Start ---------- */
@@ -3518,7 +3593,8 @@ function act(a,v,el){
     case 'lock':if(G&&G.phase==='play'&&sel.size&&lockOk([...sel])){lockOn=true;sfx('msg');render()}return;
     case 'unlock':lockOn=false;return render();
     case 'watch':if(!/^[A-Z]{4}$/.test(v))return;if(code&&code!==v)leave();return joinRoom(v);
-    case 'th':PEEK=null;clearTimeout(peekT);T[el.dataset.k]=v;saveTheme();sfx('pop');return render();
+    case 'th':PEEK=null;clearTimeout(peekT);T[el.dataset.k]=v;saveTheme();sfx('pop');if(dsOpen&&modalOpen)openDesignQuick();return render();
+    case 'dsq':return openDesignQuick();
     case 'set':SET[v]=!SET[v];saveSet();if(v==='snd'&&SET.snd){ac();setTimeout(()=>sfx('turn'),60)}return render();
     case 'push-on':return enablePush();
     case 'hide':store.hide(v).then(()=>{myGames=myGames.filter(x=>x.code!==v);render()}).catch(()=>toast('Hat nicht geklappt.'));return;
@@ -3539,7 +3615,7 @@ function act(a,v,el){
         (v==='pinfo'?'<button class="ghost" data-a="avback">‹ Zurück</button>':'<button class="ghost" data-a="modal-x">Schließen</button>'));return}
     case 'avback':return drawPinfo();
     case 'rk-game':rankGame=GAMES[v]?v:'arsch';return go('ranking');
-    case 'cdlock':case 'thlock':case 'peek':{sfx('pop');return peekStart(el.dataset.k,v)}
+    case 'cdlock':case 'thlock':case 'peek':{sfx('pop');peekStart(el.dataset.k,v);if(dsOpen&&modalOpen)openDesignQuick();return}
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
     case 'splock':{const t=+v.slice(2),x=SPECIAL[t-1];toast(me?x[1]+' „'+x[2]+'“ gibt es ab '+x[0]+' Siegen. Du hast '+winsAll()+'.':'Spezial-Emotes gibt es nur mit Konto.');return}
@@ -3648,8 +3724,8 @@ document.addEventListener('input',e=>{const ds=e.target.dataset||{};if(ds.k)draf
 document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea'))e.preventDefault()});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='dmsg')act('dsend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
-function openModal(h,sticky){modalOpen=true;const m=$('#modal');clearTimeout(modalT);m.classList.remove('out');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
-let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
+function openModal(h,sticky){modalOpen=true;dsOpen=false;const m=$('#modal');clearTimeout(modalT);m.classList.remove('out');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
+let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;dsOpen=false;soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
 
 /* ---------- Anzeige ---------- */
 const SPEC_UI={100:['🃏','Joker'],101:['🃏','Joker'],110:['🔄','Revolution'],120:['⏭️','Aussetzer'],130:['🔁','Wechsel']};
@@ -3705,17 +3781,19 @@ function setHTML(el,h){const t=document.createElement('template');t.innerHTML=h;
   if(!el.firstChild){el.appendChild(t.content);return}
   const wrap=document.createElement('div');wrap.appendChild(t.content);mkids(el,wrap)}
 // Handkarten gleiten nach, wenn sich die Hand veraendert
+const FLIP_EASE=(()=>{try{return CSS.supports('transition-timing-function','linear(0,1)')?'linear(0,.006,.025 2.8%,.101 6.1%,.539 18.9%,.721 25.3%,.849 31.5%,.937 38.1%,.968 41.8%,.991 45.7%,1.006 50.1%,1.015 55%,1.017 63.9%,1.001)':'cubic-bezier(.22,1,.36,1)'}catch(e){return 'cubic-bezier(.22,1,.36,1)'}})();
 const FLIPSEL='.hand>.card[data-v],.shand>.scard[data-key],.dice>.die';
 function flipPrep(root){const m=new Map();if(REDUCED.matches||document.body.classList.contains('low'))return m;root.querySelectorAll(FLIPSEL).forEach(e=>m.set(e,e.getBoundingClientRect()));return m}
 function flipRun(m){m.forEach((r,e)=>{if(!e.isConnected)return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
-  if(Math.abs(dx)<1&&Math.abs(dy)<1)return;try{e.animate([{translate:dx+'px '+dy+'px'},{translate:'0 0'}],{duration:340,easing:'cubic-bezier(.22,1,.36,1)'})}catch(x){}})}
+  if(Math.abs(dx)<1&&Math.abs(dy)<1)return;try{e.animate([{translate:dx+'px '+dy+'px'},{translate:'0 0'}],{duration:420,easing:FLIP_EASE})}catch(x){}})}
 function render(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;doRender()})}
 // Hintergrund-Aktualisierungen nicht anzeigen, solange jemand tippt
 function renderSoft(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&$('#app').contains(a))return;render()}
 let vtRun=null;
 function doRender(){
   const app=$('#app');
-  const k=code?(!G?'load':G.phase==='lobby'?'lobby':G.phase==='over'?'over':G.phase==='end'&&Date.now()>=endHold?'end'+G.round:'game'+G.round):'v:'+view;
+  const rk=G&&['qwixx','dice'].includes(gameOf(G))?'':(G&&G.round);
+  const k=code?(!G?'load':G.phase==='lobby'?'lobby':G.phase==='over'?'over':G.phase==='end'&&Date.now()>=endHold?'end'+rk:'game'+rk):'v:'+view;
   const cat=x=>x==null?'':x.startsWith('v:')?x:x.replace(/\d+$/,'');
   // Wechsel zwischen Bildschirmen (Menü-Reiter, Raum betreten, Lobby → Spiel, Endstand) als weiche Überblendung
   if(k!==seen.scr&&cat(k)!==cat(seen.scr)&&seen.scr&&document.startViewTransition&&!REDUCED.matches&&!document.body.classList.contains('low')&&!vtRun&&!document.hidden){
@@ -3727,7 +3805,7 @@ function doRender(){
   if(k!==seen.scr){seen.scr=k;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(enterT);enterT=setTimeout(()=>app.classList.remove('enter'),1500)}
 }
 function draw(){
-  const app=$('#app');if(PEEK&&(code||view!=='design')){PEEK=null;clearTimeout(peekT);applyTheme()}
+  const app=$('#app');if(PEEK&&!(dsOpen&&modalOpen)&&(code||view!=='design')){PEEK=null;clearTimeout(peekT);applyTheme()}
   if(code){drawGame(app);renderChat();return}
   renderChat();
   setHTML(app,({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount,settings:drawSettings,ach:drawAch}[view]||drawHome)());
@@ -3868,6 +3946,21 @@ function drawRanking(){
   if(rows.length<2)h+='<button class="ghost" data-a="go" data-v="friends">Freunde hinzufügen</button>';
   return h;
 }
+function lockOptH(k,list,prev){return '<div class="opts">'+list.map(([v,l,req,ex])=>{const ok=unlockedReq(req),pv=PEEK&&PEEK.k===k&&PEEK.v===v;
+    return '<button class="opt'+(T[k]===v&&!PEEK?' on':'')+(ok?'':' lock')+(pv?' peek':'')+'" data-a="'+(ok?'th':'peek')+'" data-k="'+k+'" data-v="'+v+'">'+prev(v,ex)+'<span>'+l+'</span>'+(req?'<small>'+(ok?'freigeschaltet':reqText(req))+'</small>':'')+'</button>'}).join('')+'</div>'}
+// Design schnell im Spiel ändern (🎨 oben in der Leiste)
+let dsOpen=false;
+function openDesignQuick(){
+  const k=G?gameOf(G):'arsch',dice=k==='dice'||k==='qwixx';
+  const dz='<h3>Würfel</h3>'+lockOptH('dice',DICES,v=>'<span class="mdie md-'+v+'"><i></i><i></i><i></i></span>');
+  const cz='<h3>Kartenrücken</h3>'+lockOptH('back',BACKS,v=>'<span class="mini cb-'+v+'"></span>')+(k==='arsch'?'<h3>Karten</h3>'+lockOptH('cards',FRONTS,v=>'<span class="mini cf-'+v+'">A<i>♥</i></span>'):'');
+  const tz='<h3>Tisch</h3>'+lockOptH('surface',SURF.map(x=>[x[0],x[1],x[3],x[2]]),(v,e)=>'<span style="font-size:22px">'+e+'</span>');
+  const pk=PEEK?'<p class="note peekq">👀 Vorschau: <b>'+esc(PEEK.label)+'</b></p>':'';
+  const st=$('#modal .box'),sc=st?st.scrollTop:0,re=modalOpen&&dsOpen;
+  const pv=dice?'<div class="dice dpv dsqp">'+[6,5,4].map(v=>dieHtml(v,'','')).join('')+'</div>':'<div class="dsqp"><div class="card back"></div><div class="card back"></div></div>';
+  openModal('<h2>🎨 Design</h2>'+pv+pk+'<div class="dsq">'+(dice?dz+tz+cz:cz+tz+dz)+'</div><button class="ghost" data-a="modal-x" style="margin-top:12px">Fertig</button>');
+  dsOpen=true;const m=$('#modal');if(re){m.classList.add('still');const b=$('#modal .box');if(b)b.scrollTop=sc}else m.classList.remove('still');
+}
 function drawDesign(){
   const opt=(k,list)=>'<div class="opts">'+list.map(([v,label,sw])=>'<button class="opt'+(T[k]===v?' on':'')+'" data-a="th" data-k="'+k+'" data-v="'+v+'">'+sw+'<span>'+label+'</span></button>').join('')+'</div>';
   const pk=PEEK?'<div class="peekb">👀 Vorschau: <b>'+esc(PEEK.label)+'</b><span>'+(PEEK.req?esc(reqText(PEEK.req).replace('🔒 ','Freischalten: ')):'')+'</span><i style="animation-duration:'+Math.max(0,peekEnd-Date.now())+'ms"></i></div>':'';
@@ -3875,8 +3968,7 @@ function drawDesign(){
   h+='<div class="dprev"><div class="table" style="min-height:150px;flex:0 0 auto;margin-top:0"><div class="pile">'+cardHtml(28)+cardHtml(30)+'<div class="card back" style="margin-left:8px"></div></div><div class="msg">So sieht dein Tisch aus</div></div>'+
     '<div class="dice dpv">'+[6,5,4].map(v=>dieHtml(v,'','')).join('')+'</div>'+pk+'</div>';
   // Gesperrte Designs: Antippen zeigt 4 Sekunden lang eine Vorschau
-  const lockOpt=(k,list,prev)=>'<div class="opts">'+list.map(([v,l,req,ex])=>{const ok=unlockedReq(req),pv=PEEK&&PEEK.k===k&&PEEK.v===v;
-    return '<button class="opt'+(T[k]===v&&!PEEK?' on':'')+(ok?'':' lock')+(pv?' peek':'')+'" data-a="'+(ok?'th':'peek')+'" data-k="'+k+'" data-v="'+v+'">'+prev(v,ex)+'<span>'+l+'</span>'+(req?'<small>'+(ok?'freigeschaltet':reqText(req))+'</small>':'')+'</button>'}).join('')+'</div>';
+  const lockOpt=lockOptH;
   const peekNote='<p class="note" style="margin-bottom:0">Tipp auf ein gesperrtes Design für eine kurze Vorschau.</p>';
   h+='<div class="panel"><h3>Tisch</h3>'+lockOpt('surface',SURF.map(x=>[x[0],x[1],x[3],x[2]]),(v,e)=>'<span style="font-size:24px">'+e+'</span>')+
     '<p class="note" style="margin-bottom:0">„Siege“ zählen aus allen Spielen: Präsident im Arschloch und jede gewonnene Partie in den anderen Spielen'+(me?' – du hast '+winsAll()+'.':' (nur mit Konto).')+'</p></div>';
@@ -3951,7 +4043,7 @@ function topBar(){
   const s=mySeat(),on=RS().online,canPause=running()&&s>=0&&on&&!G.paused;
   return '<div class="top"><span class="rinfo">'+(G&&GAMES[gameOf(G)]?GAMES[gameOf(G)].icon+' ':'')+'<b>'+esc(G&&G.local?'Tisch':code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
     (on?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat (T)" style="position:relative">💬'+(chatUnread+dmTotal()?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+(chatUnread+dmTotal())+'</span>':'')+'</button>':'')+
-    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
+    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
@@ -4107,12 +4199,12 @@ if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceW
 
 /* ===================== Spieleabend: Spielauswahl, Wizard, Kniffel ===================== */
 const GAMES={
-  arsch:{name:'Arschloch',icon:'🃏',min:3,max:8,desc:'Präsident oder Arschloch – wer zuerst alle Karten los ist, gewinnt.'},
-  stich:{name:'Wizard',icon:'🧙',min:3,max:6,desc:'Sag an, wie viele Stiche du holst – mit Zauberern, Narren und auf Wunsch 7 Sonderkarten.'},
-  dice:{name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'},
-  cabo:{name:'Cabo',icon:'🦉',min:2,max:5,desc:'Merk dir deine verdeckten Karten, tausch clever und ruf CABO, wenn du die wenigsten Punkte hast.'},
-  p10:{name:'Phase 10',icon:'🔟',min:2,max:6,desc:'Schaff die 10 Phasen der Reihe nach – Drillinge, Folgen, Farben. Mit Jokern und Aussetzen.'},
-  qwixx:{name:'Qwixx',icon:'✖️',min:2,max:5,desc:'Würfeln und ankreuzen – alle machen mit, auch wenn sie nicht dran sind. Reihen abschließen!'}};
+  arsch:{short:'Wer zuerst raus ist, wird Präsident',name:'Arschloch',icon:'🃏',min:3,max:8,desc:'Präsident oder Arschloch – wer zuerst alle Karten los ist, gewinnt.'},
+  stich:{short:'Stiche ansagen und holen',name:'Wizard',icon:'🧙',min:3,max:6,desc:'Sag an, wie viele Stiche du holst – mit Zauberern, Narren und auf Wunsch 7 Sonderkarten.'},
+  dice:{short:'5 Würfel, 13 Felder',name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'},
+  cabo:{short:'Merken, tauschen, CABO!',name:'Cabo',icon:'🦉',min:2,max:5,desc:'Merk dir deine verdeckten Karten, tausch clever und ruf CABO, wenn du die wenigsten Punkte hast.'},
+  p10:{short:'10 Phasen der Reihe nach',name:'Phase 10',icon:'🔟',min:2,max:6,desc:'Schaff die 10 Phasen der Reihe nach – Drillinge, Folgen, Farben. Mit Jokern und Aussetzen.'},
+  qwixx:{short:'Würfeln und ankreuzen',name:'Qwixx',icon:'✖️',min:2,max:5,desc:'Würfeln und ankreuzen – alle machen mit, auch wenn sie nicht dran sind. Reihen abschließen!'}};
 const gameOf=g=>g&&GAMES[g.game]?g.game:'arsch';
 let rstore=null,trickHold=0,diceAnim=0;
 const RS=()=>rstore||store;
@@ -4120,9 +4212,9 @@ const RS=()=>rstore||store;
 // ----- Raum anlegen -----
 function openNewRoom(){
   const off=!store.online;
-  openModal('<h2>Was wollt ihr spielen?</h2><div class="gpick">'+Object.entries(GAMES).map(([k,x])=>
-    '<button class="gcard" data-a="create" data-v="'+k+'"><span class="gi">'+x.icon+'</span><span class="gt"><b>'+x.name+'</b><small>'+x.desc+'</small></span></button>').join('')+
-    '<button class="gcard ghost" data-a="create-local"><span class="gi">📝</span><span class="gt"><b>Kniffel am Tisch</b><small>Ein Handy für alle – ohne Raum, perfekt mit echten Würfeln.</small></span></button></div>'+
+  openModal('<h2 class="gph">Was wollt ihr spielen?</h2><div class="gpick">'+Object.entries(GAMES).map(([k,x])=>
+    '<button class="gcard" data-a="create" data-v="'+k+'"><span class="gi">'+x.icon+'</span><span class="gt"><b>'+x.name+'</b><small>'+x.short+'</small><em>'+(x.min===x.max?x.min:x.min+'–'+x.max)+' Spieler</em></span></button>').join('')+
+    '<button class="gcard ghost wide" data-a="create-local"><span class="gi">📝</span><span class="gt"><b>Kniffel am Tisch</b><small>Ein Handy für alle, mit echten Würfeln</small></span></button></div>'+
     (off?'<p class="note">Gerade offline – es wird gegen Computer gespielt.</p>':'')+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Abbrechen</button>');
 }
 function newRoomData(game){
@@ -4409,7 +4501,7 @@ function drawDice(app,top){
   let area='';
   if(!real){
     const who=G.players[G.turn];
-    const dice=G.dice.map((v,i)=>dieHtml(rolling&&!G.held[i]?1+Math.floor(Math.random()*6):v,(G.held[i]&&G.rolls>0?'held':'')+(rolling&&!G.held[i]?' roll':''),myTurn&&G.rolls>0&&G.rolls<3?'data-a="dc-hold" data-v="'+i+'"':'')).join('');
+    const dice=G.dice.map((v,i)=>dieHtml(rolling&&!G.held[i]?1+Math.floor(Math.random()*6):v,(G.held[i]&&G.rolls>0?'held':'')+(rolling&&!G.held[i]?' roll':''),'data-key="dd'+i+'" '+(myTurn&&G.rolls>0&&G.rolls<3?'data-a="dc-hold" data-v="'+i+'"':''))).join('');
     area='<div class="panel dicebox"><div class="dturn">'+(myTurn?(G.local?'📱 '+esc(who.name)+' ist dran':'Du bist dran'):esc(who?who.name:'')+' ist dran')+' · Wurf '+G.rolls+'/3</div>'+
       '<div class="dice">'+(G.rolls>0?dice:'<span class="note">Noch nicht gewürfelt</span>')+'</div>'+
       (myTurn?'<button data-a="dc-roll" '+(G.rolls<3&&!(G.rolls>0&&G.held.every(Boolean))?'':'disabled')+'>🎲 Würfeln'+(G.rolls>0&&G.rolls<3?' ('+(3-G.rolls)+' übrig)':'')+'</button>'+
