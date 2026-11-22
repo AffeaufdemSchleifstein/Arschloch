@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-SWD/UHLnZTbHeNz9rzh2Il9vwd0IeU4GjIMjspYnLXo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-x284YeJpN+yPtT9hTG4rqmFEq5NoAV17d8OlREL950w=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -992,6 +992,27 @@ body[data-surface=mystic] .table{border:10px solid #2f3b3a;background:radial-gra
 #modal{align-items:center}
 #modal .box{max-height:calc(100dvh - 24px);max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 @supports (height:100dvh){#modal .box{max-height:calc(100dvh - 24px)}}
+/* Cabo-Hausregeln: echte Spielkarten */
+.cbc.f.hk{background:linear-gradient(160deg,#fffdf7,#efe9da);color:#1b1f27;border-color:#d8d0bd}
+.cbc.f.hk.red{color:#c8102e}
+.cbc.f.hk .cn,.cbc.f.hk .cn2{text-shadow:none;font-weight:800;line-height:1;display:flex;flex-direction:column;align-items:center;font-size:13px}
+.cbc.f.hk .cn i,.cbc.f.hk .cn2 i{font-style:normal;font-size:11px}
+.cbc.f.hk .hc{font-size:28px;line-height:1}
+.cbc.f.hk.face .hc{font-size:24px;font-weight:900;font-family:Georgia,serif}
+.cbc.f.hk .ci{position:absolute;right:3px;top:3px;font-size:11px;opacity:.85}
+.cbc.f.hk .hp{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);font-size:9.5px;font-weight:800;background:#c8102e;color:#fff;border-radius:6px;padding:0 4px}
+.cbc.f.hk.jk{background:linear-gradient(150deg,#fff6d6,#f3d77a)}
+.cbc.f.hk.jk .cn{font-size:12px}.cbc.f.hk.jk .hp{background:#3d6bd6}
+.cbc.mini.hk .cn{font-size:9px;left:2px;top:1px}.cbc.mini.hk .cn i{font-size:8px}.cbc.mini.hk .hc{font-size:15px}.cbc.mini.hk.face .hc{font-size:13px}
+.cbc.mini.hk .ci,.cbc.mini.hk .hp{display:none}
+.cbc.big.hk .hc{font-size:38px}.cbc.big.hk.face .hc{font-size:32px}.cbc.big.hk .cn,.cbc.big.hk .cn2{font-size:16px}
+.cbc.known.hk{opacity:.55}
+.cbthrow{margin:2px 0 8px;background:linear-gradient(160deg,#ffd23f,#f39c12);color:#2a1a00;font-weight:800}
+.cbthrow:disabled{opacity:.45}
+.cbthrowbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 8px;padding:8px 10px;border-radius:12px;background:rgba(255,210,63,.18);border:1.5px solid #ffd23f;font-weight:700;font-size:13.5px}
+.cbthrowbar button{width:auto;padding:6px 12px;margin:0}
+.cbmine.thr .cbc{box-shadow:0 0 0 3px #ffd23f,0 6px 14px rgba(0,0,0,.45);cursor:pointer}
+.cbc.mini.hk .cn2{display:none}
 </style>
 </head>
 <body>
@@ -1807,24 +1828,39 @@ function cleanDice(g){
 
 //CABO-START
 // ===== Cabo: Gedächtnis-Kartenspiel – möglichst wenige Punkte vor sich liegen haben =====
-// Karten 0–13: je zwei 0 und 13, je vier 1–12 (52 Karten). 7/8 anschauen, 9/10 ausspionieren, 11/12 blind tauschen.
-// Jede Karte im Spiel: {v:Wert, up:offen für alle, kb:Bitmaske der Sitze, die sie kennen}
-const CB_RULES={bots:'normal',help:false};
+// Zwei Varianten:
+//  'haus' (Standard): echtes Kartenspiel, 52 Karten + 2 Joker. Karten-Code 0–51 = Farbe*13+(Rang-1), Farben ♠♥♦♣; 52/53 = Joker.
+//     Punkte: Joker −1, Ass 1, 2–10 Nennwert, Bube/Dame/schwarzer König 10, roter König 0.
+//     Aktionen (vom Stapel gezogen und abgeworfen): 7 eine Karte anschauen · 8 blind tauschen · 9 anschauen und dann entscheiden, ob getauscht wird.
+//     Jederzeit „dazwischen werfen“: eine eigene Karte mit gleichem Rang wie die oberste Ablagekarte abwerfen.
+//  'orig': Original-Cabo mit Zahlenkarten 0–13 (7/8 anschauen, 9/10 ausspionieren, 11/12 blind tauschen, Kamikaze).
+// Jede Karte im Spiel: {v:Code bzw. Wert, up:offen für alle, kb:Bitmaske der Sitze, die sie kennen}
+const CB_RULES={bots:'normal',help:false,mode:'haus'};
 const CR=g=>Object.assign({},CB_RULES,g.rules||{});
+const cbH=g=>CR(g).mode==='haus';
 const CB_ACT={7:'peek',8:'peek',9:'spy',10:'spy',11:'swap',12:'swap'};
-const CB_ACT_TXT={peek:'👁️ eigene Karte anschauen',spy:'🕵️ fremde Karte anschauen',swap:'🔄 blind tauschen'};
-function cbDeck(){const d=[0,0,13,13];for(let v=1;v<=12;v++)d.push(v,v,v,v);return shuffle(d)}
+const CB_HACT={7:'look',8:'blind',9:'peekswap'};
+const CB_ACT_TXT={peek:'👁️ eigene Karte anschauen',spy:'🕵️ fremde Karte anschauen',swap:'🔄 blind tauschen',look:'👁️ eine Karte anschauen',blind:'🔄 blind tauschen',peekswap:'🕵️ anschauen & tauschen'};
+const CB_SUIT=['♠','♥','♦','♣'],CB_RN=['','A','2','3','4','5','6','7','8','9','10','B','D','K'];
+const cbRank=(g,v)=>cbH(g)?(v>=52?0:v%13+1):v;            // Rang (Joker = 0)
+const cbPts=(g,v)=>{if(!cbH(g))return v;if(v>=52)return -1;const r=v%13+1,su=Math.floor(v/13);return r===13?(su===1||su===2?0:10):r>=11?10:r};
+const cbActOf=(g,v)=>cbH(g)?(v<52?CB_HACT[v%13+1]:undefined):CB_ACT[v];
+const cbMaxV=g=>cbH(g)?53:13;
+function cbName(g,v){if(!cbH(g))return String(v);if(v>=52)return 'Joker';return CB_RN[v%13+1]+CB_SUIT[Math.floor(v/13)]}
+function cbDeck(g){const d=[];if(cbH(g)){for(let v=0;v<54;v++)d.push(v)}else{d.push(0,0,13,13);for(let v=1;v<=12;v++)d.push(v,v,v,v)}return shuffle(d)}
 const cbBit=s=>1<<s;
 const cbKnows=(c,s)=>!!(c&&(c.up||(c.kb&cbBit(s))));
-const cbSum=l=>l.reduce((a,c)=>a+c.v,0);
-const cbKami=l=>l.length===4&&l.map(c=>c.v).sort((a,b)=>a-b).join()==='12,12,13,13';
+const cbSum=(g,l)=>l.reduce((a,c)=>a+cbPts(g,c.v),0);
+const cbKami=(g,l)=>!cbH(g)&&l.length===4&&l.map(c=>c.v).sort((a,b)=>a-b).join()==='12,12,13,13';
+const CB_MAXL=20;
 
 function cbStart(g){
+  g.rules=CR(g);
   g.totals=g.players.map(()=>0);g.reset=g.players.map(()=>false);g.hist=[];g.round=0;g.match=(g.match||0)+1;
   g.starter=Math.floor(Math.random()*g.players.length);cbDeal(g);
 }
 function cbDeal(g){
-  const n=g.players.length,d=cbDeck();
+  const n=g.players.length,d=cbDeck(g);
   g.lines=g.players.map(()=>[0,1,2,3].map(()=>({v:d.pop(),up:false,kb:0})));
   g.disc=[d.pop()];g.deck=d;g.round=(g.round||0)+1;
   g.phase='peek';g.ready=g.players.map(()=>false);g.turn=g.starter%n;g.caboBy=-1;g.drawn=null;g.act=null;g.fx=null;g.last=null;
@@ -1844,55 +1880,95 @@ function cbDraw(g,s){
   g.drawn={v:g.deck.pop(),src:'deck'};g.msg=nm(g,s)+' zieht vom Stapel.';cbFx(g,'draw',s,[]);return true;
 }
 function cbTake(g,s){
-  if(g.phase!=='play'||g.turn!==s||g.drawn||!g.disc.length)return false;
-  g.drawn={v:g.disc.pop(),src:'disc'};g.msg=nm(g,s)+' nimmt die '+g.drawn.v+' von der Ablage.';cbFx(g,'take',s,[]);return true;
+  if(g.phase!=='play'||g.turn!==s||g.drawn||!g.disc.length||!g.lines[s].length)return false;
+  g.drawn={v:g.disc.pop(),src:'disc'};g.msg=nm(g,s)+' nimmt '+(cbH(g)?cbName(g,g.drawn.v):'die '+g.drawn.v)+' von der Ablage.';cbFx(g,'take',s,[]);return true;
 }
 function cbCabo(g,s){
   if(g.phase!=='play'||g.turn!==s||g.drawn||g.caboBy>=0)return false;
   g.caboBy=s;g.msg='📣 '+nm(g,s)+' ruft CABO! Alle anderen haben noch einen Zug.';cbFx(g,'cabo',s,[]);cbNext(g);return true;
 }
-// Gezogene Karte gegen eine oder mehrere eigene Karten (gleichen Werts) tauschen
+// Gezogene Karte gegen eine oder mehrere eigene Karten (gleichen Rangs) tauschen
 function cbSwap(g,s,idx){
   if(g.phase!=='play'||g.turn!==s||!g.drawn)return false;
   const L=g.lines[s];idx=[...new Set(idx)].filter(i=>Number.isInteger(i)&&i>=0&&i<L.length).sort((a,b)=>a-b);
-  if(!idx.length||idx.length!==new Set(idx).size)return false;
-  const dr=g.drawn,nc={v:dr.v,up:dr.src==='disc',kb:cbBit(s)};g.drawn=null;
-  const vals=idx.map(i=>L[i].v);
-  if(vals.every(v=>v===vals[0])){
+  if(!idx.length)return false;
+  const dr=g.drawn,nc={v:dr.v,up:dr.src==='disc',kb:cbBit(s)};
+  const ranks=idx.map(i=>cbRank(g,L[i].v));
+  if(ranks.every(r=>r===ranks[0])){
+    g.drawn=null;
     // passt: alle ausgewählten auf die Ablage, die neue Karte an die erste Stelle
     const out=idx.map(i=>L[i]);
     for(let k=idx.length-1;k>=1;k--)L.splice(idx[k],1);
     L[idx[0]]=nc;out.forEach(c=>g.disc.push(c.v));
-    g.msg=nm(g,s)+(idx.length>1?' tauscht '+idx.length+' gleiche Karten ('+vals[0]+') gegen eine.':' tauscht eine Karte – auf die Ablage kommt eine '+vals[0]+'.');
+    const nmv=cbH(g)?cbName(g,out[0].v):String(out[0].v);
+    g.msg=nm(g,s)+(idx.length>1?' tauscht '+idx.length+' gleiche Karten ('+(cbH(g)?CB_RN[ranks[0]]||'Joker':ranks[0])+') gegen eine.':' tauscht eine Karte – auf die Ablage kommt '+(cbH(g)?nmv:'eine '+nmv)+'.');
     cbFx(g,'swap',s,[idx[0]]);
   }else{
+    if(L.length+1>CB_MAXL)return false;
+    g.drawn=null;
     // Fehlgriff: Karten bleiben offen liegen, die neue Karte kommt dazu (ab 3 Karten noch eine Strafkarte)
     idx.forEach(i=>{L[i].up=true});L.push(nc);
-    if(idx.length>=3&&g.deck.length)L.push({v:g.deck.pop(),up:false,kb:0});
+    if(idx.length>=3&&g.deck.length&&L.length<CB_MAXL)L.push({v:g.deck.pop(),up:false,kb:0});
     g.msg='❌ '+nm(g,s)+' hat sich vertan – die Karten passen nicht zusammen.';
     cbFx(g,'miss',s,idx.concat([L.length-1]));
   }
   cbNext(g);return true;
 }
-// Gezogene Karte abwerfen (nur vom Stapel); 7–12 erlauben dann eine Aktion
+// Gezogene Karte abwerfen (nur vom Stapel); Aktionskarten erlauben dann eine Aktion
 function cbDiscard(g,s){
   if(g.phase!=='play'||g.turn!==s||!g.drawn||g.drawn.src!=='deck')return false;
   const v=g.drawn.v;g.disc.push(v);g.drawn=null;
-  const a=CB_ACT[v];
-  if(a){g.phase='act';g.act={k:a,v};g.msg=nm(g,s)+' wirft eine '+v+' ab: '+CB_ACT_TXT[a]+'.';cbFx(g,'disc',s,[]);return true}
-  g.msg=nm(g,s)+' wirft eine '+v+' ab.';cbFx(g,'disc',s,[]);cbNext(g);return true;
+  const a=cbActOf(g,v),vn=cbH(g)?cbName(g,v):'eine '+v;
+  if(a){g.phase='act';g.act={k:a,v};g.msg=nm(g,s)+' wirft '+vn+' ab: '+CB_ACT_TXT[a]+'.';cbFx(g,'disc',s,[]);return true}
+  g.msg=nm(g,s)+' wirft '+vn+' ab.';cbFx(g,'disc',s,[]);cbNext(g);return true;
 }
-function cbSkip(g,s){if(g.phase!=='act'||g.turn!==s)return false;g.msg=nm(g,s)+' verzichtet auf die Aktion.';g.act=null;g.phase='play';cbNext(g);return true}
-// Aktion ausführen: peek(i) / spy(t,j) / swap(i,t,j)
+function cbSkip(g,s){if(g.phase!=='act'||g.turn!==s)return false;
+  g.msg=nm(g,s)+(g.act&&g.act.sel?' tauscht nicht.':' verzichtet auf die Aktion.');g.act=null;g.phase='play';cbNext(g);return true}
+// Aktion ausführen.
+// Original: peek(i) / spy(t,j) / swap(i,t,j).  Hausregeln: look(i) oder look(-1,t,j) / blind(i,t,j) / peekswap(i,t,j) → danach cbDecide(ja/nein)
 function cbDoAct(g,s,i,t,j){
-  if(g.phase!=='act'||g.turn!==s||!g.act)return false;
-  const k=g.act.k,L=g.lines[s];
+  if(g.phase!=='act'||g.turn!==s||!g.act||g.act.sel)return false;
+  const k=g.act.k,L=g.lines[s],oppOk=(t,j)=>Number.isInteger(t)&&t!==s&&!!g.lines[t]&&!!g.lines[t][j];
   if(k==='peek'){if(!L[i])return false;L[i].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine eigene Karte an.';cbFx(g,'peek',s,[i])}
-  else if(k==='spy'){if(t===s||!g.lines[t]||!g.lines[t][j])return false;g.lines[t][j].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine Karte von '+nm(g,t)+' an.';cbFx(g,'spy',t,[j],[s])}
-  else if(k==='swap'){if(t===s||!L[i]||!g.lines[t]||!g.lines[t][j]||t===g.caboBy)return false;
-    const a=L[i];L[i]=g.lines[t][j];g.lines[t][j]=a;g.msg='🔄 '+nm(g,s)+' tauscht eine Karte mit '+nm(g,t)+'.';cbFx(g,'xswap',s,[i],[t,j])}
+  else if(k==='spy'){if(!oppOk(t,j))return false;g.lines[t][j].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine Karte von '+nm(g,t)+' an.';cbFx(g,'spy',t,[j],[s])}
+  else if(k==='look'){
+    if(t!=null&&t>=0){if(!oppOk(t,j))return false;g.lines[t][j].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine Karte von '+nm(g,t)+' an.';cbFx(g,'spy',t,[j],[s])}
+    else{if(!L[i])return false;L[i].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine eigene Karte an.';cbFx(g,'peek',s,[i])}}
+  else if(k==='swap'||k==='blind'){if(!L[i]||!oppOk(t,j)||t===g.caboBy)return false;
+    const a=L[i];L[i]=g.lines[t][j];g.lines[t][j]=a;g.msg='🔄 '+nm(g,s)+' tauscht blind eine Karte mit '+nm(g,t)+'.';cbFx(g,'xswap',s,[i],[t,j])}
+  else if(k==='peekswap'){if(!L[i]||!oppOk(t,j)||t===g.caboBy)return false;
+    L[i].kb|=cbBit(s);g.lines[t][j].kb|=cbBit(s);g.act={k,v:g.act.v,sel:{i,t,j}};
+    g.msg='🕵️ '+nm(g,s)+' schaut sich eine eigene Karte und eine von '+nm(g,t)+' an …';cbFx(g,'pspy',s,[i],[t,j]);return true}
   else return false;
   g.act=null;g.phase='play';cbNext(g);return true;
+}
+// 9er: nach dem Anschauen entscheiden, ob getauscht wird
+function cbDecide(g,s,yes){
+  if(g.phase!=='act'||g.turn!==s||!g.act||g.act.k!=='peekswap'||!g.act.sel)return false;
+  if(!yes)return cbSkip(g,s);
+  const {i,t,j}=g.act.sel,L=g.lines[s];if(!L[i]||!g.lines[t]||!g.lines[t][j])return false;
+  const a=L[i];L[i]=g.lines[t][j];g.lines[t][j]=a;g.msg='🔄 '+nm(g,s)+' tauscht eine Karte mit '+nm(g,t)+'.';cbFx(g,'xswap',s,[i],[t,j]);
+  g.act=null;g.phase='play';cbNext(g);return true;
+}
+// Dazwischen werfen (nur Hausregeln): jederzeit eine eigene Karte mit gleichem Rang wie die oberste Ablagekarte abwerfen.
+// Passt sie nicht, wird sie aufgedeckt, bleibt liegen und es gibt eine Strafkarte.
+function cbCanThrow(g,s){return cbH(g)&&(g.phase==='play'||g.phase==='act')&&!!g.lines[s]&&g.lines[s].length>0&&g.disc.length>0&&s!==g.caboBy}
+function cbThrow(g,s,i){
+  if(!cbCanThrow(g,s))return false;
+  const L=g.lines[s];if(!Number.isInteger(i)||!L[i])return false;
+  const sel=g.act&&g.act.sel;
+  if(sel&&((s===g.turn&&i===sel.i)||(s===sel.t&&i===sel.j)))return false; // gerade angeschaute Karte bleibt liegen
+  const top=g.disc[g.disc.length-1],c=L[i];
+  if(cbRank(g,c.v)===cbRank(g,top)){
+    L.splice(i,1);g.disc.push(c.v);
+    if(sel){if(s===g.turn&&i<sel.i)sel.i--;if(s===sel.t&&i<sel.j)sel.j--}
+    g.msg='⚡ '+nm(g,s)+' wirft '+cbName(g,c.v)+' dazwischen!';cbFx(g,'throw',s,[]);
+  }else{
+    c.up=true;
+    if(g.deck.length&&L.length<CB_MAXL)L.push({v:g.deck.pop(),up:false,kb:0});
+    g.msg='❌ '+nm(g,s)+' wollte '+cbName(g,c.v)+' dazwischen werfen – passt nicht! Strafkarte.';cbFx(g,'tmiss',s,[i,L.length-1]);
+  }
+  return true;
 }
 function cbNext(g){
   const n=g.players.length;let t=(g.turn+1)%n;
@@ -1902,7 +1978,7 @@ function cbNext(g){
 }
 // Rundenende und Wertung
 function cbEndRound(g,why){
-  const n=g.players.length,sums=g.lines.map(cbSum),kami=g.lines.findIndex(cbKami),sc=Array(n).fill(0);
+  const n=g.players.length,sums=g.lines.map(l=>cbSum(g,l)),kami=g.lines.findIndex(l=>cbKami(g,l)),sc=Array(n).fill(0);
   let note='';
   if(kami>=0){for(let s=0;s<n;s++)sc[s]=s===kami?0:50;note='💥 Kamikaze von '+nm(g,kami)+'! Alle anderen bekommen 50 Punkte.'}
   else{
@@ -1929,24 +2005,55 @@ function cbPlaces(g){const st=cbStandings(g),pl=Array(g.players.length).fill(0);
   st.forEach((x,i)=>{pl[x.s]=i>0&&x.t===st[i-1].t&&x.l===st[i-1].l?pl[st[i-1].s]:i});return pl}
 
 // ----- Computergegner mit Gedächtnis -----
-function cbEst(g,s){const L=g.lines[s];let sum=0,unk=0;L.forEach(c=>{if(cbKnows(c,s))sum+=c.v;else unk++});return {sum,unk,est:sum+unk*6.5}}
+function cbEst(g,s){const L=g.lines[s];let sum=0,unk=0;L.forEach(c=>{if(cbKnows(c,s))sum+=cbPts(g,c.v);else unk++});return {sum,unk,est:sum+unk*(cbH(g)?5.9:6.5)}}
+// Welcher Computer würde jetzt dazwischen werfen? → [Sitz, Karte] oder null
+function cbBotThrow(g){
+  if(!cbH(g)||!(g.phase==='play'||g.phase==='act')||!g.disc.length)return null;
+  const lv=CR(g).bots,top=cbRank(g,g.disc[g.disc.length-1]),sel=g.act&&g.act.sel;
+  for(let s=0;s<g.players.length;s++){
+    if(!g.players[s].bot||!cbCanThrow(g,s))continue;
+    const L=g.lines[s];
+    for(let i=0;i<L.length;i++){
+      if(sel&&((s===g.turn&&i===sel.i)||(s===sel.t&&i===sel.j)))continue;
+      const c=L[i];if(!cbKnows(c,s)||cbRank(g,c.v)!==top)continue;
+      const p=cbPts(g,c.v);if(p<0||(lv==='easy'&&p<6))continue;
+      return [s,i];
+    }
+  }
+  return null;
+}
 function cbBotStep(g){
-  const lv=CR(g).bots;
+  const lv=CR(g).bots,H=cbH(g);
   if(g.phase==='peek'){const s=g.players.findIndex((p,i)=>p.bot&&!g.ready[i]);if(s<0)return false;return cbPeekStart(g,s,2,3)}
+  const th=cbBotThrow(g);if(th)return cbThrow(g,th[0],th[1]);
   const s=g.turn;if(s<0||!g.players[s]||!g.players[s].bot)return false;
-  const L=g.lines[s],know=i=>cbKnows(L[i],s);
+  const L=g.lines[s],know=i=>cbKnows(L[i],s),P=c=>cbPts(g,c.v);
+  const opp=g.players.map((_,t)=>t).filter(t=>t!==s);
+  let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||P(c)>P(L[hi])))hi=i});
   if(g.phase==='act'){
-    const k=g.act.k,opp=g.players.map((_,t)=>t).filter(t=>t!==s);
+    const k=g.act.k;
     if(k==='peek'){const i=L.findIndex((c,i)=>!know(i));return i>=0?cbDoAct(g,s,i):cbSkip(g,s)}
-    if(k==='spy'){if(lv==='easy')return cbSkip(g,s);const ch=[];opp.forEach(t=>g.lines[t].forEach((c,j)=>{if(!cbKnows(c,s))ch.push([t,j])}));
-      if(!ch.length)return cbSkip(g,s);const [t,j]=ch[Math.floor(Math.random()*ch.length)];return cbDoAct(g,s,0,t,j)}
-    if(k==='swap'){
+    if(k==='spy'||k==='look'){
+      if(k==='look'){const i=L.findIndex((c,i)=>!know(i));if(i>=0)return cbDoAct(g,s,i)}
+      if(lv==='easy')return cbSkip(g,s);const ch=[];opp.forEach(t=>g.lines[t].forEach((c,j)=>{if(!cbKnows(c,s))ch.push([t,j])}));
+      if(!ch.length)return cbSkip(g,s);const [t,j]=ch[Math.floor(Math.random()*ch.length)];return cbDoAct(g,s,-1,t,j)}
+    if(k==='swap'||k==='blind'){
       // eigene hohe bekannte Karte gegen eine bekannte niedrige Karte eines anderen tauschen
-      let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||c.v>L[hi].v))hi=i});
-      let best=null;opp.forEach(t=>{if(t===g.caboBy)return;g.lines[t].forEach((c,j)=>{if(cbKnows(c,s)&&(!best||c.v<best.v))best={t,j,v:c.v}})});
-      if(hi>=0&&best&&L[hi].v-best.v>=3)return cbDoAct(g,s,hi,best.t,best.j);
-      if(lv!=='easy'&&hi>=0&&L[hi].v>=10){const ts=opp.filter(t=>t!==g.caboBy);if(ts.length){const t=ts[Math.floor(Math.random()*ts.length)];return cbDoAct(g,s,hi,t,Math.floor(Math.random()*g.lines[t].length))}}
+      let best=null;opp.forEach(t=>{if(t===g.caboBy)return;g.lines[t].forEach((c,j)=>{if(cbKnows(c,s)&&(!best||P(c)<best.v))best={t,j,v:P(c)}})});
+      if(hi>=0&&best&&P(L[hi])-best.v>=3)return cbDoAct(g,s,hi,best.t,best.j);
+      if(lv!=='easy'&&hi>=0&&P(L[hi])>=10){const ts=opp.filter(t=>t!==g.caboBy&&g.lines[t].length);if(ts.length){const t=ts[Math.floor(Math.random()*ts.length)];return cbDoAct(g,s,hi,t,Math.floor(Math.random()*g.lines[t].length))}}
       return cbSkip(g,s);
+    }
+    if(k==='peekswap'){
+      if(g.act.sel){const {i,t,j}=g.act.sel;return cbDecide(g,s,P(g.lines[t][j])<P(L[i]))}
+      const ts=opp.filter(t=>t!==g.caboBy&&g.lines[t].length);if(!ts.length||!L.length)return cbSkip(g,s);
+      // eigene Karte: höchste bekannte, sonst eine unbekannte; fremde: bekannte niedrige, sonst eine unbekannte
+      let i=hi>=0&&P(L[hi])>=5?hi:L.findIndex((c,x)=>!know(x));if(i<0)i=hi>=0?hi:0;
+      let best=null;ts.forEach(t=>g.lines[t].forEach((c,j)=>{if(cbKnows(c,s)&&(!best||P(c)<best.v))best={t,j,v:P(c)}}));
+      if(!best||best.v>=P(L[i])){const ch=[];ts.forEach(t=>g.lines[t].forEach((c,j)=>{if(!cbKnows(c,s))ch.push([t,j])}));
+        if(ch.length){const [t,j]=ch[Math.floor(Math.random()*ch.length)];best={t,j}}}
+      if(!best)return cbSkip(g,s);
+      return cbDoAct(g,s,i,best.t,best.j);
     }
     return cbSkip(g,s);
   }
@@ -1954,23 +2061,23 @@ function cbBotStep(g){
   if(!g.drawn){
     const e=cbEst(g,s),lim=lv==='easy'?10:lv==='hard'?5:7;
     if(g.caboBy<0&&e.unk<=1&&e.est<=lim)return cbCabo(g,s);
-    const top=g.disc[g.disc.length-1];
-    if(top!=null){let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||c.v>L[hi].v))hi=i});
-      if((hi>=0&&L[hi].v>=top+3&&top<=6)||(top<=2&&L.some((c,i)=>!know(i))))return cbTake(g,s)}
-    if(!g.deck.length)return top!=null?cbTake(g,s):false;
+    const top=g.disc[g.disc.length-1],tp=top!=null?cbPts(g,top):null;
+    if(top!=null&&L.length){
+      if((hi>=0&&P(L[hi])>=tp+3&&tp<=6)||(tp<=2&&L.some((c,i)=>!know(i))))return cbTake(g,s)}
+    if(!g.deck.length)return top!=null&&L.length?cbTake(g,s):cbCabo(g,s)||false;
     return cbDraw(g,s);
   }
-  const d=g.drawn.v;
+  const d=cbPts(g,g.drawn.v);
+  if(!L.length)return g.drawn.src==='deck'?cbDiscard(g,s):false;
   // gleiche bekannte Karten gemeinsam loswerden
-  const byV={};L.forEach((c,i)=>{if(know(i))(byV[c.v]=byV[c.v]||[]).push(i)});
-  let multi=null;Object.entries(byV).forEach(([v,ix])=>{v=+v;if(ix.length>=2&&v*ix.length-d>0&&(!multi||v*ix.length>multi.gain))multi={ix,gain:v*ix.length}});
-  let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||c.v>L[hi].v))hi=i});
-  const single=hi>=0?L[hi].v-d:-99;
+  const byR={};L.forEach((c,i)=>{if(know(i))(byR[cbRank(g,c.v)]=byR[cbRank(g,c.v)]||[]).push(i)});
+  let multi=null;Object.values(byR).forEach(ix=>{const gain=ix.reduce((a,i)=>a+P(L[i]),0);if(ix.length>=2&&gain-d>0&&(!multi||gain>multi.gain))multi={ix,gain}});
+  const single=hi>=0?P(L[hi])-d:-99;
   if(multi&&multi.gain-d>single&&lv!=='easy')return cbSwap(g,s,multi.ix);
   if(single>=1)return cbSwap(g,s,[hi]);
   const unk=L.findIndex((c,i)=>!know(i));
   if(unk>=0&&d<=4)return cbSwap(g,s,[unk]);
-  if(g.drawn.src==='disc')return cbSwap(g,s,[hi>=0&&L[hi].v>d?hi:unk>=0?unk:0]);
+  if(g.drawn.src==='disc')return cbSwap(g,s,[hi>=0&&P(L[hi])>d?hi:unk>=0?unk:0]);
   return cbDiscard(g,s);
 }
 
@@ -1981,7 +2088,8 @@ function cleanCabo(g){
   if(!['lobby','closed','peek','play','act','rend','over'].includes(g.phase))return null;
   if('host' in g)g.host=S(g.host,64);
   if('bots' in g)g.bots=I(g.bots,0,4)?g.bots:0;
-  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal',help:!!r.help}}
+  if(g.phase!=='lobby'&&g.phase!=='closed'&&!('rules' in g))g.rules={};
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal',help:!!r.help,mode:r.mode==='haus'?'haus':'orig'}}
   if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
   if('msg' in g)g.msg=S(g.msg,400);
   for(const k of ['round','match','starter'])if(k in g)g[k]=I(g[k],0,1e6)?g[k]:0;
@@ -1989,22 +2097,23 @@ function cleanCabo(g){
   if(!Array.isArray(g.players)||g.players.length<2||g.players.length>5||!g.players.every(O))return null;
   const n=g.players.length;
   g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
-  const card=c=>O(c)&&I(c.v,0,13)?{v:c.v,up:!!c.up,kb:I(c.kb,0,255)?c.kb:0}:null;
+  const MV=cbMaxV(g),card=c=>O(c)&&I(c.v,0,MV)?{v:c.v,up:!!c.up,kb:I(c.kb,0,255)?c.kb:0}:null;
   if(!Array.isArray(g.lines)||g.lines.length!==n)return null;
-  g.lines=g.lines.map(l=>Array.isArray(l)&&l.length<=12?l.map(card):null);
+  g.lines=g.lines.map(l=>Array.isArray(l)&&l.length<=CB_MAXL?l.map(card):null);
   if(g.lines.some(l=>!l||l.some(c=>!c)))return null;
-  g.deck=Array.isArray(g.deck)?g.deck.filter(v=>I(v,0,13)).slice(0,52):[];
-  g.disc=Array.isArray(g.disc)?g.disc.filter(v=>I(v,0,13)).slice(-52):[];
-  g.totals=Array.isArray(g.totals)&&g.totals.length===n&&g.totals.every(x=>I(x,0,10000))?g.totals:g.players.map(()=>0);
+  g.deck=Array.isArray(g.deck)?g.deck.filter(v=>I(v,0,MV)).slice(0,54):[];
+  g.disc=Array.isArray(g.disc)?g.disc.filter(v=>I(v,0,MV)).slice(-54):[];
+  g.totals=Array.isArray(g.totals)&&g.totals.length===n&&g.totals.every(x=>I(x,-1000,10000))?g.totals:g.players.map(()=>0);
   g.reset=Array.isArray(g.reset)&&g.reset.length===n?g.reset.map(Boolean):g.players.map(()=>false);
   g.ready=Array.isArray(g.ready)&&g.ready.length===n?g.ready.map(Boolean):g.players.map(()=>true);
   g.turn=I(g.turn,-1,n-1)?g.turn:-1;g.caboBy=I(g.caboBy,-1,n-1)?g.caboBy:-1;
-  g.drawn=O(g.drawn)&&I(g.drawn.v,0,13)&&['deck','disc'].includes(g.drawn.src)?{v:g.drawn.v,src:g.drawn.src}:null;
-  g.act=O(g.act)&&['peek','spy','swap'].includes(g.act.k)&&I(g.act.v,7,12)?{k:g.act.k,v:g.act.v}:null;
-  g.fx=O(g.fx)&&typeof g.fx.k==='string'&&I(g.fx.s,0,n-1)?{k:S(g.fx.k,8),s:g.fx.s,i:Array.isArray(g.fx.i)?g.fx.i.filter(x=>I(x,0,11)).slice(0,6):[],t:Array.isArray(g.fx.t)?g.fx.t.filter(x=>I(x,0,11)).slice(0,2):null,id:I(g.fx.id,0,1e9)?g.fx.id:0}:null;
-  g.hist=Array.isArray(g.hist)?g.hist.slice(-100).filter(O).map(h=>({sums:Array.isArray(h.sums)?h.sums.map(x=>I(x,0,200)?x:0).slice(0,n):[],sc:Array.isArray(h.sc)?h.sc.map(x=>I(x,0,300)?x:0).slice(0,n):[],caboBy:I(h.caboBy,-1,n-1)?h.caboBy:-1,kami:I(h.kami,-1,n-1)?h.kami:-1})):[];
+  g.drawn=O(g.drawn)&&I(g.drawn.v,0,MV)&&['deck','disc'].includes(g.drawn.src)?{v:g.drawn.v,src:g.drawn.src}:null;
+  g.act=O(g.act)&&(cbH(g)?['look','blind','peekswap']:['peek','spy','swap']).includes(g.act.k)&&I(g.act.v,0,MV)?Object.assign({k:g.act.k,v:g.act.v},g.act.k==='peekswap'&&O(g.act.sel)&&I(g.act.sel.i,0,CB_MAXL-1)&&I(g.act.sel.t,0,n-1)&&I(g.act.sel.j,0,CB_MAXL-1)?{sel:{i:g.act.sel.i,t:g.act.sel.t,j:g.act.sel.j}}:{}):null;
+  g.fx=O(g.fx)&&typeof g.fx.k==='string'&&I(g.fx.s,0,n-1)?{k:S(g.fx.k,8),s:g.fx.s,i:Array.isArray(g.fx.i)?g.fx.i.filter(x=>I(x,0,CB_MAXL-1)).slice(0,6):[],t:Array.isArray(g.fx.t)?g.fx.t.filter(x=>I(x,0,CB_MAXL-1)).slice(0,2):null,id:I(g.fx.id,0,1e9)?g.fx.id:0}:null;
+  g.hist=Array.isArray(g.hist)?g.hist.slice(-100).filter(O).map(h=>({sums:Array.isArray(h.sums)?h.sums.map(x=>I(x,-40,400)?x:0).slice(0,n):[],sc:Array.isArray(h.sc)?h.sc.map(x=>I(x,-40,400)?x:0).slice(0,n):[],caboBy:I(h.caboBy,-1,n-1)?h.caboBy:-1,kami:I(h.kami,-1,n-1)?h.kami:-1})):[];
   if((g.phase==='play'||g.phase==='act')&&!I(g.turn,0,n-1))return null;
   if(g.phase==='act'&&!g.act)return null;
+  if(g.act&&g.act.sel&&(!g.lines[g.turn]||!g.lines[g.turn][g.act.sel.i]||g.act.sel.t===g.turn||!g.lines[g.act.sel.t][g.act.sel.j]))return null;
   return g;
 }
 //CABO-END
@@ -3913,8 +4022,9 @@ function onGameOther(g,prev){
   }
   if(k==='stich'&&prev&&g.round!==prev.round)sfx('deal');
   if(k==='dice'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
-  if(k==='cabo'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='cabo'){cbAnnounce(nm(g,g.fx.s));sfx('turn')}else if(f==='swap'||f==='xswap')sfx('deal');else if(f==='miss')sfx('lose');else sfx('card');setTimeout(render,1600)}
-  if(k==='cabo'&&prev&&g.round!==prev.round){sfx('deal');cbSel.clear();cbOpp=null;cbShow=null}
+  if(k==='cabo'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='cabo'){cbAnnounce(nm(g,g.fx.s));sfx('turn')}else if(f==='swap'||f==='xswap')sfx('deal');else if(f==='miss'||f==='tmiss')sfx('lose');else sfx('card');setTimeout(render,1600)}
+  if(k==='cabo'&&prev&&prev.lines&&g.lines&&g.lines.some((l,s)=>!prev.lines[s]||l.length!==prev.lines[s].length)){cbSel.clear();cbOpp=null}
+  if(k==='cabo'&&prev&&g.round!==prev.round){sfx('deal');cbSel.clear();cbOpp=null;cbShow=null;cbThrowMode=false}
   if(k==='p10'&&prev){if(g.round!==prev.round){sfx('deal');p10Sel.clear();p10Stage=[]}else if(g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='lay')sfx('win');else if(f==='skip'){sfx('lose');if(g.fx.x===mySeatOf(g))toast('⏭ Du musst einmal aussetzen!')}else if(f==='hit')sfx('deal');else sfx('card')}
     const ms=mySeatOf(g);if(ms>=0&&g.hands[ms])[...p10Sel].forEach(c=>{if(!g.hands[ms].includes(c))p10Sel.delete(c)});if(ms>=0&&g.hands[ms])p10Stage=p10Stage.map(x=>x.filter(c=>g.hands[ms].includes(c))).filter(x=>x.length)}
   if(k==='qwixx'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
@@ -3931,7 +4041,7 @@ function otherBot(){
   if(!G||botTimer||G.paused||!otherRunning())return;
   const k=gameOf(G),isHost=G.host===myId||G.local,me_=mySeat();
   if(!isHost&&me_<0)return;
-  const need=k==='p10'?!!(G.phase==='play'&&G.players[G.turn]&&G.players[G.turn].bot):k==='qwixx'?(G.phase==='roll'?!!G.players[G.active].bot:G.phase==='white'?G.players.some((p,s)=>p.bot&&G.wc[s]==null):G.phase==='color'?!!G.players[G.active].bot:false):k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
+  const need=k==='p10'?!!(G.phase==='play'&&G.players[G.turn]&&G.players[G.turn].bot):k==='qwixx'?(G.phase==='roll'?!!G.players[G.active].bot:G.phase==='white'?G.players.some((p,s)=>p.bot&&G.wc[s]==null):G.phase==='color'?!!G.players[G.active].bot:false):k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)||!!cbBotThrow(G)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
   if(!need)return;
   const v=G.v,delay=(k==='dice'?750:950)+(trickHold>Date.now()?trickHold-Date.now():0)+(isHost?0:7000+Math.max(0,me_)*1500);
   botTimer=setTimeout(()=>{botTimer=null;if(!G||G.paused)return;if(G.v!==v){maybeBot();return}if(busy){setTimeout(maybeBot,300);return}
@@ -4015,9 +4125,10 @@ function drawOtherLobby(app,top,host,k){
   let set='';
   if((k==='p10'||k==='qwixx')&&(G.bots||0))set='<div class="panel"><h3>Einstellungen</h3>'+(host?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'<p class="note" style="margin:0">Computer: '+({easy:'leicht',normal:'normal',hard:'schwer'}[r.bots]||'normal')+'</p>')+'</div>';
   if(k==='cabo')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
+    '<div class="rl"><span>Regeln<small>Hausregeln: echtes Kartenspiel mit Jokern (−1) und roten Königen (0), 7 anschauen, 8 blind tauschen, 9 anschauen & tauschen, jederzeit dazwischen werfen. Original: Zahlenkarten 0–13.</small></span>'+seg('mode',[['haus','Hausregeln 🃏'],['orig','Original']])+'</div>'+
     '<div class="rl"><span>Gedächtnis-Hilfe<small>Karten, die du kennst, bleiben für dich sichtbar (leichter als das Original).</small></span>'+seg('help',[[false,'aus'],[true,'an']])+'</div>'+
     ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
-    :'<p class="note" style="margin:0">'+(r.help?'Mit Gedächtnis-Hilfe':'Original-Regeln – alles im Kopf behalten')+'</p>')+'</div>';
+    :'<p class="note" style="margin:0">'+(r.mode==='orig'?'Original-Regeln':'Hausregeln 🃏')+' · '+(r.help?'mit Gedächtnis-Hilfe':'alles im Kopf behalten')+'</p>')+'</div>';
   if(k==='stich')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Karten<small>Basis: 60 Karten mit 4 Zauberern und 4 Narren. Spezial: dazu Gestaltwandler, Drache, Fee, Bombe, Werwolf, Jongleur und Wolke.</small></span>'+seg('mode',[['basis','Basis'],['spezial','Spezial ✨']])+'</div>'+
     '<div class="rl"><span>Runde 1 blind („Hellsehen“)<small>In der ersten Runde siehst du nur die Karten der anderen – deine eigene nicht.'+(r.mode==='spezial'?' Laut Anleitung eigentlich nur ohne Sonderkarten – hier als Hausregel.':'')+'</small></span>'+seg('blind',[[true,'an'],[false,'aus']])+'</div>'+
@@ -4197,9 +4308,16 @@ function stLockCheck(){
 
 // ===================== Cabo =====================
 let cbSel=new Set(),cbOpp=null,cbShow=null;
-const CB_ICON={peek:'👁️',spy:'🕵️',swap:'🔄'};
+const CB_ICON={peek:'👁️',spy:'🕵️',swap:'🔄',look:'👁️',blind:'🔄',peekswap:'🕵️'};
+let cbThrowMode=false;
 function cbCard(v,cls,attrs){
   if(v==null)return '<div class="cbc back'+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="cbl">CABO</span></div>';
+  if(G&&cbH(G)){
+    if(v>=52)return '<div class="cbc f hk jk'+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="cn">🃏</span><span class="hc">🃏</span><span class="hp">−1</span></div>';
+    const r=v%13+1,su=Math.floor(v/13),red=su===1||su===2,rn=CB_RN[r],sy=CB_SUIT[su],ha=CB_HACT[r];
+    return '<div class="cbc f hk'+(red?' red':'')+(r>10?' face':'')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="cn">'+rn+'<i>'+sy+'</i></span><span class="hc">'+(r>10?rn:sy)+'</span>'+
+      (ha?'<span class="ci">'+CB_ICON[ha]+'</span>':'')+(r===13&&red?'<span class="hp">0</span>':'')+'<span class="cn2">'+rn+'<i>'+sy+'</i></span></div>';
+  }
   const a=CB_ACT[v];
   return '<div class="cbc f v'+v+(a?'':' na')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="cn">'+v+'</span>'+(a?'<span class="ci">'+CB_ICON[a]+'</span>':'')+'<span class="cn2">'+v+'</span></div>';
 }
@@ -4214,14 +4332,19 @@ function cbAct(a,v){
   const s=mySeat(),g=clone(G);if(s<0)return true;
   switch(a){
     case 'cb-mine':{const i=+v,L=G.lines[s];if(!L[i])return true;
+      if(cbThrowMode&&G.phase!=='peek'){cbThrowMode=false;if(busy){toast('Einen Moment …');render();return true}
+        if(cbThrow(g,s,i)){sfx('card');commit(g)}else{toast('Diese Karte kannst du gerade nicht werfen.');render()}return true}
       if(G.phase==='peek'){if(G.ready[s])return true;if(cbSel.has(i))cbSel.delete(i);else if(cbSel.size<2)cbSel.add(i);render();return true}
       if(G.turn!==s)return true;
       if(G.phase==='play'&&G.drawn){cbSel.has(i)?cbSel.delete(i):cbSel.add(i);render();return true}
-      if(G.phase==='act'&&(G.act.k==='peek'||G.act.k==='swap')){cbSel.has(i)?cbSel.clear():(cbSel.clear(),cbSel.add(i));render()}
+      if(G.phase==='act'&&!G.act.sel&&['peek','swap','look','blind','peekswap'].includes(G.act.k)){cbSel.has(i)?cbSel.clear():(cbSel.clear(),cbSel.add(i));if(G.act.k==='look')cbOpp=null;render()}
       return true}
-    case 'cb-opp':{if(G.phase!=='act'||G.turn!==s||!(G.act.k==='spy'||G.act.k==='swap'))return true;const [t,j]=String(v).split(':').map(Number);
-      if(G.act.k==='swap'&&t===G.caboBy){toast('Die Karten von '+nm(G,t)+' sind nach dem CABO gesperrt.');return true}
-      cbOpp=cbOpp&&cbOpp[0]===t&&cbOpp[1]===j?null:[t,j];render();return true}
+    case 'cb-opp':{if(G.phase!=='act'||G.turn!==s||G.act.sel||!['spy','swap','look','blind','peekswap'].includes(G.act.k))return true;const [t,j]=String(v).split(':').map(Number);
+      if(G.act.k!=='spy'&&G.act.k!=='look'&&t===G.caboBy){toast('Die Karten von '+nm(G,t)+' sind nach dem CABO gesperrt.');return true}
+      cbOpp=cbOpp&&cbOpp[0]===t&&cbOpp[1]===j?null:[t,j];if(G.act.k==='look')cbSel.clear();render();return true}
+    case 'cb-throw':if(!cbCanThrow(G,s)){toast(s===G.caboBy?'Nach deinem CABO sind deine Karten gesperrt.':'Gerade kann nichts dazwischen geworfen werden.');return true}
+      cbThrowMode=!cbThrowMode;render();return true;
+    case 'cb-yes':case 'cb-no':if(cbDecide(g,s,a==='cb-yes')){cbSel.clear();cbOpp=null;if(a==='cb-yes')sfx('deal');commit(g)}return true;
     case 'cb-ready':{const [x,y]=[...cbSel];if(cbSel.size!==2)return true;if(cbPeekStart(g,s,x,y)){cbSel.clear();commit(g)}return true}
     case 'cb-draw':if(cbDraw(g,s)){cbSel.clear();sfx('card');commit(g)}else if(!G.deck.length)toast('Der Stapel ist leer.');return true;
     case 'cb-take':if(cbTake(g,s)){cbSel.clear();sfx('card');commit(g)}return true;
@@ -4233,7 +4356,9 @@ function cbAct(a,v){
     case 'cb-do':{const k=G.act&&G.act.k,i=[...cbSel][0];
       if(k==='peek'){if(i==null)return true;if(cbDoAct(g,s,i)){cbSel.clear();commit(g);cbReveal(s,[i],3000)}}
       else if(k==='spy'){if(!cbOpp)return true;const [t,j]=cbOpp;if(cbDoAct(g,s,0,t,j)){cbOpp=null;commit(g);cbReveal(t,[j],3000)}}
-      else if(k==='swap'){if(i==null||!cbOpp)return true;const [t,j]=cbOpp;if(cbDoAct(g,s,i,t,j)){cbSel.clear();cbOpp=null;sfx('deal');commit(g)}}
+      else if(k==='swap'||k==='blind'){if(i==null||!cbOpp)return true;const [t,j]=cbOpp;if(cbDoAct(g,s,i,t,j)){cbSel.clear();cbOpp=null;sfx('deal');commit(g)}}
+      else if(k==='look'){if(cbOpp){const [t,j]=cbOpp;if(cbDoAct(g,s,-1,t,j)){cbOpp=null;commit(g);cbReveal(t,[j],3000)}}else if(i!=null&&cbDoAct(g,s,i)){cbSel.clear();commit(g);cbReveal(s,[i],3000)}}
+      else if(k==='peekswap'){if(i==null||!cbOpp)return true;const [t,j]=cbOpp;if(cbDoAct(g,s,i,t,j)){cbSel.clear();cbOpp=null;commit(g)}}
       return true}
     case 'cb-block':openModal('<h2>📒 Punkte</h2>'+cbBlock(G)+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Schließen</button>');return true;
   }
@@ -4253,7 +4378,7 @@ function drawCabo(app,top){
     if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
     const cd=Math.max(0,3-Math.ceil((Date.now()-seen.endAt)/1000));if(cd>0)setTimeout(render,400);
     setHTML(app,top+'<h1 style="margin-top:6px">Runde '+G.round+' vorbei</h1>'+(G.msg?'<p class="note" style="text-align:center">'+esc(G.msg)+'</p>':'')+
-      '<div class="panel"><ul class="plist cbres">'+G.players.map((p,s)=>'<li><span class="cbrn">'+(h.caboBy===s?'📣 ':'')+esc(p.name)+'<span class="cbrl">'+G.lines[s].map(c=>cbCard(c.v,'mini')).join('')+'</span></span><span class="cbrs"><small>Summe '+h.sums[s]+'</small><b>+'+h.sc[s]+'</b></span></li>').join('')+'</ul></div>'+
+      '<div class="panel"><ul class="plist cbres">'+G.players.map((p,s)=>'<li><span class="cbrn">'+(h.caboBy===s?'📣 ':'')+esc(p.name)+'<span class="cbrl">'+G.lines[s].map(c=>cbCard(c.v,'mini')).join('')+'</span></span><span class="cbrs"><small>Summe '+h.sums[s]+'</small><b>'+(h.sc[s]>=0?'+':'')+h.sc[s]+'</b></span></li>').join('')+'</ul></div>'+
       '<div class="panel"><h3>Zwischenstand</h3>'+cbStandings(G).map((x,i)=>'<div class="rlist"><span>'+(i+1)+'. '+esc(nm(G,x.s))+(G.reset[x.s]?' <small>(100→50 genutzt)</small>':'')+'</span><b>'+x.t+'</b></div>').join('')+'<p class="note" style="margin-bottom:0">Wer über 100 Punkte kommt, beendet das Spiel – die wenigsten Punkte gewinnen.</p></div>'+
       (me_>=0?'<button data-a="next" '+(cd>0?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button>':'<p class="note" style="text-align:center">Gleich geht es weiter …</p>'));
     return;
@@ -4263,52 +4388,65 @@ function drawCabo(app,top){
   // Mitspieler
   let opps='';
   for(let k=1;k<=n;k++){const s=((me_<0?0:me_)+k)%n;if(s===me_)continue;const p=G.players[s];
-    const pick=act==='spy'||(act==='swap'&&s!==G.caboBy);
+    const asel=G.act&&G.act.sel,pick=!asel&&(act==='spy'||act==='look'||((act==='swap'||act==='blind'||act==='peekswap')&&s!==G.caboBy));
     opps+='<div class="opp cbo'+(G.turn===s&&!G.paused&&G.phase!=='peek'?' turn':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.caboBy===s?'<span class="tag gold">📣 CABO</span>':'')+'</div>'+
-      '<div class="cbol">'+G.lines[s].map((c,j)=>{const sel=cbOpp&&cbOpp[0]===s&&cbOpp[1]===j,face=c.up||cbShown(s,j);
-        return cbCard(face?c.v:null,'mini'+(sel?' sel':'')+(fxHit(s,j)?' fx':'')+(G.caboBy===s&&act==='swap'?' lockd':''),pick?'data-a="cb-opp" data-v="'+s+':'+j+'"':'')}).join('')+'</div>'+
+      '<div class="cbol">'+G.lines[s].map((c,j)=>{const ps=myTurn&&asel&&asel.t===s&&asel.j===j,sel=(cbOpp&&cbOpp[0]===s&&cbOpp[1]===j)||ps,face=c.up||cbShown(s,j)||ps;
+        return cbCard(face?c.v:null,'mini'+(sel?' sel':'')+(fxHit(s,j)?' fx':'')+(G.caboBy===s&&(act==='swap'||act==='blind'||act==='peekswap')?' lockd':''),pick?'data-a="cb-opp" data-v="'+s+':'+j+'"':'')}).join('')+'</div>'+
       '<div class="c">'+G.totals[s]+' Punkte'+(G.phase==='peek'?' · '+(G.ready[s]?'bereit ✓':'schaut …'):'')+'</div></div>'}
   // Tisch: Stapel, Ablage, gezogene Karte
-  const top1=G.disc.length?G.disc[G.disc.length-1]:null,dr=G.drawn;
+  const top1=G.disc.length?G.disc[G.disc.length-1]:null,dr=G.drawn,VN=v=>cbH(G)?cbName(G,v):String(v);
   const drShow=dr&&(dr.src==='disc'||myTurn);
   const table='<div class="table cbt"><div class="cbpiles"><div class="cbpile"><small>Stapel · '+G.deck.length+'</small>'+cbCard(null,'stack'+(myTurn&&G.phase==='play'&&!dr?' pick':''),myTurn&&G.phase==='play'&&!dr?'data-a="cb-draw"':'')+'</div>'+
-    '<div class="cbpile"><small>Ablage</small>'+(top1!=null?cbCard(top1,(myTurn&&G.phase==='play'&&!dr?'pick':'')+(fx&&fx.k==='disc'?' fx':''),myTurn&&G.phase==='play'&&!dr?'data-a="cb-take"':''):'<div class="cbc empty"></div>')+'</div>'+
+    '<div class="cbpile"><small>Ablage</small>'+(top1!=null?cbCard(top1,(myTurn&&G.phase==='play'&&!dr?'pick':'')+(fx&&(fx.k==='disc'||fx.k==='throw')?' fx':''),myTurn&&G.phase==='play'&&!dr?'data-a="cb-take"':''):'<div class="cbc empty"></div>')+'</div>'+
     (dr?'<div class="cbpile drawn"><small>'+(G.turn===me_?'Deine Karte':esc(nm(G,G.turn))+' hat')+'</small>'+cbCard(drShow?dr.v:null,'big')+'</div>':'')+'</div>'+
     '<div class="msg">'+esc(G.msg||'')+'</div></div>';
   // eigene Karten
   let mine='',panel='';
   if(me_>=0){
     const L=G.lines[me_],peekSel=G.phase==='peek'&&!G.ready[me_];
-    const canSel=peekSel||(myTurn&&G.phase==='play'&&!!dr)||(act==='peek'||act==='swap');
-    mine='<div class="cbmine">'+L.map((c,i)=>{const face=c.up||(peekSel&&cbSel.has(i))||cbShown(me_,i),known=help&&cbKnows(c,me_)&&!face;
-      return cbCard(face?c.v:known?c.v:null,(cbSel.has(i)?'sel':'')+(known?' known':'')+(fxHit(me_,i)?' fx':''),(canSel?'data-a="cb-mine" data-v="'+i+'"':'')+' data-key="m'+i+'"')}).join('')+'</div>';
+    const asel=act&&G.act.sel,thr=cbThrowMode&&cbCanThrow(G,me_);if(!thr)cbThrowMode=false;
+    const canSel=thr||peekSel||(myTurn&&G.phase==='play'&&!!dr)||(!asel&&['peek','swap','look','blind','peekswap'].includes(act));
+    mine='<div class="cbmine'+(thr?' thr':'')+'">'+L.map((c,i)=>{const ps=asel&&asel.i===i,face=c.up||(peekSel&&cbSel.has(i))||cbShown(me_,i)||ps,known=help&&cbKnows(c,me_)&&!face;
+      return cbCard(face?c.v:known?c.v:null,(cbSel.has(i)||ps?'sel':'')+(known?' known':'')+(fxHit(me_,i)?' fx':''),(canSel?'data-a="cb-mine" data-v="'+i+'"':'')+' data-key="m'+i+'"')}).join('')+'</div>';
     const pts='<button class="ghost" data-a="cb-block">📒 Punkte</button>';
     if(G.phase==='peek'){
       panel=G.ready[me_]?'<p class="note" style="text-align:center">Warte auf die anderen … ('+G.ready.filter(Boolean).length+'/'+n+' bereit)</p>':
         '<div class="panel act"><b>Tippe zwei deiner Karten an und merk sie dir gut!</b><span class="note">Danach siehst du sie nicht mehr.</span><button data-a="cb-ready" '+(cbSel.size===2?'':'disabled')+'>Gemerkt ✓</button></div>';
     }else if(myTurn&&G.phase==='play'&&!dr){
-      panel='<div class="panel act"><b>Du bist dran</b><div class="row"><button data-a="cb-draw" '+(G.deck.length?'':'disabled')+'>🂠 Ziehen</button><button class="ghost" data-a="cb-take" '+(top1!=null?'':'disabled')+'>Ablage nehmen'+(top1!=null?' ('+top1+')':'')+'</button></div>'+
+      panel='<div class="panel act"><b>Du bist dran</b><div class="row"><button data-a="cb-draw" '+(G.deck.length?'':'disabled')+'>🂠 Ziehen</button><button class="ghost" data-a="cb-take" '+(top1!=null&&L.length?'':'disabled')+'>Ablage nehmen'+(top1!=null?' ('+VN(top1)+')':'')+'</button></div>'+
         '<button class="cbcabo" data-a="cb-cabo" '+(G.caboBy<0?'':'disabled')+'>📣 CABO rufen</button></div>'+pts;
     }else if(myTurn&&G.phase==='play'&&dr){
-      const a=CB_ACT[dr.v];
-      panel='<div class="panel act"><b>'+(dr.src==='disc'?'Tausch die '+dr.v+' gegen eine deiner Karten':'Du hast eine '+dr.v+' gezogen')+'</b><span class="note">Tippe die Karte an, die du abgeben willst – oder mehrere gleiche Karten auf einmal.</span>'+
+      const a=cbActOf(G,dr.v);
+      panel='<div class="panel act"><b>'+(dr.src==='disc'?'Tausch '+(cbH(G)?VN(dr.v):'die '+dr.v)+' gegen eine deiner Karten':'Du hast '+(cbH(G)?VN(dr.v):'eine '+dr.v)+' gezogen')+'</b><span class="note">Tippe die Karte an, die du abgeben willst – oder mehrere gleiche Karten auf einmal.</span>'+
         '<div class="row"><button data-a="cb-swap" '+(cbSel.size?'':'disabled')+'>Tauschen'+(cbSel.size>1?' ('+cbSel.size+' Karten)':'')+'</button>'+(dr.src==='deck'?'<button class="ghost" data-a="cb-disc">Abwerfen'+(a?' + '+CB_ICON[a]:'')+'</button>':'')+'</div>'+
         (dr.src==='deck'&&a?'<span class="note">Abwerfen erlaubt: '+CB_ACT_TXT[a]+'</span>':'')+'</div>';
+    }else if(act&&asel){
+      const mv=cbPts(G,L[asel.i].v),ov=cbPts(G,G.lines[asel.t][asel.j].v);
+      panel='<div class="panel act"><b>🕵️ Tauschen?</b><span class="note">Deine Karte: <b>'+VN(L[asel.i].v)+'</b> ('+mv+' P.) · Karte von '+esc(nm(G,asel.t))+': <b>'+VN(G.lines[asel.t][asel.j].v)+'</b> ('+ov+' P.)</span><div class="row"><button data-a="cb-yes">🔄 Tauschen</button><button class="ghost" data-a="cb-no">Nicht tauschen</button></div></div>';
     }else if(act){
-      const t={peek:'Tippe eine deiner Karten an, um sie dir anzuschauen.',spy:'Tippe eine Karte eines Mitspielers an, um sie dir anzuschauen.',swap:'Tippe eine deiner Karten und eine eines Mitspielers an – sie werden blind getauscht.'}[act];
-      const ok=act==='peek'?cbSel.size===1:act==='spy'?!!cbOpp:cbSel.size===1&&!!cbOpp;
-      panel='<div class="panel act"><b>'+CB_ACT_TXT[act]+'</b><span class="note">'+t+'</span><div class="row"><button data-a="cb-do" '+(ok?'':'disabled')+'>'+(act==='swap'?'Tauschen':'Anschauen')+'</button><button class="ghost" data-a="cb-skip">Überspringen</button></div></div>';
+      const t={peek:'Tippe eine deiner Karten an, um sie dir anzuschauen.',spy:'Tippe eine Karte eines Mitspielers an, um sie dir anzuschauen.',swap:'Tippe eine deiner Karten und eine eines Mitspielers an – sie werden blind getauscht.',
+        look:'Tippe eine Karte an – deine eigene oder die eines Mitspielers –, um sie dir anzuschauen.',blind:'Tippe eine deiner Karten und eine eines Mitspielers an – sie werden blind getauscht.',peekswap:'Tippe eine deiner Karten und eine eines Mitspielers an. Du siehst dir beide an und entscheidest dann, ob getauscht wird.'}[act];
+      const ok=act==='peek'?cbSel.size===1:act==='spy'?!!cbOpp:act==='look'?(cbSel.size===1||!!cbOpp):cbSel.size===1&&!!cbOpp;
+      panel='<div class="panel act"><b>'+CB_ACT_TXT[act]+'</b><span class="note">'+t+'</span><div class="row"><button data-a="cb-do" '+(ok?'':'disabled')+'>'+(act==='swap'||act==='blind'?'Tauschen':'Anschauen')+'</button><button class="ghost" data-a="cb-skip">Überspringen</button></div></div>';
     }else panel='<p class="note" style="text-align:center">'+(G.turn>=0?esc(nm(G,G.turn))+' ist dran …':'')+(G.caboBy>=0?' · 📣 '+esc(nm(G,G.caboBy))+' hat CABO gerufen':'')+'</p>'+pts;
   }
+  if(me_>=0&&cbH(G)&&G.phase!=='peek'){const can=cbCanThrow(G,me_);
+    const tb=cbThrowMode?'<div class="cbthrowbar on"><span>⚡ Tippe deine Karte an'+(top1!=null?' (muss '+(top1>=52?'ein Joker':'eine '+CB_RN[top1%13+1])+' sein)':'')+'</span><button class="ghost" data-a="cb-throw">Abbrechen</button></div>'
+      :'<button class="cbthrow" data-a="cb-throw" '+(can?'':'disabled')+'>⚡ Dazwischen werfen</button>';
+    panel=tb+panel}
   const meB=me_>=0?'<div class="mebar" data-a="pinfo" data-v="me"><span>'+esc(nm(G,me_))+(G.caboBy===me_?' 📣':'')+'</span><span>'+G.totals[me_]+' Punkte · '+G.lines[me_].length+' Karten</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
   const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+(mySeat()>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
   setHTML(app,top+'<div class="opps cbops'+(n>3?' many':'')+'">'+opps+'</div>'+table+pz+meB+mine+panel);
 }
-const CB_RULES_TXT='<details><summary>Regeln Cabo</summary>Ziel: am Ende einer Runde möglichst wenige Punkte vor sich liegen haben. Jeder bekommt 4 verdeckte Karten (Werte 0–13) und schaut sich zu Beginn zwei davon an – danach nur noch im Kopf behalten!<br><br>'+
+const CB_RULES_TXT='<details><summary>Regeln Cabo</summary>Ziel: am Ende einer Runde möglichst wenige Punkte vor sich liegen haben. Jeder bekommt 4 verdeckte Karten und schaut sich zu Beginn zwei davon an – danach nur noch im Kopf behalten!<br><br>'+
   '<b>Dein Zug:</b> Zieh vom Stapel oder nimm die oberste Karte der Ablage. Die gezogene Karte tauschst du gegen eine eigene Karte (die alte kommt auf die Ablage) – oder gegen mehrere gleiche Karten auf einmal. Liegst du daneben, bleiben die Karten offen liegen und die neue kommt dazu (ab drei Karten noch eine Strafkarte). Eine Karte vom Stapel darfst du auch einfach abwerfen. Karten von der Ablage liegen danach offen.<br><br>'+
-  '<b>Aktionskarten</b> (nur wenn du sie vom Stapel ziehst und abwirfst): 7/8 👁️ eine eigene Karte anschauen · 9/10 🕵️ eine fremde Karte anschauen · 11/12 🔄 eine eigene Karte blind mit einer fremden tauschen.<br><br>'+
+  '<b>Hausregeln 🃏 (Standard)</b> – echtes Kartenspiel mit 54 Karten. Punkte: Joker −1 · Ass 1 · 2–10 Nennwert · Bube, Dame und schwarzer König 10 · <b>roter König 0</b>.<br>'+
+  'Aktionskarten (nur vom Stapel gezogen und abgeworfen, alle freiwillig): <b>7</b> 👁️ eine Karte anschauen – deine oder die eines Mitspielers · <b>8</b> 🔄 eine eigene Karte blind mit einer fremden tauschen · <b>9</b> 🕵️ eine eigene und eine fremde Karte anschauen, dann entscheiden, ob getauscht wird.<br>'+
+  '<b>⚡ Dazwischen werfen:</b> Jederzeit – auch wenn du nicht dran bist – darfst du eine eigene Karte mit dem gleichen Rang wie die oberste Ablagekarte drauflegen (z. B. eine 2 auf eine 2). Passt sie nicht, wird sie aufgedeckt, bleibt liegen und du bekommst eine Strafkarte.<br><br>'+
+  '<b>Original-Regeln</b> – Zahlenkarten 0–13: 7/8 👁️ eigene Karte anschauen · 9/10 🕵️ fremde Karte anschauen · 11/12 🔄 blind tauschen. <b>Kamikaze:</b> genau zwei 12er und zwei 13er: du bekommst 0, alle anderen 50 Punkte.<br><br>'+
   '<b>CABO:</b> Statt zu ziehen rufst du CABO, wenn du glaubst, die wenigsten Punkte zu haben. Alle anderen haben noch einen Zug, deine Karten können dabei nicht mehr getauscht werden. Hast du die niedrigste Summe, bekommst du 0 Punkte, sonst deine Summe plus 10. Wer sonst die niedrigste Summe hat, bekommt 0, alle anderen ihre Summe. Ist der Stapel leer, endet die Runde ebenfalls.<br><br>'+
-  '<b>Kamikaze:</b> Genau zwei 12er und zwei 13er: du bekommst 0, alle anderen 50 Punkte. <b>Genau 100</b> Punkte fallen einmal pro Spiel auf 50 zurück. Wer über 100 kommt, beendet das Spiel – die wenigsten Punkte gewinnen.</details>';
+  '<b>Genau 100</b> Punkte fallen einmal pro Spiel auf 50 zurück. Wer über 100 kommt, beendet das Spiel – die wenigsten Punkte gewinnen.</details>';
+
 
 // Einblendung, wenn jemand CABO ruft
 function cbAnnounce(name){const el=document.createElement('div');el.className='cbann';el.innerHTML='<b>📣 CABO!</b><span>'+esc(name)+' hat gerufen – alle anderen haben noch einen Zug</span>';
