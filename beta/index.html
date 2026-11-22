@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-JI/jKr9cMiCjREgPsEES45gkaHCTbsFLwZ9iiV9Fk60=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-SWD/UHLnZTbHeNz9rzh2Il9vwd0IeU4GjIMjspYnLXo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -975,6 +975,19 @@ body[data-surface=mystic] .table{border:10px solid #2f3b3a;background:radial-gra
 @keyframes p10glow{from{box-shadow:0 0 0 1px rgba(255,214,90,.5)}to{box-shadow:0 0 0 3px rgba(255,214,90,.95),0 0 16px rgba(255,214,90,.5)}}
 .qc.can{animation:qglow 1s ease-in-out infinite alternate}
 @keyframes qglow{from{box-shadow:0 0 0 2px #111}to{box-shadow:0 0 0 3px #111,0 0 14px rgba(255,255,255,.95)}}
+/* Erfolge-Fenster: nie breiter als der Bildschirm */
+#modal .box{max-width:min(460px,calc(100vw - 20px));box-sizing:border-box}
+.pibody{overflow-x:hidden}
+.pibody .ach{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pibody .ac{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+.pibody .ac b{font-size:12.5px}.pibody .ac small{font-size:10.5px}
+.pibody .rews{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+.pibody .rew{min-width:0;overflow-wrap:anywhere}
+.pibody .panel{padding:10px}
+.pih{min-width:0}.pih>div{min-width:0}.pih b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pih .pihint{display:block;font-size:11px;opacity:.7}
+.avzoom{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0 16px;animation:pop .45s var(--e-spring)}
+.avzoom b{font-size:22px}.avzoom small{color:var(--mute)}
 </style>
 </head>
 <body>
@@ -2360,6 +2373,8 @@ const EKEY={'😂':'laugh','💣':'bomb','😡':'angry','😎':'cool','😭':'cr
 const SPECIAL=[[10,'🌟','Goldstern'],[20,'🔥','Feuerkrone','gold'],[40,'💎','Diamant'],[70,'⚡','Donnergott','throne'],
   [100,'🐉','Drache'],[150,'🚀','Feuerwerk','lava'],[200,'🌋','Vulkan'],[300,'🏆','Legende','diamond']];
 let presCount=0;
+// Siege aus allen Spielen (Präsident + gewonnene Partien der anderen Spiele) – zählen für Freischaltungen
+function winsAll(){let w=presCount;if(myGS&&typeof myGS==='object')for(const k in myGS)w+=+((myGS[k]||{}).wins||0);return w}
 let online=new Set();
 const turnSecs=()=>G?R(G).turn:20;
 
@@ -2650,7 +2665,8 @@ async function showPinfo(uid,name,bot){
 let pinfoData=null;
 function drawPinfo(){
   const d=pinfoData;if(!d)return;const {st,gs}=d;
-  const head='<div class="pih">'+avatar(st.avatar||null,d.name,st.wins,44)+'<div><b>'+esc(d.name)+'</b><small>'+(st.wins||0)+'× Präsident · '+(st.rounds||0)+' Runden Arschloch</small></div></div>';
+  const tw=(+st.wins||0)+(gs?Object.values(gs).reduce((a,x)=>a+(+(x||{}).wins||0),0):0);
+  const head='<div class="pih"><span data-a="avbig" data-v="pinfo" style="cursor:zoom-in">'+avatar(st.avatar||null,d.name,tw,52)+'</span><div><b>'+esc(d.name)+'</b><small>'+tw+' Siege · davon '+(st.wins||0)+'× Präsident</small><small class="pihint">Bild antippen zum Vergrößern</small></div></div>';
   const tabs='<div class="seg pitabs"><button class="'+(pinfoTab.t==='ach'?'on':'')+'" data-a="pi-tab" data-v="ach">🏅 Erfolge</button><button class="'+(pinfoTab.t==='rew'?'on':'')+'" data-a="pi-tab" data-v="rew">🎁 Freischaltungen</button></div>';
   let body='';
   if(pinfoTab.t==='ach')body=achHtml(st)+ach2Html(gs);
@@ -2681,9 +2697,9 @@ const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',20
 const DICES=[['white','Klassisch'],['black','Schwarz'],['ruby','Rubin'],['gold','Gold',{g:'dice',k:'best',n:250,t:'250 Punkte in Kniffel'}],
   ['neon','Neon',{g:'dice',k:'kn',n:5,t:'5× Kniffel geworfen'}],['diamond','Diamant',{g:'dice',k:'wins',n:25,t:'25× Kniffel gewonnen'}]];
 let myGS=null;
-function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return presCount>=req;if(typeof req==='object')return !!(myGS&&myGS[req.g]&&(+myGS[req.g][req.k]||0)>=req.n);if(req==='stars5')return !!(quests&&quests.stars>=5);return !!(myStats&&myStats[req]>=1)}
-function reqFor(req,st,gs){if(!req)return true;if(!st)return false;if(typeof req==='number')return (+st.wins||0)>=req;if(typeof req==='object')return !!(gs&&gs[req.g]&&(+gs[req.g][req.k]||0)>=req.n);if(req==='stars5')return null;return (+st[req]||0)>=1}
-function reqText(req){if(req&&typeof req==='object')return '🔒 '+req.t;return typeof req==='number'?'🔒 '+req+'× Präsident':req==='stars5'?'🔒 5 Tagessterne':'🔒 Erfolg „Bombe auf Bombe“'}
+function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return winsAll()>=req;if(typeof req==='object')return !!(myGS&&myGS[req.g]&&(+myGS[req.g][req.k]||0)>=req.n);if(req==='stars5')return !!(quests&&quests.stars>=5);return !!(myStats&&myStats[req]>=1)}
+function reqFor(req,st,gs){if(!req)return true;if(!st)return false;if(typeof req==='number'){let w=+st.wins||0;if(gs)for(const k in gs)w+=+((gs[k]||{}).wins||0);return w>=req}if(typeof req==='object')return !!(gs&&gs[req.g]&&(+gs[req.g][req.k]||0)>=req.n);if(req==='stars5')return null;return (+st[req]||0)>=1}
+function reqText(req){if(req&&typeof req==='object')return '🔒 '+req.t;return typeof req==='number'?'🔒 '+req+' Siege':req==='stars5'?'🔒 5 Tagessterne':'🔒 Erfolg „Bombe auf Bombe“'}
 const BGS=[['bar','Bar','#5a3820'],['night','Nacht','#1a2550'],['living','Wohnzimmer','#6b5442'],['neon','Neon','#5a1a6d'],['concrete','Beton','#4a4d52']];
 const ACC={gold:['Gold','#f2c14e','#2b2100'],mint:['Mint','#5fe0b5','#06281c'],pink:['Pink','#ff7ab6','#3a0820'],sky:['Himmelblau','#6cc4ff','#06243a'],orange:['Orange','#ff9b42','#3a1a00'],white:['Weiß','#f2f2f2','#1a1a1a']};
 let T={surface:'felt',felt:'green',bg:'bar',accent:'gold',cards:'classic',back:'red'};
@@ -2988,10 +3004,10 @@ function special(uid,t){
   el.innerHTML=h;document.body.appendChild(el);setTimeout(()=>el.remove(),t===8?4600:3800);
   try{navigator.vibrate&&navigator.vibrate(t>=7?[80,40,160]:60)}catch(_){}
 }
-function specialUnlocked(t){return presCount>=SPECIAL[t-1][0]}
-async function loadPres(){if(!me)return;loadGS();try{const s=await store.rpc('get_stats',{p_uid:myId});if(s){const before=presCount,prevSt=myStats;myStats=s;presCount=s.wins||0;applyTheme();if(wheelOpen)renderChat();
+function specialUnlocked(t){return winsAll()>=SPECIAL[t-1][0]}
+async function loadPres(){if(!me)return;loadGS();try{const s=await store.rpc('get_stats',{p_uid:myId});if(s){const before=winsAll(),prevSt=myStats;myStats=s;presCount=s.wins||0;const after=winsAll();applyTheme();if(wheelOpen)renderChat();
   if(prevSt){ACH.forEach(a=>{if(a[3](s)&&!a[3](prevSt)){sfx('unlock');toast('🏅 Erfolg freigeschaltet: '+a[0]+' '+a[1])}})}
-  if(before&&presCount>before){const t=SPECIAL.findIndex(x=>before<x[0]&&presCount>=x[0]);if(t>=0)toast('🎉 Freigeschaltet: '+SPECIAL[t][1]+' '+SPECIAL[t][2]+(SPECIAL[t][3]?' + neuer Tisch!':'!'))}}}catch(e){}}
+  if(before&&after>before){const t=SPECIAL.findIndex(x=>before<x[0]&&after>=x[0]);if(t>=0)toast('🎉 Freigeschaltet: '+SPECIAL[t][1]+' '+SPECIAL[t][2]+(SPECIAL[t][3]?' + neuer Tisch!':'!'))}}}catch(e){}}
 // Wizard-/Kniffel-Statistik des eigenen Kontos: Belohnungen und Erfolge
 const ACH2=[['🧙','Zauberlehrling','Eine Partie Wizard gewonnen',x=>x.stich.wins>=1],['🔮','Hellseher','100 richtige Wizard-Ansagen',x=>x.stich.hits>=100],
   ['📜','Wizard-Stammgast','10 Partien Wizard gespielt',x=>x.stich.played>=10],['🏆','Erzmagier','25× Wizard gewonnen',x=>x.stich.wins>=25],
@@ -3005,7 +3021,7 @@ const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof 
 function ach2Html(g){const x=gsFill(g),got=ACH2.filter(a=>a[3](x)).length;
   return '<div class="panel"><h3>Wizard, Kniffel, Cabo, Phase 10 & Qwixx · '+got+' von '+ACH2.length+'</h3><div class="ach">'+ACH2.map(a=>{const ok=a[3](x);
     return '<div class="ac'+(ok?' on':'')+'"><span>'+a[0]+'</span><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></div>'}).join('')+'</div></div>'}
-const allRewards=()=>[...SURF.map(x=>[x[1],x[3]]),...FRONTS.map(x=>[x[1],x[2]]),...BACKS.map(x=>[x[1]+' (Rücken)',x[2]]),...DICES.map(x=>[x[1]+' (Würfel)',x[2]])].filter(x=>x[1]&&typeof x[1]==='object');
+const allRewards=()=>[...SURF.map(x=>[x[1],x[3]]),...FRONTS.map(x=>[x[1],x[2]]),...BACKS.map(x=>[x[1]+' (Rücken)',x[2]]),...DICES.map(x=>[x[1]+' (Würfel)',x[2]]),...SPECIAL.map(x=>[x[1]+' '+x[2],x[0]])].filter(x=>x[1]&&(typeof x[1]==='object'||typeof x[1]==='number'));
 async function loadGS(){if(!me)return;try{const g=await store.rpc('game_stats',{p_uid:myId});if(!g)return;const prev=myGS;
   const before=prev?allRewards().filter(x=>unlockedReq(x[1])).map(x=>x[0]):null,a0=prev?ACH2.filter(a=>a[3](gsFill(prev))).map(a=>a[1]):null;
   myGS=g;applyTheme();
@@ -3027,7 +3043,7 @@ function renderChat(){
   let h='';
   if(inRoom&&wheelOpen)h+='<div class="wheel" data-a="wheel">'+EMOTES.map((e,i)=>{const a=i/EMOTES.length*6.283-1.571;
     return '<button class="we" data-a="emote" data-v="'+e+'" style="--x:'+(Math.cos(a)*108).toFixed(0)+'px;--y:'+(Math.sin(a)*108-40).toFixed(0)+'px;--i:'+i+'">'+e+'</button>'}).join('')+'<span class="wc">✕</span>'+
-    '<div class="spstrip"><div class="sph">Spezial-Emotes · '+(me?'du warst '+presCount+'× Präsident':'nur mit Konto')+'</div><div class="spl">'+SPECIAL.map((x,i)=>{const ok=me&&specialUnlocked(i+1);
+    '<div class="spstrip"><div class="sph">Spezial-Emotes · '+(me?'du hast '+winsAll()+' Siege':'nur mit Konto')+'</div><div class="spl">'+SPECIAL.map((x,i)=>{const ok=me&&specialUnlocked(i+1);
       return '<button class="spb'+(ok?'':' lock')+'" data-a="'+(ok?'emote':'splock')+'" data-v="sp'+(i+1)+'"><span>'+x[1]+'</span><small>'+(ok?esc(x[2]):'🔒 '+x[0]+'×')+'</small></button>'}).join('')+'</div></div></div>';
   if(chatOpen){
     const g=chatGeo(),dmN=dmTotal();
@@ -3269,11 +3285,17 @@ function act(a,v,el){
     case 'rk-mode':rankMode=v;return go('ranking');
     case 'pinfo':if(el.dataset.u){const u=el.dataset.u,l=lobby.find(x=>x.id===u);return showPinfo(u,l?l.name:'Spieler',false)}return pinfoSeat(v);
     case 'pi-tab':pinfoTab.t=v==='rew'?'rew':'ach';return drawPinfo();
+    case 'avbig':{const src=v==='pinfo'?pinfoData&&pinfoData.st:profileData;if(!src)return;const gsx=v==='pinfo'?pinfoData.gs:gameStats;
+      const nm2=v==='pinfo'?pinfoData.name:(src.display||'');const tw=(+src.wins||0)+(gsx?Object.values(gsx).reduce((q,x)=>q+(+(x||{}).wins||0),0):0);
+      const sz=Math.min(260,Math.round(innerWidth*.66));
+      openModal('<div class="avzoom">'+avatar(src.avatar||null,nm2,tw,sz)+'<b>'+esc(nm2)+'</b><small>'+tw+' Siege</small></div>'+
+        (v==='pinfo'?'<button class="ghost" data-a="avback">‹ Zurück</button>':'<button class="ghost" data-a="modal-x">Schließen</button>'));return}
+    case 'avback':return drawPinfo();
     case 'rk-game':rankGame=GAMES[v]?v:'arsch';return go('ranking');
     case 'cdlock':case 'thlock':case 'peek':{sfx('pop');return peekStart(el.dataset.k,v)}
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
-    case 'splock':{const t=+v.slice(2),x=SPECIAL[t-1];toast(me?x[1]+' „'+x[2]+'“ gibt es ab '+x[0]+'× Präsident. Du hast '+presCount+'×.':'Spezial-Emotes gibt es nur mit Konto.');return}
+    case 'splock':{const t=+v.slice(2),x=SPECIAL[t-1];toast(me?x[1]+' „'+x[2]+'“ gibt es ab '+x[0]+' Siegen. Du hast '+winsAll()+'.':'Spezial-Emotes gibt es nur mit Konto.');return}
     case 'chat':{if(REC)micStop(true);const inRoom=!!(code&&G&&RS().online);if(!inRoom&&!me&&!chatOpen){toast('Für den Privatchat brauchst du ein Konto.');return}
       chatOpen=!chatOpen;wheelOpen=false;if(chatOpen){chatTab=inRoom?(chatTab==='dm'&&dmWith?'dm':'room'):'dm';if(!inRoom||chatTab==='dm')loadDmUnread()}
       if(chatOpen&&chatTab==='room'&&chatUnread)chatUnread=0;render();renderChat();if(chatOpen)focusChat();return}
@@ -3457,7 +3479,7 @@ function needAccount(what){return '<div class="panel"><p style="margin-top:0">F�
 function incomingCount(){return friends.filter(f=>f.rel==='incoming').length}
 
 function drawHome(){
-  const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">'+avatar(me.avatar,me.display,presCount,24)+'<span class="an">'+esc(me.display)+'</span></button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
+  const acct=!ready?'':me?'<button class="acct" data-a="go" data-v="account">'+avatar(me.avatar,me.display,winsAll(),24)+'<span class="an">'+esc(me.display)+'</span></button>':store.online?'<button class="acct" data-a="go" data-v="account">Anmelden</button>':'';
   const dmb=me?'<button class="iconbtn homechat" data-a="chat" title="Privatchat (T)">💬'+(dmTotal()?'<span class="badge">'+dmTotal()+'</span>':'')+'</button>':'';
   let h='<div class="head"><h1>Spieleabend</h1><span class="hbtns">'+dmb+acct+'</span></div><p class="suits">🃏 🧙 🎲</p>';
   if(!ready)return h+'<p class="note">Verbinde …</p>';
@@ -3488,7 +3510,7 @@ function drawAccount(){
   let h=backBtn+'<h2>Konto</h2>';
   if(!store||!store.online)return h+'<p class="note">Gerade keine Verbindung.</p>';
   if(me){const av=me.avatar||{};
-    h+='<div class="panel avedit"><div class="avbig">'+avatar(av,me.display,presCount,88)+'<div><b>'+esc(me.display)+'</b><span class="note">'+(frameOf(presCount)?'Rahmen durch '+presCount+'× Präsident':'Ab 10× Präsident bekommst du einen Rahmen')+'</span></div></div>'+
+    h+='<div class="panel avedit"><div class="avbig">'+avatar(av,me.display,winsAll(),88)+'<div><b>'+esc(me.display)+'</b><span class="note">'+(frameOf(winsAll())?'Rahmen durch '+winsAll()+' Siege':'Ab 10× Präsident bekommst du einen Rahmen')+'</span></div></div>'+
       '<h3 style="margin-top:14px">Avatar</h3><div class="avgrid">'+AV_EMO.map(e=>'<button class="'+(av.e===e&&!av.img?'on':'')+'" data-a="av-e" data-v="'+e+'">'+e+'</button>').join('')+'</div>'+
       '<h3 style="margin-top:14px">Farbe</h3><div class="avcols">'+AV_COL.map(c=>'<button style="background:'+c+'" class="'+(av.c===c&&!av.img?'on':'')+'" data-a="av-c" data-v="'+c+'"></button>').join('')+'</div>'+
       '<div class="row" style="margin-top:14px"><button class="ghost" data-a="av-photo">📷 Eigenes Foto</button>'+(av.img||av.e?'<button class="ghost" data-a="av-clear">Zurücksetzen</button>':'')+'</div></div>';
@@ -3546,11 +3568,11 @@ function drawProfile(){
   const p=profileData,mine=!viewArg||viewArg===myId;
   if(!p)return h+'<h2>Statistik</h2><p class="note">Lade …</p>';
   if(p.err)return h+'<h2>Statistik</h2><p class="note">Konnte nicht geladen werden.</p>';
-  const r=p.rounds||0;
-  h+='<div class="phead">'+avatar(p.avatar,p.display,p.wins,64)+'</div><div class="head"><h2>'+(mine?'Deine Statistik':esc(p.display))+'</h2>'+(mine?'':'<span class="tag"><span class="dot'+(p.online?' on':'')+'" style="display:inline-block;width:8px;height:8px;margin-right:5px"></span>'+(p.online?STATUS[p.status]||'online':'offline')+'</span>')+'</div>';
-  const lv=SPECIAL.filter(x=>(p.wins||0)>=x[0]).length,nx=SPECIAL[lv];
-  h+='<div class="panel tier"><div class="tb"><span class="te">'+(lv?SPECIAL[lv-1][1]:'🃏')+'</span><div><b>Präsident-Stufe '+lv+(lv?' · '+esc(SPECIAL[lv-1][2]):'')+'</b><span>'+(p.wins||0)+'× Präsident'+(nx?' · nächste Stufe bei '+nx[0]+'× ('+nx[1]+' '+esc(nx[2])+')':' · höchste Stufe erreicht!')+'</span></div></div>'+
-    (nx?'<div class="bar"><i style="width:'+Math.min(100,Math.round(((p.wins||0)-(lv?SPECIAL[lv-1][0]:0))*100/(nx[0]-(lv?SPECIAL[lv-1][0]:0))))+'%"></i></div>':'')+
+  const r=p.rounds||0,tw=(p.wins||0)+(gameStats&&typeof gameStats==='object'?Object.values(gameStats).reduce((a,x)=>a+(+(x||{}).wins||0),0):0);
+  h+='<div class="phead"><span data-a="avbig" data-v="profile" style="cursor:zoom-in">'+avatar(p.avatar,p.display,tw,64)+'</span></div><div class="head"><h2>'+(mine?'Deine Statistik':esc(p.display))+'</h2>'+(mine?'':'<span class="tag"><span class="dot'+(p.online?' on':'')+'" style="display:inline-block;width:8px;height:8px;margin-right:5px"></span>'+(p.online?STATUS[p.status]||'online':'offline')+'</span>')+'</div>';
+  const lv=SPECIAL.filter(x=>tw>=x[0]).length,nx=SPECIAL[lv];
+  h+='<div class="panel tier"><div class="tb"><span class="te">'+(lv?SPECIAL[lv-1][1]:'🃏')+'</span><div><b>Sieg-Stufe '+lv+(lv?' · '+esc(SPECIAL[lv-1][2]):'')+'</b><span>'+tw+' Siege'+(nx?' · nächste Stufe bei '+nx[0]+' ('+nx[1]+' '+esc(nx[2])+')':' · höchste Stufe erreicht!')+'</span></div></div>'+
+    (nx?'<div class="bar"><i style="width:'+Math.min(100,Math.round((tw-(lv?SPECIAL[lv-1][0]:0))*100/(nx[0]-(lv?SPECIAL[lv-1][0]:0))))+'%"></i></div>':'')+
     '<div class="tl">'+SPECIAL.map((x,i)=>'<span class="'+(i<lv?'on':'')+'" title="'+esc(x[2])+'">'+x[1]+'<small>'+x[0]+'</small></span>').join('')+'</div></div>';
   h+='<h3 style="margin:18px 0 8px">🃏 Arschloch</h3><div class="stats">'+[
     [r,'Runden gespielt'],[p.matches||0,'Partien'],
@@ -3599,7 +3621,7 @@ function drawDesign(){
     return '<button class="opt'+(T[k]===v&&!PEEK?' on':'')+(ok?'':' lock')+(pv?' peek':'')+'" data-a="'+(ok?'th':'peek')+'" data-k="'+k+'" data-v="'+v+'">'+prev(v,ex)+'<span>'+l+'</span>'+(req?'<small>'+(ok?'freigeschaltet':reqText(req))+'</small>':'')+'</button>'}).join('')+'</div>';
   const peekNote='<p class="note" style="margin-bottom:0">Tipp auf ein gesperrtes Design für eine kurze Vorschau.</p>';
   h+='<div class="panel"><h3>Tisch</h3>'+lockOpt('surface',SURF.map(x=>[x[0],x[1],x[3],x[2]]),(v,e)=>'<span style="font-size:24px">'+e+'</span>')+
-    '<p class="note" style="margin-bottom:0">Besondere Tische gibt es für oft Präsident werden'+(me?' (bisher '+presCount+'×)':' (nur mit Konto)')+' – und für Siege in den anderen Spielen.</p></div>';
+    '<p class="note" style="margin-bottom:0">„Siege“ zählen aus allen Spielen: Präsident im Arschloch und jede gewonnene Partie in den anderen Spielen'+(me?' – du hast '+winsAll()+'.':' (nur mit Konto).')+'</p></div>';
   h+='<div class="panel"><h3>Filzfarbe</h3>'+opt('felt',Object.entries(FELT).map(([v,f])=>[v,f[0],'<span class="sw" style="background:radial-gradient('+f[1]+','+f[3]+')"></span>']))+
     '<p class="note" style="margin-bottom:0">Gilt für den Filz- und den Schreibtisch.</p></div>';
   h+='<div class="panel"><h3>Karten</h3>'+lockOpt('cards',FRONTS,v=>'<span class="mini cf-'+v+'">A<i>♥</i></span>')+'</div>';
