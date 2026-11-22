@@ -2,11 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Yqpg2ZD3ZmHEEsU/xZICCUHrShYJmHGUP3ND5Dx2HPQ=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-R0T8C1/N/A2vIk9cODRiupIq6Cdve4/LR95u6VCXIco=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
-<meta name="description" content="Spieleabend – Arschloch, Wizard und Kniffel online mit Freunden, jeder auf seinem Handy.">
+<meta name="description" content="Spieleabend – Arschloch, Wizard, Kniffel und Cabo online mit Freunden, jeder auf seinem Handy.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -832,6 +832,62 @@ body[data-dice] .die.held{box-shadow:0 0 0 3px var(--gold),0 8px 16px rgba(0,0,0
 .scard.locked{transform:translateY(-14px);box-shadow:0 0 0 3px var(--gold),0 10px 20px rgba(0,0,0,.5)}
 .scard.locked::after{content:'🔒';position:absolute;top:-10px;right:-8px;font-size:15px;background:var(--gold);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .note.lockn{text-align:center;margin:6px 0 0}
+
+/* ===================== Cabo ===================== */
+.cbc{position:relative;width:58px;height:84px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(255,255,255,.85);box-shadow:0 4px 10px rgba(0,0,0,.4);color:#fff;font-weight:900;user-select:none;
+  transition:transform .3s var(--e-spring),box-shadow .3s var(--e-out)}
+.cbc.back{background:radial-gradient(circle at 50% 50%,#2a5d8f 0 28%,transparent 29%),repeating-linear-gradient(45deg,#163a5c 0 6px,#1d4a73 6px 12px);border-color:#cfe3ff}
+.cbc.back .cbl{font-size:10px;letter-spacing:1px;color:#cfe3ff;transform:rotate(-20deg)}
+.cbc .cn{position:absolute;left:6px;top:3px;font-size:14px}.cbc .cn2{position:absolute;right:6px;bottom:3px;font-size:14px;transform:rotate(180deg)}
+.cbc.f{background:linear-gradient(150deg,var(--c1),var(--c2))}
+.cbc.f .ci{font-size:22px}
+.cbc.f .cn,.cbc.f .cn2{text-shadow:0 1px 2px rgba(0,0,0,.45)}
+.cbc.f{--c1:#6c7a89;--c2:#3e4854}
+.cbc.v0{--c1:#2ad1a3;--c2:#0b8a69}.cbc.v1{--c1:#4fd36a;--c2:#1f8f3a}.cbc.v2{--c1:#6fcf4a;--c2:#3a8f1f}.cbc.v3{--c1:#a3d140;--c2:#6a9112}
+.cbc.v4{--c1:#d6cf3c;--c2:#9c930f}.cbc.v5{--c1:#e8b53a;--c2:#a87710}.cbc.v6{--c1:#f09a3a;--c2:#b45f0d}
+.cbc.v7,.cbc.v8{--c1:#9a6cf0;--c2:#5a2cb3}.cbc.v9,.cbc.v10{--c1:#3fa6f0;--c2:#155f9c}.cbc.v11,.cbc.v12{--c1:#f05a7a;--c2:#a51d3d}.cbc.v13{--c1:#5a1222;--c2:#24060d}
+.cbc.mini{width:30px;height:44px;border-radius:6px;border-width:1.5px}.cbc.mini .cn{font-size:11px;left:3px;top:1px}.cbc.mini .cn2{display:none}.cbc.mini .ci{font-size:13px}
+.cbc.mini.back .cbl{font-size:6px}
+.cbc.big{width:74px;height:106px}.cbc.big .ci{font-size:30px}.cbc.big .cn,.cbc.big .cn2{font-size:18px}
+.cbc.sel{transform:translateY(-12px);box-shadow:0 0 0 3px var(--gold),0 10px 20px rgba(0,0,0,.5)}
+.cbc.mini.sel{transform:translateY(-5px)}
+.cbc.known{opacity:.6;filter:saturate(.6)}
+.cbc.fx{animation:cbfx 1.4s var(--e-out)}
+@keyframes cbfx{0%{box-shadow:0 0 0 0 rgba(255,214,90,.95)}30%{transform:scale(1.12);box-shadow:0 0 0 6px rgba(255,214,90,.8)}100%{box-shadow:0 0 0 0 rgba(255,214,90,0);transform:none}}
+.cbc.pick{cursor:pointer;box-shadow:0 0 0 3px rgba(255,214,90,.75),0 6px 14px rgba(0,0,0,.45)}
+.cbc.lockd{opacity:.45}
+.cbc.empty{background:rgba(0,0,0,.25);border:2px dashed rgba(255,255,255,.3);box-shadow:none}
+.cbc[data-a]{cursor:pointer}
+/* Zahl in der Mitte für Karten ohne Symbol */
+.cbc.na .cn{position:static;font-size:30px}
+.cbc.na .cn2{display:none}
+.cbc.mini.na .cn{font-size:16px}
+.cbc.big.na .cn{font-size:40px}
+.table.cbt{min-height:190px;justify-content:center}
+.cbpiles{display:flex;justify-content:center;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.cbpile{display:flex;flex-direction:column;align-items:center;gap:4px}
+.cbpile small{color:rgba(255,255,255,.75);font-size:11.5px;font-weight:700}
+.cbpile.drawn{animation:pop .45s var(--e-spring)}
+.cbc.stack{box-shadow:2px 2px 0 #12304d,4px 4px 0 #0d2438,0 6px 14px rgba(0,0,0,.5)}
+.cbmine{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
+.opp.cbo .cbol{display:flex;gap:3px;flex-wrap:wrap;margin:6px 0 4px}
+.opp.cbo .n b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cbcabo{margin-top:8px;background:linear-gradient(160deg,#ff8a3d,#e0452b);color:#fff}
+.cbres li{align-items:center}
+.cbrn{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.cbrl{display:flex;gap:3px;flex-wrap:wrap}
+.cbrs{display:flex;flex-direction:column;align-items:flex-end}.cbrs small{color:var(--mute)}
+@media (max-width:380px){.cbc{width:52px;height:76px}.cbmine{gap:6px}}
+/* Cabo-Belohnungen */
+.mini.cb-owl,body[data-back=owl] .card.back,body[data-back=owl] .scard.back,body[data-back=owl] .cbc.back{background:radial-gradient(circle at 36% 42%,#ffe08a 0 9%,#2a1a0a 10% 13%,transparent 14%),radial-gradient(circle at 64% 42%,#ffe08a 0 9%,#2a1a0a 10% 13%,transparent 14%),radial-gradient(ellipse at 50% 55%,#8a5a2c,#3b2410 75%)}
+body[data-surface=mystic] .table{border:10px solid #2f3b3a;background:radial-gradient(ellipse at 30% 30%,rgba(255,255,255,.18),transparent 40%),radial-gradient(ellipse at 70% 75%,rgba(255,255,255,.12),transparent 45%),radial-gradient(ellipse at 50% 50%,#3f6b5a,#1b3329 75%);box-shadow:0 0 0 2px #182220,0 0 28px rgba(160,220,200,.35),inset 0 0 50px rgba(0,0,0,.5)}
+.cbann{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:40;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:rgba(20,10,4,.92);border:2px solid #ff8a3d;border-radius:20px;padding:16px 22px;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(255,138,61,.45);
+  animation:cbann 2.6s var(--e-out) forwards;text-align:center;max-width:86vw}
+.cbann b{font-size:38px;color:#ffb36b;letter-spacing:1px;text-shadow:0 2px 10px rgba(255,120,40,.6)}
+.cbann span{font-size:14px;color:#f3e6d8}
+@keyframes cbann{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}20%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-60%) scale(.96)}}
 </style>
 </head>
 <body>
@@ -1172,6 +1228,7 @@ function cleanGame(g){
   if(!g||typeof g!=='object'||Array.isArray(g)||!Number.isInteger(g.v)||g.v<1)return null;
   if(g.game==='stich')return typeof cleanStich==='function'?cleanStich(g):null;
   if(g.game==='dice')return typeof cleanDice==='function'?cleanDice(g):null;
+  if(g.game==='cabo')return typeof cleanCabo==='function'?cleanCabo(g):null;
   if('game' in g&&g.game!=='arsch')return null;
   return cleanArsch(g);
 }
@@ -1642,6 +1699,210 @@ function cleanDice(g){
 }
 //DICE-END
 
+//CABO-START
+// ===== Cabo: Gedächtnis-Kartenspiel – möglichst wenige Punkte vor sich liegen haben =====
+// Karten 0–13: je zwei 0 und 13, je vier 1–12 (52 Karten). 7/8 anschauen, 9/10 ausspionieren, 11/12 blind tauschen.
+// Jede Karte im Spiel: {v:Wert, up:offen für alle, kb:Bitmaske der Sitze, die sie kennen}
+const CB_RULES={bots:'normal',help:false};
+const CR=g=>Object.assign({},CB_RULES,g.rules||{});
+const CB_ACT={7:'peek',8:'peek',9:'spy',10:'spy',11:'swap',12:'swap'};
+const CB_ACT_TXT={peek:'👁️ eigene Karte anschauen',spy:'🕵️ fremde Karte anschauen',swap:'🔄 blind tauschen'};
+function cbDeck(){const d=[0,0,13,13];for(let v=1;v<=12;v++)d.push(v,v,v,v);return shuffle(d)}
+const cbBit=s=>1<<s;
+const cbKnows=(c,s)=>!!(c&&(c.up||(c.kb&cbBit(s))));
+const cbSum=l=>l.reduce((a,c)=>a+c.v,0);
+const cbKami=l=>l.length===4&&l.map(c=>c.v).sort((a,b)=>a-b).join()==='12,12,13,13';
+
+function cbStart(g){
+  g.totals=g.players.map(()=>0);g.reset=g.players.map(()=>false);g.hist=[];g.round=0;g.match=(g.match||0)+1;
+  g.starter=Math.floor(Math.random()*g.players.length);cbDeal(g);
+}
+function cbDeal(g){
+  const n=g.players.length,d=cbDeck();
+  g.lines=g.players.map(()=>[0,1,2,3].map(()=>({v:d.pop(),up:false,kb:0})));
+  g.disc=[d.pop()];g.deck=d;g.round=(g.round||0)+1;
+  g.phase='peek';g.ready=g.players.map(()=>false);g.turn=g.starter%n;g.caboBy=-1;g.drawn=null;g.act=null;g.fx=null;g.last=null;
+  g.msg='Neue Runde – schaut euch zwei eurer Karten an.';
+}
+// Startblick: zwei eigene Karten anschauen
+function cbPeekStart(g,s,a,b){
+  if(g.phase!=='peek'||g.ready[s]||a===b||!g.lines[s][a]||!g.lines[s][b])return false;
+  g.lines[s][a].kb|=cbBit(s);g.lines[s][b].kb|=cbBit(s);g.ready[s]=true;
+  if(g.ready.every(Boolean)){g.phase='play';g.msg=nm(g,g.turn)+' beginnt.'}
+  return true;
+}
+const cbFx=(g,k,s,i,t)=>{g.fx={k,s,i,t:t||null,id:((g.fx&&g.fx.id)||0)+1}};
+function cbDraw(g,s){
+  if(g.phase!=='play'||g.turn!==s||g.drawn)return false;
+  if(!g.deck.length)return false;
+  g.drawn={v:g.deck.pop(),src:'deck'};g.msg=nm(g,s)+' zieht vom Stapel.';cbFx(g,'draw',s,[]);return true;
+}
+function cbTake(g,s){
+  if(g.phase!=='play'||g.turn!==s||g.drawn||!g.disc.length)return false;
+  g.drawn={v:g.disc.pop(),src:'disc'};g.msg=nm(g,s)+' nimmt die '+g.drawn.v+' von der Ablage.';cbFx(g,'take',s,[]);return true;
+}
+function cbCabo(g,s){
+  if(g.phase!=='play'||g.turn!==s||g.drawn||g.caboBy>=0)return false;
+  g.caboBy=s;g.msg='📣 '+nm(g,s)+' ruft CABO! Alle anderen haben noch einen Zug.';cbFx(g,'cabo',s,[]);cbNext(g);return true;
+}
+// Gezogene Karte gegen eine oder mehrere eigene Karten (gleichen Werts) tauschen
+function cbSwap(g,s,idx){
+  if(g.phase!=='play'||g.turn!==s||!g.drawn)return false;
+  const L=g.lines[s];idx=[...new Set(idx)].filter(i=>Number.isInteger(i)&&i>=0&&i<L.length).sort((a,b)=>a-b);
+  if(!idx.length||idx.length!==new Set(idx).size)return false;
+  const dr=g.drawn,nc={v:dr.v,up:dr.src==='disc',kb:cbBit(s)};g.drawn=null;
+  const vals=idx.map(i=>L[i].v);
+  if(vals.every(v=>v===vals[0])){
+    // passt: alle ausgewählten auf die Ablage, die neue Karte an die erste Stelle
+    const out=idx.map(i=>L[i]);
+    for(let k=idx.length-1;k>=1;k--)L.splice(idx[k],1);
+    L[idx[0]]=nc;out.forEach(c=>g.disc.push(c.v));
+    g.msg=nm(g,s)+(idx.length>1?' tauscht '+idx.length+' gleiche Karten ('+vals[0]+') gegen eine.':' tauscht eine Karte – auf die Ablage kommt eine '+vals[0]+'.');
+    cbFx(g,'swap',s,[idx[0]]);
+  }else{
+    // Fehlgriff: Karten bleiben offen liegen, die neue Karte kommt dazu (ab 3 Karten noch eine Strafkarte)
+    idx.forEach(i=>{L[i].up=true});L.push(nc);
+    if(idx.length>=3&&g.deck.length)L.push({v:g.deck.pop(),up:false,kb:0});
+    g.msg='❌ '+nm(g,s)+' hat sich vertan – die Karten passen nicht zusammen.';
+    cbFx(g,'miss',s,idx.concat([L.length-1]));
+  }
+  cbNext(g);return true;
+}
+// Gezogene Karte abwerfen (nur vom Stapel); 7–12 erlauben dann eine Aktion
+function cbDiscard(g,s){
+  if(g.phase!=='play'||g.turn!==s||!g.drawn||g.drawn.src!=='deck')return false;
+  const v=g.drawn.v;g.disc.push(v);g.drawn=null;
+  const a=CB_ACT[v];
+  if(a){g.phase='act';g.act={k:a,v};g.msg=nm(g,s)+' wirft eine '+v+' ab: '+CB_ACT_TXT[a]+'.';cbFx(g,'disc',s,[]);return true}
+  g.msg=nm(g,s)+' wirft eine '+v+' ab.';cbFx(g,'disc',s,[]);cbNext(g);return true;
+}
+function cbSkip(g,s){if(g.phase!=='act'||g.turn!==s)return false;g.msg=nm(g,s)+' verzichtet auf die Aktion.';g.act=null;g.phase='play';cbNext(g);return true}
+// Aktion ausführen: peek(i) / spy(t,j) / swap(i,t,j)
+function cbDoAct(g,s,i,t,j){
+  if(g.phase!=='act'||g.turn!==s||!g.act)return false;
+  const k=g.act.k,L=g.lines[s];
+  if(k==='peek'){if(!L[i])return false;L[i].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine eigene Karte an.';cbFx(g,'peek',s,[i])}
+  else if(k==='spy'){if(t===s||!g.lines[t]||!g.lines[t][j])return false;g.lines[t][j].kb|=cbBit(s);g.msg=nm(g,s)+' schaut sich eine Karte von '+nm(g,t)+' an.';cbFx(g,'spy',t,[j],[s])}
+  else if(k==='swap'){if(t===s||!L[i]||!g.lines[t]||!g.lines[t][j]||t===g.caboBy)return false;
+    const a=L[i];L[i]=g.lines[t][j];g.lines[t][j]=a;g.msg='🔄 '+nm(g,s)+' tauscht eine Karte mit '+nm(g,t)+'.';cbFx(g,'xswap',s,[i],[t,j])}
+  else return false;
+  g.act=null;g.phase='play';cbNext(g);return true;
+}
+function cbNext(g){
+  const n=g.players.length;let t=(g.turn+1)%n;
+  if(g.caboBy>=0&&t===g.caboBy)return cbEndRound(g,'cabo');
+  if(!g.deck.length)return cbEndRound(g,'deck');
+  g.turn=t;
+}
+// Rundenende und Wertung
+function cbEndRound(g,why){
+  const n=g.players.length,sums=g.lines.map(cbSum),kami=g.lines.findIndex(cbKami),sc=Array(n).fill(0);
+  let note='';
+  if(kami>=0){for(let s=0;s<n;s++)sc[s]=s===kami?0:50;note='💥 Kamikaze von '+nm(g,kami)+'! Alle anderen bekommen 50 Punkte.'}
+  else{
+    const mn=Math.min(...sums),cb=g.caboBy;
+    if(cb>=0&&sums[cb]===mn){for(let s=0;s<n;s++)sc[s]=s===cb?0:sums[s];note='📣 '+nm(g,cb)+' hat mit CABO richtig gelegen.'}
+    else{for(let s=0;s<n;s++)sc[s]=sums[s]===mn?0:sums[s];if(cb>=0){sc[cb]=sums[cb]+10;note='📣 '+nm(g,cb)+' hat sich mit CABO verschätzt: +10 Strafpunkte.'}
+      else note=why==='deck'?'Der Stapel ist leer – die Runde endet.':''}
+  }
+  const resetNow=[];
+  for(let s=0;s<n;s++){g.totals[s]+=sc[s];if(g.totals[s]===100&&!g.reset[s]){g.totals[s]=50;g.reset[s]=true;resetNow.push(s)}}
+  if(resetNow.length)note+=(note?' ':'')+resetNow.map(s=>nm(g,s)).join(', ')+' hatte genau 100 – zurück auf 50!';
+  g.hist.push({sums,sc,caboBy:g.caboBy,kami});
+  g.lines.forEach(l=>l.forEach(c=>{c.up=true}));
+  g.drawn=null;g.act=null;g.turn=-1;g.fx=null;
+  g.msg=note||'Runde vorbei.';
+  // Nächste Runde beginnt, wer diese Runde am wenigsten Punkte bekam (bei Gleichstand: nächster nach dem letzten Startspieler)
+  const mn=Math.min(...sc);let st=g.starter;for(let k=0;k<n;k++){const s=(g.starter+k)%n;if(sc[s]===mn){st=s;break}}g.starter=st;
+  g.phase=g.totals.some(x=>x>100)?'over':'rend';
+}
+function cbNextRound(g){if(g.phase!=='rend')return false;cbDeal(g);return true}
+function cbStandings(g){const last=g.hist.length?g.hist[g.hist.length-1].sc:g.players.map(()=>0);
+  return g.players.map((p,s)=>({s,t:g.totals[s],l:last[s]})).sort((a,b)=>a.t-b.t||a.l-b.l)}
+function cbPlaces(g){const st=cbStandings(g),pl=Array(g.players.length).fill(0);
+  st.forEach((x,i)=>{pl[x.s]=i>0&&x.t===st[i-1].t&&x.l===st[i-1].l?pl[st[i-1].s]:i});return pl}
+
+// ----- Computergegner mit Gedächtnis -----
+function cbEst(g,s){const L=g.lines[s];let sum=0,unk=0;L.forEach(c=>{if(cbKnows(c,s))sum+=c.v;else unk++});return {sum,unk,est:sum+unk*6.5}}
+function cbBotStep(g){
+  const lv=CR(g).bots;
+  if(g.phase==='peek'){const s=g.players.findIndex((p,i)=>p.bot&&!g.ready[i]);if(s<0)return false;return cbPeekStart(g,s,2,3)}
+  const s=g.turn;if(s<0||!g.players[s]||!g.players[s].bot)return false;
+  const L=g.lines[s],know=i=>cbKnows(L[i],s);
+  if(g.phase==='act'){
+    const k=g.act.k,opp=g.players.map((_,t)=>t).filter(t=>t!==s);
+    if(k==='peek'){const i=L.findIndex((c,i)=>!know(i));return i>=0?cbDoAct(g,s,i):cbSkip(g,s)}
+    if(k==='spy'){if(lv==='easy')return cbSkip(g,s);const ch=[];opp.forEach(t=>g.lines[t].forEach((c,j)=>{if(!cbKnows(c,s))ch.push([t,j])}));
+      if(!ch.length)return cbSkip(g,s);const [t,j]=ch[Math.floor(Math.random()*ch.length)];return cbDoAct(g,s,0,t,j)}
+    if(k==='swap'){
+      // eigene hohe bekannte Karte gegen eine bekannte niedrige Karte eines anderen tauschen
+      let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||c.v>L[hi].v))hi=i});
+      let best=null;opp.forEach(t=>{if(t===g.caboBy)return;g.lines[t].forEach((c,j)=>{if(cbKnows(c,s)&&(!best||c.v<best.v))best={t,j,v:c.v}})});
+      if(hi>=0&&best&&L[hi].v-best.v>=3)return cbDoAct(g,s,hi,best.t,best.j);
+      if(lv!=='easy'&&hi>=0&&L[hi].v>=10){const ts=opp.filter(t=>t!==g.caboBy);if(ts.length){const t=ts[Math.floor(Math.random()*ts.length)];return cbDoAct(g,s,hi,t,Math.floor(Math.random()*g.lines[t].length))}}
+      return cbSkip(g,s);
+    }
+    return cbSkip(g,s);
+  }
+  if(g.phase!=='play')return false;
+  if(!g.drawn){
+    const e=cbEst(g,s),lim=lv==='easy'?10:lv==='hard'?5:7;
+    if(g.caboBy<0&&e.unk<=1&&e.est<=lim)return cbCabo(g,s);
+    const top=g.disc[g.disc.length-1];
+    if(top!=null){let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||c.v>L[hi].v))hi=i});
+      if((hi>=0&&L[hi].v>=top+3&&top<=6)||(top<=2&&L.some((c,i)=>!know(i))))return cbTake(g,s)}
+    if(!g.deck.length)return top!=null?cbTake(g,s):false;
+    return cbDraw(g,s);
+  }
+  const d=g.drawn.v;
+  // gleiche bekannte Karten gemeinsam loswerden
+  const byV={};L.forEach((c,i)=>{if(know(i))(byV[c.v]=byV[c.v]||[]).push(i)});
+  let multi=null;Object.entries(byV).forEach(([v,ix])=>{v=+v;if(ix.length>=2&&v*ix.length-d>0&&(!multi||v*ix.length>multi.gain))multi={ix,gain:v*ix.length}});
+  let hi=-1;L.forEach((c,i)=>{if(know(i)&&(hi<0||c.v>L[hi].v))hi=i});
+  const single=hi>=0?L[hi].v-d:-99;
+  if(multi&&multi.gain-d>single&&lv!=='easy')return cbSwap(g,s,multi.ix);
+  if(single>=1)return cbSwap(g,s,[hi]);
+  const unk=L.findIndex((c,i)=>!know(i));
+  if(unk>=0&&d<=4)return cbSwap(g,s,[unk]);
+  if(g.drawn.src==='disc')return cbSwap(g,s,[hi>=0&&L[hi].v>d?hi:unk>=0?unk:0]);
+  return cbDiscard(g,s);
+}
+
+// ----- Spielstand prüfen (alles, was über das Netz kommt) -----
+function cleanCabo(g){
+  const I=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+  if(!['lobby','closed','peek','play','act','rend','over'].includes(g.phase))return null;
+  if('host' in g)g.host=S(g.host,64);
+  if('bots' in g)g.bots=I(g.bots,0,4)?g.bots:0;
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal',help:!!r.help}}
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
+  if('msg' in g)g.msg=S(g.msg,400);
+  for(const k of ['round','match','starter'])if(k in g)g[k]=I(g[k],0,1e6)?g[k]:0;
+  if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
+  if(!Array.isArray(g.players)||g.players.length<2||g.players.length>5||!g.players.every(O))return null;
+  const n=g.players.length;
+  g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
+  const card=c=>O(c)&&I(c.v,0,13)?{v:c.v,up:!!c.up,kb:I(c.kb,0,255)?c.kb:0}:null;
+  if(!Array.isArray(g.lines)||g.lines.length!==n)return null;
+  g.lines=g.lines.map(l=>Array.isArray(l)&&l.length<=12?l.map(card):null);
+  if(g.lines.some(l=>!l||l.some(c=>!c)))return null;
+  g.deck=Array.isArray(g.deck)?g.deck.filter(v=>I(v,0,13)).slice(0,52):[];
+  g.disc=Array.isArray(g.disc)?g.disc.filter(v=>I(v,0,13)).slice(-52):[];
+  g.totals=Array.isArray(g.totals)&&g.totals.length===n&&g.totals.every(x=>I(x,0,10000))?g.totals:g.players.map(()=>0);
+  g.reset=Array.isArray(g.reset)&&g.reset.length===n?g.reset.map(Boolean):g.players.map(()=>false);
+  g.ready=Array.isArray(g.ready)&&g.ready.length===n?g.ready.map(Boolean):g.players.map(()=>true);
+  g.turn=I(g.turn,-1,n-1)?g.turn:-1;g.caboBy=I(g.caboBy,-1,n-1)?g.caboBy:-1;
+  g.drawn=O(g.drawn)&&I(g.drawn.v,0,13)&&['deck','disc'].includes(g.drawn.src)?{v:g.drawn.v,src:g.drawn.src}:null;
+  g.act=O(g.act)&&['peek','spy','swap'].includes(g.act.k)&&I(g.act.v,7,12)?{k:g.act.k,v:g.act.v}:null;
+  g.fx=O(g.fx)&&typeof g.fx.k==='string'&&I(g.fx.s,0,n-1)?{k:S(g.fx.k,8),s:g.fx.s,i:Array.isArray(g.fx.i)?g.fx.i.filter(x=>I(x,0,11)).slice(0,6):[],t:Array.isArray(g.fx.t)?g.fx.t.filter(x=>I(x,0,11)).slice(0,2):null,id:I(g.fx.id,0,1e9)?g.fx.id:0}:null;
+  g.hist=Array.isArray(g.hist)?g.hist.slice(-100).filter(O).map(h=>({sums:Array.isArray(h.sums)?h.sums.map(x=>I(x,0,200)?x:0).slice(0,n):[],sc:Array.isArray(h.sc)?h.sc.map(x=>I(x,0,300)?x:0).slice(0,n):[],caboBy:I(h.caboBy,-1,n-1)?h.caboBy:-1,kami:I(h.kami,-1,n-1)?h.kami:-1})):[];
+  if((g.phase==='play'||g.phase==='act')&&!I(g.turn,0,n-1))return null;
+  if(g.phase==='act'&&!g.act)return null;
+  return g;
+}
+//CABO-END
+
 /* ---------- Grundlagen ---------- */
 const SB_URL='https://xatfnfirvkvoxnitysmj.supabase.co';
 const SB_KEY='sb_publishable_JV8pQLw5a7tLFJXZ1yZZPg_V8XN7K_4';
@@ -1966,12 +2227,12 @@ function achHtml(st){
 /* ---------- Design ---------- */
 const SURF=[['felt','Filz','🟩'],['desk','Schreibtisch','🗄️'],['wood','Holzplatte','🪵'],['grass','Rasen','🌱'],['marble','Marmor','🏛️'],['space','Weltraum','🌌'],
   ['gold','Goldfilz','🥇',20],['throne','Thron','👑',70],['lava','Lava','🌋',150],['diamond','Diamant','💎',300],
-  ['arcane','Magierturm','🔮',{g:'stich',k:'wins',n:10,t:'10× Wizard gewonnen'}],['casino','Casino','🎰',{g:'dice',k:'wins',n:10,t:'10× Kniffel gewonnen'}]];
+  ['arcane','Magierturm','🔮',{g:'stich',k:'wins',n:10,t:'10× Wizard gewonnen'}],['casino','Casino','🎰',{g:'dice',k:'wins',n:10,t:'10× Kniffel gewonnen'}],['mystic','Nebelwald','🌫️',{g:'cabo',k:'wins',n:10,t:'10× Cabo gewonnen'}]];
 const FELT={green:['Grün','#2c8a55','#17603a','#0c3d22'],blue:['Blau','#2f6fb0','#1b4a80','#0e2a4d'],red:['Rot','#b0413b','#7d2622','#4a1311'],
   purple:['Lila','#7a4bb0','#53307f','#2e1a4a'],teal:['Türkis','#24a098','#147068','#0a403b'],black:['Schwarz','#4a4a4a','#2a2a2a','#111']};
 const FRONTS=[['classic','Klassisch'],['dark','Dunkel'],['vintage','Vintage'],['gold','Gold',40],['neon','Neon',100],['diamond','Diamant',300]];
 const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',20],['flame','Flammen','bob'],['star','Sterne','stars5'],['legend','Legende',200],
-  ['wizard','Zauberer',{g:'stich',k:'wins',n:3,t:'3× Wizard gewonnen'}],['crystal','Kristall',{g:'stich',k:'hits',n:50,t:'50 richtige Wizard-Ansagen'}],['dice','Würfel',{g:'dice',k:'kn',n:1,t:'1× Kniffel geworfen'}]];
+  ['wizard','Zauberer',{g:'stich',k:'wins',n:3,t:'3× Wizard gewonnen'}],['crystal','Kristall',{g:'stich',k:'hits',n:50,t:'50 richtige Wizard-Ansagen'}],['dice','Würfel',{g:'dice',k:'kn',n:1,t:'1× Kniffel geworfen'}],['owl','Eule',{g:'cabo',k:'wins',n:3,t:'3× Cabo gewonnen'}]];
 // Würfel-Designs für Kniffel
 const DICES=[['white','Klassisch'],['black','Schwarz'],['ruby','Rubin'],['gold','Gold',{g:'dice',k:'best',n:250,t:'250 Punkte in Kniffel'}],
   ['neon','Neon',{g:'dice',k:'kn',n:5,t:'5× Kniffel geworfen'}],['diamond','Diamant',{g:'dice',k:'wins',n:25,t:'25× Kniffel gewonnen'}]];
@@ -2290,10 +2551,12 @@ async function loadPres(){if(!me)return;loadGS();try{const s=await store.rpc('ge
 const ACH2=[['🧙','Zauberlehrling','Eine Partie Wizard gewonnen',x=>x.stich.wins>=1],['🔮','Hellseher','100 richtige Wizard-Ansagen',x=>x.stich.hits>=100],
   ['📜','Wizard-Stammgast','10 Partien Wizard gespielt',x=>x.stich.played>=10],['🏆','Erzmagier','25× Wizard gewonnen',x=>x.stich.wins>=25],
   ['🎲','Kniffel!','Einen Kniffel (5 Gleiche) geworfen',x=>x.dice.kn>=1],['🍀','Glückspilz','10 Kniffel geworfen',x=>x.dice.kn>=10],
-  ['💯','Highscore','300 Punkte in einer Partie Kniffel',x=>x.dice.best>=300],['🏅','Würfelkönig','10× Kniffel gewonnen',x=>x.dice.wins>=10]];
-const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof g==='object'?g:{};return {stich:Object.assign({},z,o.stich||{}),dice:Object.assign({},z,o.dice||{})}};
+  ['💯','Highscore','300 Punkte in einer Partie Kniffel',x=>x.dice.best>=300],['🏅','Würfelkönig','10× Kniffel gewonnen',x=>x.dice.wins>=10],
+  ['🦉','Gutes Gedächtnis','Eine Partie Cabo gewonnen',x=>x.cabo.wins>=1],['📣','Volltreffer','10× richtig CABO gerufen',x=>x.cabo.hits>=10],
+  ['💥','Kamikaze','Eine Kamikaze-Runde (zwei 12er, zwei 13er)',x=>x.cabo.kn>=1],['🧠','Gedächtniskünstler','10× Cabo gewonnen',x=>x.cabo.wins>=10]];
+const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof g==='object'?g:{};return {stich:Object.assign({},z,o.stich||{}),dice:Object.assign({},z,o.dice||{}),cabo:Object.assign({},z,o.cabo||{})}};
 function ach2Html(g){const x=gsFill(g),got=ACH2.filter(a=>a[3](x)).length;
-  return '<div class="panel"><h3>Wizard & Kniffel · '+got+' von '+ACH2.length+'</h3><div class="ach">'+ACH2.map(a=>{const ok=a[3](x);
+  return '<div class="panel"><h3>Wizard, Kniffel & Cabo · '+got+' von '+ACH2.length+'</h3><div class="ach">'+ACH2.map(a=>{const ok=a[3](x);
     return '<div class="ac'+(ok?' on':'')+'"><span>'+a[0]+'</span><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></div>'}).join('')+'</div></div>'}
 const allRewards=()=>[...SURF.map(x=>[x[1],x[3]]),...FRONTS.map(x=>[x[1],x[2]]),...BACKS.map(x=>[x[1]+' (Rücken)',x[2]]),...DICES.map(x=>[x[1]+' (Würfel)',x[2]])].filter(x=>x[1]&&typeof x[1]==='object');
 async function loadGS(){if(!me)return;try{const g=await store.rpc('game_stats',{p_uid:myId});if(!g)return;const prev=myGS;
@@ -2751,7 +3014,7 @@ function drawHome(){
   if(!me)h+='<div class="panel"><label for="name">Dein Name</label><input id="name" data-k="name" maxlength="16" autocomplete="off" placeholder="z. B. Max" value="'+esc(drafts.name||'')+'"></div>';
   if(store.online){
     const tb=savedTable();
-    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Kniffel</p></div>'+
+    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Kniffel · 🦉 Cabo</p></div>'+
       (tb?'<div class="panel"><button class="ghost" data-a="resume-local">📝 Kniffel am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button></div>':'')+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
     h+=questPanel()+friendsPlaying();
@@ -2767,7 +3030,7 @@ function drawHome(){
     '<button class="ghost" data-a="go" data-v="ach"><b>🏅</b>Erfolge</button>'+
     '<button class="ghost" data-a="go" data-v="design"><b>🎨</b>Design</button>'+
     '<button class="ghost" data-a="go" data-v="settings"><b>⚙️</b>Einstellungen</button></div>';
-  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div>'+
+  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div><div class="panel">'+CB_RULES_TXT+'</div>'+
     (navigator.standalone||matchMedia('(display-mode: standalone)').matches?'':'<p class="note" style="text-align:center">Tipp: Über „Teilen“ → „Zum Home-Bildschirm“ (iPhone) bzw. Menü → „App installieren“ (Android) hast du das Spiel als App.</p>');
   return h;
 }
@@ -2822,9 +3085,9 @@ function drawFriends(){
 }
 function otherStatsHtml(){
   const gs=gameStats&&typeof gameStats==='object'?gameStats:{};
-  return ['stich','dice'].map(k=>{const x=gs[k]||{},n=+x.played||0;
+  return ['stich','dice','cabo'].map(k=>{const x=gs[k]||{},n=+x.played||0;
     return '<h3 style="margin:18px 0 8px">'+GAMES[k].icon+' '+GAMES[k].name+'</h3><div class="stats">'+[
-      [n,'Partien'],[n?(+x.wins||0)+'×':'–','Gewonnen'],[n?+x.best:'–','Bestwert'],[n?+x.avg:'–','Punkteschnitt']
+      [n,'Partien'],[n?(+x.wins||0)+'×':'–','Gewonnen'],[n?(k==='cabo'?+x.low:+x.best):'–',k==='cabo'?'Bester Endstand':'Bestwert'],[n?+x.avg:'–','Punkteschnitt']
     ].map(y=>'<div class="stat"><b>'+esc(y[0])+'</b><span>'+y[1]+'</span></div>').join('')+'</div>'}).join('');
 }
 function drawProfile(){
@@ -2877,7 +3140,7 @@ function drawDesign(){
     return '<button class="opt'+(T[k]===v&&!PEEK?' on':'')+(ok?'':' lock')+(pv?' peek':'')+'" data-a="'+(ok?'th':'peek')+'" data-k="'+k+'" data-v="'+v+'">'+prev(v,ex)+'<span>'+l+'</span>'+(req?'<small>'+(ok?'freigeschaltet':reqText(req))+'</small>':'')+'</button>'}).join('')+'</div>';
   const peekNote='<p class="note" style="margin-bottom:0">Tipp auf ein gesperrtes Design für eine kurze Vorschau.</p>';
   h+='<div class="panel"><h3>Tisch</h3>'+lockOpt('surface',SURF.map(x=>[x[0],x[1],x[3],x[2]]),(v,e)=>'<span style="font-size:24px">'+e+'</span>')+
-    '<p class="note" style="margin-bottom:0">Besondere Tische gibt es für oft Präsident werden'+(me?' (bisher '+presCount+'×)':' (nur mit Konto)')+' – und für Siege bei Wizard und Kniffel.</p></div>';
+    '<p class="note" style="margin-bottom:0">Besondere Tische gibt es für oft Präsident werden'+(me?' (bisher '+presCount+'×)':' (nur mit Konto)')+' – und für Siege bei Wizard, Kniffel und Cabo.</p></div>';
   h+='<div class="panel"><h3>Filzfarbe</h3>'+opt('felt',Object.entries(FELT).map(([v,f])=>[v,f[0],'<span class="sw" style="background:radial-gradient('+f[1]+','+f[3]+')"></span>']))+
     '<p class="note" style="margin-bottom:0">Gilt für den Filz- und den Schreibtisch.</p></div>';
   h+='<div class="panel"><h3>Karten</h3>'+lockOpt('cards',FRONTS,v=>'<span class="mini cf-'+v+'">A<i>♥</i></span>')+'</div>';
@@ -3107,7 +3370,8 @@ if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceW
 const GAMES={
   arsch:{name:'Arschloch',icon:'🃏',min:3,max:8,desc:'Präsident oder Arschloch – wer zuerst alle Karten los ist, gewinnt.'},
   stich:{name:'Wizard',icon:'🧙',min:3,max:6,desc:'Sag an, wie viele Stiche du holst – mit Zauberern, Narren und auf Wunsch 7 Sonderkarten.'},
-  dice:{name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'}};
+  dice:{name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'},
+  cabo:{name:'Cabo',icon:'🦉',min:2,max:5,desc:'Merk dir deine verdeckten Karten, tausch clever und ruf CABO, wenn du die wenigsten Punkte hast.'}};
 const gameOf=g=>g&&GAMES[g.game]?g.game:'arsch';
 let rstore=null,trickHold=0,diceAnim=0;
 const RS=()=>rstore||store;
@@ -3124,6 +3388,7 @@ function newRoomData(game){
   const d={v:1,phase:'lobby',host:myId,created:Date.now()};
   if(game==='stich'){d.game='stich';d.rules=Object.assign({},ST_RULES);d.bots=store.online?0:2}
   else if(game==='dice'){d.game='dice';d.rules=Object.assign({},DC_RULES);d.bots=store.online?0:1}
+  else if(game==='cabo'){d.game='cabo';d.rules=Object.assign({},CB_RULES);d.bots=store.online?0:2}
   else d.bots=store.online?0:2;
   return d;
 }
@@ -3144,7 +3409,7 @@ function localTableStore(){
 function savedTable(){try{const s=JSON.parse(ls.get('al_table')||'null');return s&&s.phase!=='over'&&s.phase!=='closed'?s:null}catch(e){return null}}
 
 // ----- Laufende Partien: Hilfen -----
-function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':false}
+function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':k==='cabo'?['peek','play','act'].includes(G.phase):false}
 // Welcher Sitz wird von diesem Geraet gesteuert? (am Tisch-Handy: jeder menschliche Spieler)
 function ctrlSeat(){
   if(!G||!G.players)return -1;
@@ -3159,9 +3424,11 @@ function onGameOther(g,prev){
   }
   if(k==='stich'&&prev&&g.round!==prev.round)sfx('deal');
   if(k==='dice'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
+  if(k==='cabo'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='cabo'){cbAnnounce(nm(g,g.fx.s));sfx('turn')}else if(f==='swap'||f==='xswap')sfx('deal');else if(f==='miss')sfx('lose');else sfx('card');setTimeout(render,1600)}
+  if(k==='cabo'&&prev&&g.round!==prev.round){sfx('deal');cbSel.clear();cbOpp=null;cbShow=null}
   const cs=(()=>{const t=G;G=g;const r=ctrlSeat();G=t;return r})();
   if(prev&&g.v!==prev.v&&g.turn!==prev.turn&&cs>=0&&g.turn===cs&&!g.local)setTimeout(()=>sfx('turn'),250);
-  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
+  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):k==='cabo'?cbPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
   if(g.phase==='over'&&!g.local&&store.online&&seen.recG!==code+':'+g.match){seen.recG=code+':'+g.match;const c=code;setTimeout(()=>store.rpc&&store.rpc('record_game',{p_code:c}).then(()=>setTimeout(loadGS,800)).catch(()=>{}),1200)}
   G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();
   const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
@@ -3171,19 +3438,20 @@ function otherBot(){
   if(!G||botTimer||G.paused||!otherRunning())return;
   const k=gameOf(G),isHost=G.host===myId||G.local,me_=mySeat();
   if(!isHost&&me_<0)return;
-  const need=k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
+  const need=k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
   if(!need)return;
   const v=G.v,delay=(k==='dice'?750:950)+(trickHold>Date.now()?trickHold-Date.now():0)+(isHost?0:7000+Math.max(0,me_)*1500);
   botTimer=setTimeout(()=>{botTimer=null;if(!G||G.paused)return;if(G.v!==v){maybeBot();return}if(busy){setTimeout(maybeBot,300);return}
-    const g=clone(G);const ok=k==='stich'?stBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
+    const g=clone(G);const ok=k==='stich'?stBotStep(g):k==='cabo'?cbBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
 }
 function othersTotal(){return G.local?(G.names||[]).length+(G.bots||0):Math.min(lobby.length,8)+(G.bots||0)}
 
 // ----- Aktionen -----
 function otherAct(a,v,el,g,s){
   const k=gameOf(G),host=G.host===myId||G.local,info=GAMES[k];
+  if(k==='cabo'&&a.startsWith('cb-'))return cbAct(a,v);
   switch(a){
-    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:DC_RULES,g.rules||{});
+    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:k==='cabo'?CB_RULES:DC_RULES,g.rules||{});
       g.rules[key]=v==='true'?true:v==='false'?false:v;if(k==='dice'&&key==='mode'&&v==='real')g.bots=0;commit(g);return true}
     case 'bot+':if(host&&othersTotal()<info.max&&!(k==='dice'&&DR(G).mode==='real')){g.bots=(g.bots||0)+1;commit(g)}return true;
     case 'bot-':if(host&&g.bots>0){g.bots--;commit(g)}return true;
@@ -3193,9 +3461,9 @@ function otherAct(a,v,el,g,s){
     case 'start':{if(!host)return true;const t=othersTotal();if(t<info.min||t>info.max)return true;
       const pl=G.local?(G.names||[]).map((x,i)=>({id:'L'+i,name:x,bot:false})):lobby.slice(0,8).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
       for(let i=0;i<(g.bots||0);i++)pl.push({id:'bot'+i,name:BOTS[i],bot:true});
-      g.players=pl;if(k==='stich')stStart(g);else dcStart(g);commit(g);return true}
-    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else dcStart(g);commit(g)}return true;
-    case 'next':if(k==='stich'&&G.phase==='rend'&&(s>=0||G.local)&&Date.now()-(seen.endAt||0)>=2500){stNext(g);commit(g)}return true;
+      g.players=pl;if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else dcStart(g);cbSel.clear();cbOpp=null;commit(g);return true}
+    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else dcStart(g);commit(g)}return true;
+    case 'next':if(G.phase==='rend'&&(s>=0||G.local)&&Date.now()-(seen.endAt||0)>=2500){if(k==='stich'){stNext(g);commit(g)}else if(k==='cabo'&&cbNextRound(g)){cbSel.clear();cbOpp=null;cbShow=null;commit(g)}}return true;
     case 'lv-end':closeModal();if(s>=0||G.local){g.phase='over';g.paused=null;g.turn=-1;if(k==='stich'&&G.phase!=='rend'&&G.phase!=='over'){/* Runde abbrechen */}commit(g)}return true;
     // Wizard
     case 'st-trump':{const c=ctrlSeat();if(stSetTrump(g,c,+v))commit(g);return true}
@@ -3235,10 +3503,11 @@ function drawOther(app,top,host){
   const k=gameOf(G);
   if(G.phase==='lobby')return drawOtherLobby(app,top,host,k);
   if(k==='stich')return drawStich(app,top);
+  if(k==='cabo')return drawCabo(app,top);
   return drawDice(app,top);
 }
 function drawOtherLobby(app,top,host,k){
-  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
+  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):k==='cabo'?CR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
   const seg=(key,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[key])===String(v)?'on':'')+'" data-a="rule" data-k="'+key+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
   let li='';
   if(G.local){li=(G.names||[]).map((x,i)=>'<li><span>'+avatar({e:'🎲',c:hashCol(x)},x,0,34)+esc(x)+'</span><button class="small ghost" data-a="ln-del" data-v="'+i+'">✕</button></li>').join('')}
@@ -3247,13 +3516,17 @@ function drawOtherLobby(app,top,host,k){
   for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[r.bots||'normal']+'</span></li>';
   const canBots=!(k==='dice'&&r.mode==='real');
   let set='';
+  if(k==='cabo')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
+    '<div class="rl"><span>Gedächtnis-Hilfe<small>Karten, die du kennst, bleiben für dich sichtbar (leichter als das Original).</small></span>'+seg('help',[[false,'aus'],[true,'an']])+'</div>'+
+    ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
+    :'<p class="note" style="margin:0">'+(r.help?'Mit Gedächtnis-Hilfe':'Original-Regeln – alles im Kopf behalten')+'</p>')+'</div>';
   if(k==='stich')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Karten<small>Basis: 60 Karten mit 4 Zauberern und 4 Narren. Spezial: dazu Gestaltwandler, Drache, Fee, Bombe, Werwolf, Jongleur und Wolke.</small></span>'+seg('mode',[['basis','Basis'],['spezial','Spezial ✨']])+'</div>'+
     '<div class="rl"><span>Runde 1 blind („Hellsehen“)<small>In der ersten Runde siehst du nur die Karten der anderen – deine eigene nicht.'+(r.mode==='spezial'?' Laut Anleitung eigentlich nur ohne Sonderkarten – hier als Hausregel.':'')+'</small></span>'+seg('blind',[[true,'an'],[false,'aus']])+'</div>'+
     '<div class="rl"><span>Plus/Minus 1<small>Die Summe aller Ansagen darf nicht genau der Stichzahl entsprechen (gilt für den Geber).</small></span>'+seg('plusminus',[[false,'aus'],[true,'an']])+'</div>'+
     ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
     :'<p class="note" style="margin:0">'+(r.mode==='spezial'?'Spezial-Karten':'Basis-Karten')+(r.plusminus?' · Plus/Minus 1':'')+(r.blind?' · Runde 1 blind':'')+'</p>')+'</div>';
-  else set='<div class="panel"><h3>Einstellungen</h3>'+(host?
+  else if(k==='dice')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Würfel<small>Am Handy würfeln oder mit echten Würfeln würfeln und nur die Punkte eintragen.</small></span>'+seg('mode',[['roll','📱 am Handy'],['real','🎲 echte Würfel']])+'</div>'+
     (canBots&&(G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
     :'<p class="note" style="margin:0">'+(r.mode==='real'?'Mit echten Würfeln – jeder trägt seine Punkte selbst ein.':'Gewürfelt wird am Handy.')+'</p>')+'</div>';
@@ -3264,7 +3537,7 @@ function drawOtherLobby(app,top,host,k){
     '<div class="panel"><label>'+(G.local?'Wer spielt mit?':'Am Tisch')+' ('+t+' von '+info.min+'–'+info.max+')</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul>'+nameAdd+'</div>'+friendInvitePanel()+
     (host?(canBots?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=info.max?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+((G.bots||0)>0?'':'disabled')+'>− Computer</button></div>':'')+
       '<button data-a="start" '+(okStart?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<info.min?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens '+info.min+' Spieler.</p>':'')
-      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:DC_RULES_TXT)+'</div>');
+      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:k==='cabo'?CB_RULES_TXT:DC_RULES_TXT)+'</div>');
 }
 
 // ----- Wizard-Ansicht -----
@@ -3423,6 +3696,125 @@ function stLockCheck(){
     if(stPlay(g,s,L.c,L.as)){sel.clear();commit(g)}
     else{toast('🔓 Deine eingeloggte Karte passt nicht – du musst bedienen. Wähle neu.');sel.clear();render()}},wait);
 }
+
+// ===================== Cabo =====================
+let cbSel=new Set(),cbOpp=null,cbShow=null;
+const CB_ICON={peek:'👁️',spy:'🕵️',swap:'🔄'};
+function cbCard(v,cls,attrs){
+  if(v==null)return '<div class="cbc back'+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="cbl">CABO</span></div>';
+  const a=CB_ACT[v];
+  return '<div class="cbc f v'+v+(a?'':' na')+(cls?' '+cls:'')+'" '+(attrs||'')+'><span class="cn">'+v+'</span>'+(a?'<span class="ci">'+CB_ICON[a]+'</span>':'')+'<span class="cn2">'+v+'</span></div>';
+}
+const cbShown=(s,i)=>cbShow&&cbShow.until>Date.now()&&cbShow.s===s&&cbShow.i.includes(i);
+function cbReveal(s,i,ms){cbShow={s,i,until:Date.now()+ms};setTimeout(render,ms+50)}
+function cbBlock(g){
+  return '<div class="blockw"><table class="rk block"><tr><th>R</th>'+g.players.map(p=>'<th>'+esc(p.name.slice(0,7))+'</th>').join('')+'</tr>'+
+    (g.hist||[]).map((h,r)=>'<tr><td>'+(r+1)+'</td>'+h.sc.map((x,s)=>'<td>'+(h.caboBy===s?'📣':'')+(h.kami===s?'💥':'')+'<b>'+x+'</b><br><small>Σ '+h.sums[s]+'</small></td>').join('')+'</tr>').join('')+
+    '<tr class="sum"><td>Σ</td>'+g.totals.map(x=>'<td><b>'+x+'</b></td>').join('')+'</tr></table></div>';
+}
+function cbAct(a,v){
+  const s=mySeat(),g=clone(G);if(s<0)return true;
+  switch(a){
+    case 'cb-mine':{const i=+v,L=G.lines[s];if(!L[i])return true;
+      if(G.phase==='peek'){if(G.ready[s])return true;if(cbSel.has(i))cbSel.delete(i);else if(cbSel.size<2)cbSel.add(i);render();return true}
+      if(G.turn!==s)return true;
+      if(G.phase==='play'&&G.drawn){cbSel.has(i)?cbSel.delete(i):cbSel.add(i);render();return true}
+      if(G.phase==='act'&&(G.act.k==='peek'||G.act.k==='swap')){cbSel.has(i)?cbSel.clear():(cbSel.clear(),cbSel.add(i));render()}
+      return true}
+    case 'cb-opp':{if(G.phase!=='act'||G.turn!==s||!(G.act.k==='spy'||G.act.k==='swap'))return true;const [t,j]=String(v).split(':').map(Number);
+      if(G.act.k==='swap'&&t===G.caboBy){toast('Die Karten von '+nm(G,t)+' sind nach dem CABO gesperrt.');return true}
+      cbOpp=cbOpp&&cbOpp[0]===t&&cbOpp[1]===j?null:[t,j];render();return true}
+    case 'cb-ready':{const [x,y]=[...cbSel];if(cbSel.size!==2)return true;if(cbPeekStart(g,s,x,y)){cbSel.clear();commit(g)}return true}
+    case 'cb-draw':if(cbDraw(g,s)){cbSel.clear();sfx('card');commit(g)}else if(!G.deck.length)toast('Der Stapel ist leer.');return true;
+    case 'cb-take':if(cbTake(g,s)){cbSel.clear();sfx('card');commit(g)}return true;
+    case 'cb-cabo':openModal('<h2>📣 CABO rufen?</h2><p class="note">Du glaubst, du hast die wenigsten Punkte. Alle anderen haben noch einen Zug – liegst du falsch, bekommst du 10 Strafpunkte.</p><div class="row"><button data-a="cb-cabo-ok">CABO!</button><button class="ghost" data-a="modal-x">Abbrechen</button></div>');return true;
+    case 'cb-cabo-ok':closeModal();if(cbCabo(g,s))commit(g);return true;
+    case 'cb-swap':{const ix=[...cbSel];if(!ix.length)return true;if(cbSwap(g,s,ix)){cbSel.clear();sfx('deal');commit(g)}return true}
+    case 'cb-disc':if(cbDiscard(g,s)){cbSel.clear();sfx('card');commit(g)}return true;
+    case 'cb-skip':if(cbSkip(g,s)){cbSel.clear();cbOpp=null;commit(g)}return true;
+    case 'cb-do':{const k=G.act&&G.act.k,i=[...cbSel][0];
+      if(k==='peek'){if(i==null)return true;if(cbDoAct(g,s,i)){cbSel.clear();commit(g);cbReveal(s,[i],3000)}}
+      else if(k==='spy'){if(!cbOpp)return true;const [t,j]=cbOpp;if(cbDoAct(g,s,0,t,j)){cbOpp=null;commit(g);cbReveal(t,[j],3000)}}
+      else if(k==='swap'){if(i==null||!cbOpp)return true;const [t,j]=cbOpp;if(cbDoAct(g,s,i,t,j)){cbSel.clear();cbOpp=null;sfx('deal');commit(g)}}
+      return true}
+    case 'cb-block':openModal('<h2>📒 Punkte</h2>'+cbBlock(G)+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Schließen</button>');return true;
+  }
+  return false;
+}
+function drawCabo(app,top){
+  const n=G.players.length,me_=mySeat(),help=CR(G).help;
+  if(G.phase==='over'){
+    const st=cbStandings(G),pl=cbPlaces(G),medal=['🥇','🥈','🥉'];
+    setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><div class="panel"><ul class="plist">'+st.map(x=>'<li><span>'+(medal[pl[x.s]]||'')+' '+esc(nm(G,x.s))+'</span><b>'+x.t+' Punkte</b></li>').join('')+'</ul>'+
+      '<p class="note" style="margin-bottom:0">'+esc(G.msg||'')+'</p></div><div class="panel"><h3>Punkte</h3>'+cbBlock(G)+'</div>'+
+      (me_>=0?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');
+    return;
+  }
+  if(G.phase==='rend'){
+    const h=G.hist[G.hist.length-1],ek=code+':'+G.match+':'+G.round;
+    if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}
+    const cd=Math.max(0,3-Math.ceil((Date.now()-seen.endAt)/1000));if(cd>0)setTimeout(render,400);
+    setHTML(app,top+'<h1 style="margin-top:6px">Runde '+G.round+' vorbei</h1>'+(G.msg?'<p class="note" style="text-align:center">'+esc(G.msg)+'</p>':'')+
+      '<div class="panel"><ul class="plist cbres">'+G.players.map((p,s)=>'<li><span class="cbrn">'+(h.caboBy===s?'📣 ':'')+esc(p.name)+'<span class="cbrl">'+G.lines[s].map(c=>cbCard(c.v,'mini')).join('')+'</span></span><span class="cbrs"><small>Summe '+h.sums[s]+'</small><b>+'+h.sc[s]+'</b></span></li>').join('')+'</ul></div>'+
+      '<div class="panel"><h3>Zwischenstand</h3>'+cbStandings(G).map((x,i)=>'<div class="rlist"><span>'+(i+1)+'. '+esc(nm(G,x.s))+(G.reset[x.s]?' <small>(100→50 genutzt)</small>':'')+'</span><b>'+x.t+'</b></div>').join('')+'<p class="note" style="margin-bottom:0">Wer über 100 Punkte kommt, beendet das Spiel – die wenigsten Punkte gewinnen.</p></div>'+
+      (me_>=0?'<button data-a="next" '+(cd>0?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button>':'<p class="note" style="text-align:center">Gleich geht es weiter …</p>'));
+    return;
+  }
+  const myTurn=me_>=0&&G.turn===me_&&G.phase!=='peek',fx=G.fx,act=G.phase==='act'&&myTurn?G.act.k:null;
+  const fxHit=(s,i)=>fx&&((fx.s===s&&fx.i.includes(i))||(fx.t&&fx.t.length===2&&fx.t[0]===s&&fx.t[1]===i));
+  // Mitspieler
+  let opps='';
+  for(let k=1;k<=n;k++){const s=((me_<0?0:me_)+k)%n;if(s===me_)continue;const p=G.players[s];
+    const pick=act==='spy'||(act==='swap'&&s!==G.caboBy);
+    opps+='<div class="opp cbo'+(G.turn===s&&!G.paused&&G.phase!=='peek'?' turn':'')+'" data-s="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.caboBy===s?'<span class="tag gold">📣 CABO</span>':'')+'</div>'+
+      '<div class="cbol">'+G.lines[s].map((c,j)=>{const sel=cbOpp&&cbOpp[0]===s&&cbOpp[1]===j,face=c.up||cbShown(s,j);
+        return cbCard(face?c.v:null,'mini'+(sel?' sel':'')+(fxHit(s,j)?' fx':'')+(G.caboBy===s&&act==='swap'?' lockd':''),pick?'data-a="cb-opp" data-v="'+s+':'+j+'"':'')}).join('')+'</div>'+
+      '<div class="c">'+G.totals[s]+' Punkte'+(G.phase==='peek'?' · '+(G.ready[s]?'bereit ✓':'schaut …'):'')+'</div></div>'}
+  // Tisch: Stapel, Ablage, gezogene Karte
+  const top1=G.disc.length?G.disc[G.disc.length-1]:null,dr=G.drawn;
+  const drShow=dr&&(dr.src==='disc'||myTurn);
+  const table='<div class="table cbt"><div class="cbpiles"><div class="cbpile"><small>Stapel · '+G.deck.length+'</small>'+cbCard(null,'stack'+(myTurn&&G.phase==='play'&&!dr?' pick':''),myTurn&&G.phase==='play'&&!dr?'data-a="cb-draw"':'')+'</div>'+
+    '<div class="cbpile"><small>Ablage</small>'+(top1!=null?cbCard(top1,(myTurn&&G.phase==='play'&&!dr?'pick':'')+(fx&&fx.k==='disc'?' fx':''),myTurn&&G.phase==='play'&&!dr?'data-a="cb-take"':''):'<div class="cbc empty"></div>')+'</div>'+
+    (dr?'<div class="cbpile drawn"><small>'+(G.turn===me_?'Deine Karte':esc(nm(G,G.turn))+' hat')+'</small>'+cbCard(drShow?dr.v:null,'big')+'</div>':'')+'</div>'+
+    '<div class="msg">'+esc(G.msg||'')+'</div></div>';
+  // eigene Karten
+  let mine='',panel='';
+  if(me_>=0){
+    const L=G.lines[me_],peekSel=G.phase==='peek'&&!G.ready[me_];
+    const canSel=peekSel||(myTurn&&G.phase==='play'&&!!dr)||(act==='peek'||act==='swap');
+    mine='<div class="cbmine">'+L.map((c,i)=>{const face=c.up||(peekSel&&cbSel.has(i))||cbShown(me_,i),known=help&&cbKnows(c,me_)&&!face;
+      return cbCard(face?c.v:known?c.v:null,(cbSel.has(i)?'sel':'')+(known?' known':'')+(fxHit(me_,i)?' fx':''),(canSel?'data-a="cb-mine" data-v="'+i+'"':'')+' data-key="m'+i+'"')}).join('')+'</div>';
+    const pts='<button class="ghost" data-a="cb-block">📒 Punkte</button>';
+    if(G.phase==='peek'){
+      panel=G.ready[me_]?'<p class="note" style="text-align:center">Warte auf die anderen … ('+G.ready.filter(Boolean).length+'/'+n+' bereit)</p>':
+        '<div class="panel act"><b>Tippe zwei deiner Karten an und merk sie dir gut!</b><span class="note">Danach siehst du sie nicht mehr.</span><button data-a="cb-ready" '+(cbSel.size===2?'':'disabled')+'>Gemerkt ✓</button></div>';
+    }else if(myTurn&&G.phase==='play'&&!dr){
+      panel='<div class="panel act"><b>Du bist dran</b><div class="row"><button data-a="cb-draw" '+(G.deck.length?'':'disabled')+'>🂠 Ziehen</button><button class="ghost" data-a="cb-take" '+(top1!=null?'':'disabled')+'>Ablage nehmen'+(top1!=null?' ('+top1+')':'')+'</button></div>'+
+        '<button class="cbcabo" data-a="cb-cabo" '+(G.caboBy<0?'':'disabled')+'>📣 CABO rufen</button></div>'+pts;
+    }else if(myTurn&&G.phase==='play'&&dr){
+      const a=CB_ACT[dr.v];
+      panel='<div class="panel act"><b>'+(dr.src==='disc'?'Tausch die '+dr.v+' gegen eine deiner Karten':'Du hast eine '+dr.v+' gezogen')+'</b><span class="note">Tippe die Karte an, die du abgeben willst – oder mehrere gleiche Karten auf einmal.</span>'+
+        '<div class="row"><button data-a="cb-swap" '+(cbSel.size?'':'disabled')+'>Tauschen'+(cbSel.size>1?' ('+cbSel.size+' Karten)':'')+'</button>'+(dr.src==='deck'?'<button class="ghost" data-a="cb-disc">Abwerfen'+(a?' + '+CB_ICON[a]:'')+'</button>':'')+'</div>'+
+        (dr.src==='deck'&&a?'<span class="note">Abwerfen erlaubt: '+CB_ACT_TXT[a]+'</span>':'')+'</div>';
+    }else if(act){
+      const t={peek:'Tippe eine deiner Karten an, um sie dir anzuschauen.',spy:'Tippe eine Karte eines Mitspielers an, um sie dir anzuschauen.',swap:'Tippe eine deiner Karten und eine eines Mitspielers an – sie werden blind getauscht.'}[act];
+      const ok=act==='peek'?cbSel.size===1:act==='spy'?!!cbOpp:cbSel.size===1&&!!cbOpp;
+      panel='<div class="panel act"><b>'+CB_ACT_TXT[act]+'</b><span class="note">'+t+'</span><div class="row"><button data-a="cb-do" '+(ok?'':'disabled')+'>'+(act==='swap'?'Tauschen':'Anschauen')+'</button><button class="ghost" data-a="cb-skip">Überspringen</button></div></div>';
+    }else panel='<p class="note" style="text-align:center">'+(G.turn>=0?esc(nm(G,G.turn))+' ist dran …':'')+(G.caboBy>=0?' · 📣 '+esc(nm(G,G.caboBy))+' hat CABO gerufen':'')+'</p>'+pts;
+  }
+  const meB=me_>=0?'<div class="mebar"><span>'+esc(nm(G,me_))+(G.caboBy===me_?' 📣':'')+'</span><span>'+G.totals[me_]+' Punkte · '+G.lines[me_].length+' Karten</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+(mySeat()>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  setHTML(app,top+'<div class="opps cbops'+(n>3?' many':'')+'">'+opps+'</div>'+table+pz+meB+mine+panel);
+}
+const CB_RULES_TXT='<details><summary>Regeln Cabo</summary>Ziel: am Ende einer Runde möglichst wenige Punkte vor sich liegen haben. Jeder bekommt 4 verdeckte Karten (Werte 0–13) und schaut sich zu Beginn zwei davon an – danach nur noch im Kopf behalten!<br><br>'+
+  '<b>Dein Zug:</b> Zieh vom Stapel oder nimm die oberste Karte der Ablage. Die gezogene Karte tauschst du gegen eine eigene Karte (die alte kommt auf die Ablage) – oder gegen mehrere gleiche Karten auf einmal. Liegst du daneben, bleiben die Karten offen liegen und die neue kommt dazu (ab drei Karten noch eine Strafkarte). Eine Karte vom Stapel darfst du auch einfach abwerfen. Karten von der Ablage liegen danach offen.<br><br>'+
+  '<b>Aktionskarten</b> (nur wenn du sie vom Stapel ziehst und abwirfst): 7/8 👁️ eine eigene Karte anschauen · 9/10 🕵️ eine fremde Karte anschauen · 11/12 🔄 eine eigene Karte blind mit einer fremden tauschen.<br><br>'+
+  '<b>CABO:</b> Statt zu ziehen rufst du CABO, wenn du glaubst, die wenigsten Punkte zu haben. Alle anderen haben noch einen Zug, deine Karten können dabei nicht mehr getauscht werden. Hast du die niedrigste Summe, bekommst du 0 Punkte, sonst deine Summe plus 10. Wer sonst die niedrigste Summe hat, bekommt 0, alle anderen ihre Summe. Ist der Stapel leer, endet die Runde ebenfalls.<br><br>'+
+  '<b>Kamikaze:</b> Genau zwei 12er und zwei 13er: du bekommst 0, alle anderen 50 Punkte. <b>Genau 100</b> Punkte fallen einmal pro Spiel auf 50 zurück. Wer über 100 kommt, beendet das Spiel – die wenigsten Punkte gewinnen.</details>';
+
+// Einblendung, wenn jemand CABO ruft
+function cbAnnounce(name){const el=document.createElement('div');el.className='cbann';el.innerHTML='<b>📣 CABO!</b><span>'+esc(name)+' hat gerufen – alle anderen haben noch einen Zug</span>';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
 </script>
 </body>
 </html>
