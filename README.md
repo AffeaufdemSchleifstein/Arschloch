@@ -1,6 +1,6 @@
 # Spieleabend
 
-Spiele-App fürs Handy mit **Arschloch**, **Wizard**, **Kniffel** und **Cabo** – jeder spielt auf seinem eigenen Gerät.
+Spiele-App fürs Handy mit **Arschloch**, **Wizard**, **Kniffel**, **Cabo**, **Phase 10** und **Qwixx** – jeder spielt auf seinem eigenen Gerät.
 
 **Spielen:** https://affeaufdemschleifstein.github.io/Arschloch/
 
@@ -29,6 +29,9 @@ Als App installieren: iPhone → Safari → Teilen → *Zum Home-Bildschirm*. An
 - **Kniffel** – 5 Würfel, 3 Würfe, 13 Felder. Am Handy würfeln oder mit echten Würfeln nur zählen: online (jeder trägt bei sich ein) oder als **Kniffel am Tisch** (ein Handy für alle, ohne Internet).
 
 - **Cabo** – Gedächtnis-Kartenspiel: 4 verdeckte Karten, tauschen, spionieren und CABO rufen, wenn du die wenigsten Punkte hast.
+
+- **Phase 10** – 10 Phasen der Reihe nach schaffen: Drillinge, Folgen, Farben – mit Jokern und Aussetzen.
+- **Qwixx** – Würfeln und in vier Farbreihen ankreuzen, alle machen gleichzeitig mit.
 
 ## Spielmodi Arschloch
 

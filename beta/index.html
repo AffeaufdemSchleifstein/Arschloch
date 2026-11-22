@@ -2,11 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XFxz2Eh9TpKuoC01clBmk68icX7gBPcG1IjtHtLv/yI=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-JI/jKr9cMiCjREgPsEES45gkaHCTbsFLwZ9iiV9Fk60=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
-<meta name="description" content="Spieleabend – Arschloch, Wizard, Kniffel und Cabo online mit Freunden, jeder auf seinem Handy.">
+<meta name="description" content="Spieleabend – Arschloch, Wizard, Kniffel, Cabo, Phase 10 und Qwixx online mit Freunden, jeder auf seinem Handy.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -908,6 +908,73 @@ body[data-surface=mystic] .table{border:10px solid #2f3b3a;background:radial-gra
 .rew.unk{opacity:.7}
 .rew b{font-size:12.5px}.rew small{font-size:10.5px;color:var(--mute);line-height:1.25}
 .rew.on small{color:#9ff0bd}
+.rkg{grid-template-columns:repeat(3,1fr)}
+/* ===================== Phase 10 ===================== */
+.pc{position:relative;width:46px;height:68px;border-radius:9px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 3px 8px rgba(0,0,0,.4);color:#fff;font-weight:900;user-select:none;transition:transform .3s var(--e-spring),box-shadow .3s var(--e-out)}
+.pc b{font-size:24px;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.4)}.pc i{font-style:normal;font-size:8.5px;font-weight:700;margin-top:3px}
+.pc.cr{background:linear-gradient(150deg,#ff5a5a,#b81d1d)}.pc.cy{background:linear-gradient(150deg,#ffd23f,#d69a00);color:#3a2a00}.pc.cy b{text-shadow:none}
+.pc.cg{background:linear-gradient(150deg,#4fd36a,#17803a)}.pc.cb{background:linear-gradient(150deg,#4fa8ff,#1a56b8)}
+.pc.wild{background:conic-gradient(from 0deg,#ff5a5a,#ffd23f,#4fd36a,#4fa8ff,#ff5a5a);color:#fff}.pc.wild b{text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.pc.skip{background:linear-gradient(150deg,#3a3a3a,#111)}
+.pc.back{background:repeating-linear-gradient(135deg,#1d2b55 0 6px,#26376b 6px 12px);border-color:#c9d6ff}.pc.back span{font-size:14px;color:#c9d6ff;font-weight:900}
+.pc.empty{background:rgba(0,0,0,.25);border:2px dashed rgba(255,255,255,.3);box-shadow:none}
+.pc.mini{width:26px;height:38px;border-radius:5px;border-width:1.5px}.pc.mini b{font-size:13px}.pc.mini i{display:none}
+.pc.sel{transform:translateY(-12px);box-shadow:0 0 0 3px var(--gold),0 10px 20px rgba(0,0,0,.5)}
+.pc.pick{cursor:pointer;box-shadow:0 0 0 3px rgba(255,214,90,.75),0 6px 14px rgba(0,0,0,.45)}
+.pc.new{animation:pop .5s var(--e-spring)}
+.pc.stack{box-shadow:2px 2px 0 #121c38,4px 4px 0 #0c1327,0 6px 14px rgba(0,0,0,.5)}
+.pc[data-a]{cursor:pointer}
+.table.p10t{min-height:150px;justify-content:center}
+.p10hand{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:8px 0}
+.p10goal{display:flex;align-items:center;gap:8px;justify-content:center;font-size:14px;margin-top:6px;flex-wrap:wrap}.p10goal .small{width:auto;padding:0 10px;height:30px;font-size:12px}
+.p10laid{padding:10px}.p10laid h3{margin-bottom:6px}
+.p10g{border-radius:10px;padding:5px 6px;margin-bottom:5px;background:rgba(255,255,255,.04);border:1px solid transparent;transition:background .25s,border-color .25s}
+.p10g small{font-size:11px;color:var(--mute)}.p10gc{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.p10g.hit{cursor:pointer;border-color:var(--gold);background:rgba(255,214,90,.12);animation:winp 1.1s ease-in-out infinite alternate}
+.p10g.fx{animation:cbfx 1.4s var(--e-out)}
+.p10stage{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap;margin:4px 0 8px;padding:8px;border-radius:12px;background:rgba(255,214,90,.08);border:1px dashed var(--gold)}
+.p10stage small{font-size:11px;color:var(--mute)}.p10stage .small{width:auto;padding:0 10px;height:30px;font-size:12px}
+.opp.fxs{animation:cbfx 1.4s var(--e-out)}
+.p10st{display:flex;flex-direction:column;align-items:flex-end}.p10st small{color:var(--mute);font-size:12px}
+.row.wrap{flex-wrap:wrap}.row.wrap>button{min-width:42%}
+/* ===================== Qwixx ===================== */
+.table.qxt{min-height:130px;justify-content:center}
+.qdice{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.qd .die{width:40px;height:40px;padding:5px;border-radius:9px;cursor:default}
+.qd.qr .die{background:linear-gradient(160deg,#ff6b6b,#c62828)}.qd.qy .die{background:linear-gradient(160deg,#ffe066,#e0a800)}
+.qd.qg .die{background:linear-gradient(160deg,#5fe08a,#1f8f46)}.qd.qb .die{background:linear-gradient(160deg,#6cb4ff,#1f5fbf)}
+.qd.qr .die i.p,.qd.qg .die i.p,.qd.qb .die i.p{background:#fff}.qd.qy .die i.p{background:#3a2a00}
+.qdice.rolling .die{animation:droll .5s var(--e-soft) infinite}
+.qsum{text-align:center;margin-top:8px;font-size:15px}.qsum b{font-size:22px;color:var(--gold)}
+.qsheet{background:#f6f1e6;border-radius:12px;padding:8px 6px;margin:8px 0;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.qrow{display:flex;align-items:center;gap:2px;margin-bottom:4px;border-radius:7px;padding:3px}
+.qrow.qr{background:#e53935}.qrow.qy{background:#f9c80e}.qrow.qg{background:#2e9d4f}.qrow.qb{background:#2f6fd0}
+.qrow.locked{opacity:.55;filter:saturate(.5)}
+.qc{flex:1;min-width:0;height:28px;border-radius:5px;background:rgba(255,255,255,.88);color:#222;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .2s var(--e-spring)}
+.qc.x::after{content:'✕';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#111;font-weight:900}
+.qc.x{color:transparent}
+.qc.past{opacity:.35}
+.qc.can{cursor:pointer;background:#fff;box-shadow:0 0 0 3px #111,0 0 12px rgba(255,255,255,.9);animation:qpulse 1s ease-in-out infinite alternate;z-index:1}
+@keyframes qpulse{from{transform:scale(1)}to{transform:scale(1.12)}}
+.qc.lk{flex:0 0 26px;border-radius:50%;font-size:11px}.qc.last{border:2px solid #111}
+.qn{flex:0 0 22px;text-align:center;color:#fff;font-weight:900;font-size:13px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.qrow.qy .qn{color:#3a2a00;text-shadow:none}
+.qfoot{display:flex;justify-content:space-between;align-items:center;color:#333;padding:2px 4px;font-size:13px}.qfoot i{font-style:normal;display:inline-block;width:18px;text-align:center;color:#bbb;font-weight:900}.qfoot i.on{color:#c62828}
+.qfoot b{font-size:16px;color:#111}
+.qbars{display:flex;flex-direction:column;gap:3px;margin:5px 0}
+.qbars span{height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}.qbars span i{display:block;height:100%;border-radius:3px}
+.qbars .qr i{background:#e53935}.qbars .qy i{background:#f9c80e}.qbars .qg i{background:#2e9d4f}.qbars .qb i{background:#2f6fd0}
+.qdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 2px 0 4px}.qdot.qr{background:#e53935}.qdot.qy{background:#f9c80e}.qdot.qg{background:#2e9d4f}.qdot.qb{background:#2f6fd0}
+.bigroll{height:56px;font-size:19px;margin-top:6px}
+@media (max-width:380px){.qc{font-size:11.5px;height:26px}.pc{width:42px;height:62px}}
+/* Belohnungen */
+.mini.cb-rainbow,body[data-back=rainbow] .card.back,body[data-back=rainbow] .scard.back,body[data-back=rainbow] .cbc.back,body[data-back=rainbow] .pc.back{background:linear-gradient(135deg,#ff5a5a,#ffd23f 30%,#4fd36a 55%,#4fa8ff 80%,#9a6cf0)}
+.mini.cb-cross,body[data-back=cross] .card.back,body[data-back=cross] .scard.back,body[data-back=cross] .cbc.back,body[data-back=cross] .pc.back{background:repeating-linear-gradient(45deg,transparent 0 7px,rgba(255,255,255,.8) 7px 9px),repeating-linear-gradient(-45deg,transparent 0 7px,rgba(255,255,255,.8) 7px 9px),linear-gradient(135deg,#e53935,#2f6fd0)}
+.p10g.hit{animation:p10glow 1s ease-in-out infinite alternate}
+@keyframes p10glow{from{box-shadow:0 0 0 1px rgba(255,214,90,.5)}to{box-shadow:0 0 0 3px rgba(255,214,90,.95),0 0 16px rgba(255,214,90,.5)}}
+.qc.can{animation:qglow 1s ease-in-out infinite alternate}
+@keyframes qglow{from{box-shadow:0 0 0 2px #111}to{box-shadow:0 0 0 3px #111,0 0 14px rgba(255,255,255,.95)}}
 </style>
 </head>
 <body>
@@ -1249,6 +1316,8 @@ function cleanGame(g){
   if(g.game==='stich')return typeof cleanStich==='function'?cleanStich(g):null;
   if(g.game==='dice')return typeof cleanDice==='function'?cleanDice(g):null;
   if(g.game==='cabo')return typeof cleanCabo==='function'?cleanCabo(g):null;
+  if(g.game==='p10')return typeof cleanP10==='function'?cleanP10(g):null;
+  if(g.game==='qwixx')return typeof cleanQwixx==='function'?cleanQwixx(g):null;
   if('game' in g&&g.game!=='arsch')return null;
   return cleanArsch(g);
 }
@@ -1923,6 +1992,327 @@ function cleanCabo(g){
 }
 //CABO-END
 
+//P10-START
+// ===== Phase 10: Rommé-artig, 10 Phasen der Reihe nach erfüllen =====
+// Karten: 0–95 Zahlen (Farbe = floor(i/24), Wert = i%12+1, je zwei pro Farbe), 96–103 Joker, 104–107 Aussetzen
+const P10_RULES={bots:'normal'};
+const PR=g=>Object.assign({},P10_RULES,g.rules||{});
+const P10_PH=[[['set',3],['set',3]],[['set',3],['run',4]],[['set',4],['run',4]],[['run',7]],[['run',8]],[['run',9]],[['set',4],['set',4]],[['col',7]],[['set',5],['set',2]],[['set',5],['set',3]]];
+const P10_TXT=['2 Drillinge','1 Drilling + 1 Viererfolge','1 Vierling + 1 Viererfolge','1 Siebenerfolge','1 Achterfolge','1 Neunerfolge','2 Vierlinge','7 Karten einer Farbe','1 Fünfling + 1 Zwilling','1 Fünfling + 1 Drilling'];
+const P10_COL=['Rot','Gelb','Grün','Blau'];
+const p10W=c=>c>=96&&c<104,p10S=c=>c>=104,p10N=c=>c>=0&&c<96;
+const p10V=c=>p10N(c)?c%12+1:0,p10C=c=>p10N(c)?Math.floor(c/24):-1;
+const p10Pts=c=>p10W(c)?25:p10S(c)?15:p10V(c)>=10?10:5;
+function p10Deck(){const d=[];for(let i=0;i<108;i++)d.push(i);return shuffle(d)}
+
+function p10Start(g){
+  const n=g.players.length;g.ph=g.players.map(()=>0);g.pts=g.players.map(()=>0);g.hist=[];g.round=0;g.match=(g.match||0)+1;
+  g.dealer=Math.floor(Math.random()*n);p10Deal(g);
+}
+function p10Deal(g){
+  const n=g.players.length,d=p10Deck();
+  g.hands=g.players.map(()=>d.splice(0,10));g.disc=[d.pop()];g.deck=d;g.groups=[];g.laid=g.players.map(()=>false);
+  g.skip=g.players.map(()=>0);g.drew=false;g.round=(g.round||0)+1;g.phase='play';g.fx=null;
+  g.turn=(g.dealer+1)%n;
+  if(p10S(g.disc[0])){g.msg=nm(g,g.turn)+' muss gleich aussetzen (Aussetzen liegt oben).';p10Advance(g,true)}
+  else g.msg=nm(g,g.turn)+' beginnt. Ziel: Phase '+(g.ph[g.turn]+1)+'.';
+}
+const p10Fx=(g,k,s,x)=>{g.fx={k,s,x:x==null?null:x,id:((g.fx&&g.fx.id)||0)+1}};
+// nächster Spieler (Aussetzer überspringen)
+function p10Advance(g,skipFirst){
+  const n=g.players.length;let t=skipFirst?g.turn:(g.turn+1)%n;
+  if(skipFirst){t=(t+1)%n}
+  for(let k=0;k<n*2;k++){if(g.skip[t]>0){g.skip[t]--;g.msg+=' '+nm(g,t)+' setzt aus.';t=(t+1)%n;continue}break}
+  g.turn=t;g.drew=false;
+}
+function p10Draw(g,s,src){
+  if(g.phase!=='play'||g.turn!==s||g.drew)return false;
+  let c;
+  if(src==='disc'){if(!g.disc.length||p10S(g.disc[g.disc.length-1]))return false;c=g.disc.pop();g.msg=nm(g,s)+' nimmt '+p10Name(c)+' von der Ablage.'}
+  else{if(!g.deck.length){const top=g.disc.pop();g.deck=shuffle(g.disc);g.disc=top!=null?[top]:[]}if(!g.deck.length)return false;c=g.deck.pop();g.msg=nm(g,s)+' zieht vom Stapel.'}
+  g.hands[s].push(c);g.drew=true;g.last=c;p10Fx(g,src==='disc'?'take':'draw',s,null);return true;
+}
+function p10Name(c){return p10W(c)?'einen Joker':p10S(c)?'ein Aussetzen':P10_COL[p10C(c)]+' '+p10V(c)}
+// Gruppe prüfen; gibt Gruppenobjekt zurück oder null
+function p10Grp(t,cards,need){
+  if(!Array.isArray(cards)||cards.length<need||cards.some(c=>!(p10N(c)||p10W(c))))return null;
+  const nat=cards.filter(p10N);if(!nat.length)return null;
+  if(t==='set'){const v=p10V(nat[0]);if(nat.some(c=>p10V(c)!==v))return null;return {t,c:cards.slice(),v}}
+  if(t==='col'){const k=p10C(nat[0]);if(nat.some(c=>p10C(c)!==k))return null;return {t,c:cards.slice(),k}}
+  if(t==='run'){const L=cards.length;if(L>12)return null;const vs=nat.map(p10V);if(new Set(vs).size!==vs.length)return null;
+    const mn=Math.min(...vs),mx=Math.max(...vs);if(mx-mn+1>L)return null;
+    // Joker zuerst oben anlegen, sonst unten
+    let lo=Math.min(mn,12-L+1);if(lo+L-1<mx)return null;if(lo<1)return null;
+    return {t,c:cards.slice(),lo}}
+  return null;
+}
+// Phase auslegen: groups = Liste von Kartenlisten passend zur aktuellen Phase
+function p10Lay(g,s,groups){
+  if(g.phase!=='play'||g.turn!==s||!g.drew||g.laid[s])return false;
+  const def=P10_PH[g.ph[s]];if(!Array.isArray(groups)||groups.length!==def.length)return false;
+  const all=groups.flat();if(new Set(all).size!==all.length||all.some(c=>!g.hands[s].includes(c)))return false;
+  const perms=def.length===2?[[0,1],[1,0]]:[[0]];let made=null;
+  for(const pm of perms){const r=pm.map((di,i)=>p10Grp(def[di][0],groups[i],def[di][1]));if(r.every(Boolean)){made=r;break}}
+  if(!made)return false;
+  made.forEach(x=>{x.o=s;g.groups.push(x)});g.hands[s]=g.hands[s].filter(c=>!all.includes(c));g.laid[s]=true;
+  g.msg='✅ '+nm(g,s)+' legt Phase '+(g.ph[s]+1)+' aus ('+P10_TXT[g.ph[s]]+').';p10Fx(g,'lay',s,null);
+  if(!g.hands[s].length)p10EndHand(g,s);
+  return true;
+}
+// Karte an eine ausliegende Gruppe anlegen
+function p10Fit(gr,c){
+  if(!(p10N(c)||p10W(c)))return null;
+  if(gr.t==='set')return p10W(c)||p10V(c)===gr.v?{}:null;
+  if(gr.t==='col')return p10W(c)||p10C(c)===gr.k?{}:null;
+  const L=gr.c.length,hi=gr.lo+L-1;
+  if(p10W(c))return hi<12?{}:gr.lo>1?{lo:gr.lo-1}:null;
+  const v=p10V(c);return v===hi+1&&hi<12?{}:v===gr.lo-1?{lo:gr.lo-1}:null;
+}
+function p10Hit(g,s,c,gi){
+  if(g.phase!=='play'||g.turn!==s||!g.drew||!g.laid[s])return false;
+  const gr=g.groups[gi];if(!gr||!g.hands[s].includes(c))return false;
+  const f=p10Fit(gr,c);if(!f)return false;
+  if(f.lo!=null){gr.lo=f.lo;gr.c.unshift(c)}else gr.c.push(c);
+  g.hands[s]=g.hands[s].filter(x=>x!==c);g.msg=nm(g,s)+' legt '+p10Name(c)+' an.';p10Fx(g,'hit',s,gi);
+  if(!g.hands[s].length)p10EndHand(g,s);
+  return true;
+}
+function p10Discard(g,s,c,target){
+  if(g.phase!=='play'||g.turn!==s||!g.drew||!g.hands[s].includes(c))return false;
+  const n=g.players.length;
+  if(p10S(c)){
+    if(!Number.isInteger(target)||target===s||target<0||target>=n)return false;
+    if(g.skip[target]>0&&g.players.some((_,t)=>t!==s&&g.skip[t]===0))return false;
+  }
+  g.hands[s]=g.hands[s].filter(x=>x!==c);g.disc.push(c);
+  g.msg=nm(g,s)+' wirft '+p10Name(c)+' ab'+(p10S(c)?' – '+nm(g,target)+' muss aussetzen!':'.');p10Fx(g,p10S(c)?'skip':'disc',s,p10S(c)?target:null);
+  if(p10S(c))g.skip[target]++;
+  if(!g.hands[s].length)return p10EndHand(g,s),true;
+  p10Advance(g,false);return true;
+}
+function p10EndHand(g,out){
+  const n=g.players.length,sc=g.hands.map(h=>h.reduce((a,c)=>a+p10Pts(c),0)),done=g.laid.slice();
+  for(let s=0;s<n;s++){g.pts[s]+=sc[s];if(done[s])g.ph[s]++}
+  g.hist.push({out,sc,done,ph:g.ph.slice()});
+  g.msg='🏁 '+nm(g,out)+' ist raus! '+(done.filter(Boolean).length?done.map((d,s)=>d?nm(g,s):null).filter(Boolean).join(', ')+' '+(done.filter(Boolean).length>1?'schaffen':'schafft')+' ihre Phase.':'');
+  g.turn=-1;g.drew=false;g.fx=null;
+  g.phase=g.ph.some(x=>x>=10)?'over':'rend';
+}
+function p10NextHand(g){if(g.phase!=='rend')return false;g.dealer=(g.dealer+1)%g.players.length;p10Deal(g);return true}
+function p10Standings(g){return g.players.map((p,s)=>({s,ph:g.ph[s],pts:g.pts[s]})).sort((a,b)=>b.ph-a.ph||a.pts-b.pts)}
+function p10Places(g){const st=p10Standings(g),pl=Array(g.players.length).fill(0);st.forEach((x,i)=>{pl[x.s]=i>0&&x.ph===st[i-1].ph&&x.pts===st[i-1].pts?pl[st[i-1].s]:i});return pl}
+
+// ----- Phase in einer Hand finden: wie viele Karten fehlen (ohne Joker) und mit Jokern bauen -----
+function p10Plan(hand,pi){
+  const def=P10_PH[pi],W=hand.filter(p10W),nat=hand.filter(p10N);
+  const byV={},byC={};nat.forEach(c=>{(byV[p10V(c)]=byV[p10V(c)]||[]).push(c);(byC[p10C(c)]=byC[p10C(c)]||[]).push(c)});
+  let best=null;const tryP=(miss,groups)=>{if(!best||miss<best.miss)best={miss,groups}};
+  const setOpts=(need,used)=>{const r=[];for(let v=1;v<=12;v++){const l=(byV[v]||[]).filter(c=>!used.has(c));r.push({v,cards:l.slice(0,need),miss:Math.max(0,need-l.length)})}return r};
+  const runOpts=(L,used)=>{const r=[];for(let lo=1;lo+L-1<=12;lo++){const cards=[];for(let v=lo;v<lo+L;v++){const c=(byV[v]||[]).find(x=>!used.has(x));if(c!=null)cards.push(c)}r.push({lo,cards,miss:L-cards.length})}return r};
+  if(def.length===1){
+    const [t,L]=def[0];
+    if(t==='run')runOpts(L,new Set()).forEach(o=>tryP(o.miss,[o.cards]));
+    else if(t==='col')for(let k=0;k<4;k++){const l=(byC[k]||[]).slice(0,L);tryP(L-l.length,[l])}
+  }else{
+    const [a,b]=def;
+    const firstOpts=a[0]==='set'?setOpts(a[1],new Set()):runOpts(a[1],new Set());
+    firstOpts.forEach(o1=>{const used=new Set(o1.cards);const so=b[0]==='set'?setOpts(b[1],used):runOpts(b[1],used);
+      so.forEach(o2=>{if(a[0]==='set'&&b[0]==='set'&&o1.v===o2.v&&!(o1.cards.length&&o2.cards.length))return;tryP(o1.miss+o2.miss,[o1.cards,o2.cards])})});
+    // Lauf zuerst belegen (andere Reihenfolge)
+    if(b[0]==='run')runOpts(b[1],new Set()).forEach(o2=>{const used=new Set(o2.cards);setOpts(a[1],used).forEach(o1=>tryP(o1.miss+o2.miss,[o1.cards,o2.cards]))});
+  }
+  if(!best)return {miss:99,groups:null};
+  const res={miss:best.miss,groups:null};
+  if(best.miss<=W.length){
+    // Joker auffüllen
+    const w=W.slice(),grs=best.groups.map((cards,i)=>{const need=def[i][1],out=cards.slice();while(out.length<need)out.push(w.pop());return out});
+    if(grs.every((gc,i)=>gc.some(p10N)&&p10Grp(def[i][0],gc,def[i][1])))res.groups=grs;
+  }
+  return res;
+}
+// ----- Computergegner -----
+function p10BotStep(g){
+  if(g.phase!=='play')return false;const s=g.turn;if(s<0||!g.players[s]||!g.players[s].bot)return false;
+  const lv=PR(g).bots,H=g.hands[s];
+  if(!g.drew){
+    const top=g.disc[g.disc.length-1];
+    if(top!=null&&!p10S(top)&&lv!=='easy'){
+      if(p10W(top))return p10Draw(g,s,'disc');
+      if(!g.laid[s]){const m0=p10Plan(H,g.ph[s]).miss,m1=p10Plan(H.concat([top]),g.ph[s]).miss;if(m1<m0)return p10Draw(g,s,'disc')}
+      else if(g.groups.some(gr=>p10Fit(gr,top)))return p10Draw(g,s,'disc');
+    }
+    return p10Draw(g,s,'deck');
+  }
+  if(!g.laid[s]){const p=p10Plan(H,g.ph[s]);if(p.groups&&p10Lay(g,s,p.groups))return true}
+  if(g.laid[s]){for(const c of H){if(p10S(c))continue;for(let gi=0;gi<g.groups.length;gi++)if(p10Fit(g.groups[gi],c))return p10Hit(g,s,c,gi)}}
+  // abwerfen: Aussetzen zuerst (auf den Führenden), sonst die unnützeste Karte
+  const sk=H.find(p10S),n=g.players.length;
+  if(sk!=null){const tg=g.players.map((_,t)=>t).filter(t=>t!==s&&g.skip[t]===0).sort((a,b)=>g.ph[b]-g.ph[a]||g.hands[a].length-g.hands[b].length)[0];if(tg!=null)return p10Discard(g,s,sk,tg)}
+  let bestC=null,bestScore=-1e9;
+  for(const c of H){if(p10W(c)&&H.length>1)continue;if(p10S(c))continue;
+    let sc;if(g.laid[s])sc=p10Pts(c);else{const rest=H.filter(x=>x!==c);sc=-p10Plan(rest,g.ph[s]).miss*20+p10Pts(c)*.1+(lv==='easy'?Math.random()*30:0)}
+    if(sc>bestScore){bestScore=sc;bestC=c}}
+  if(bestC==null)bestC=H[0];
+  if(p10S(bestC)){const tg=g.players.map((_,t)=>t).find(t=>t!==s);return p10Discard(g,s,bestC,tg)}
+  return p10Discard(g,s,bestC);
+}
+function cleanP10(g){
+  const I=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+  if(!['lobby','closed','play','rend','over'].includes(g.phase))return null;
+  if('host' in g)g.host=S(g.host,64);if('bots' in g)g.bots=I(g.bots,0,5)?g.bots:0;
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal'}}
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
+  if('msg' in g)g.msg=S(g.msg,400);
+  for(const k of ['round','match','dealer'])if(k in g)g[k]=I(g[k],0,1e6)?g[k]:0;
+  if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
+  if(!Array.isArray(g.players)||g.players.length<2||g.players.length>6||!g.players.every(O))return null;
+  const n=g.players.length;g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
+  const C=a=>Array.isArray(a)&&a.every(c=>I(c,0,107));
+  if(!Array.isArray(g.hands)||g.hands.length!==n||!g.hands.every(h=>C(h)&&h.length<=40))return null;
+  if(!C(g.deck)||!C(g.disc))return null;
+  g.ph=Array.isArray(g.ph)&&g.ph.length===n&&g.ph.every(x=>I(x,0,10))?g.ph:null;if(!g.ph)return null;
+  g.pts=Array.isArray(g.pts)&&g.pts.length===n&&g.pts.every(x=>I(x,0,100000))?g.pts:null;if(!g.pts)return null;
+  g.laid=Array.isArray(g.laid)&&g.laid.length===n?g.laid.map(Boolean):g.players.map(()=>false);
+  g.skip=Array.isArray(g.skip)&&g.skip.length===n&&g.skip.every(x=>I(x,0,10))?g.skip:g.players.map(()=>0);
+  g.drew=!!g.drew;g.turn=I(g.turn,-1,n-1)?g.turn:-1;if('last' in g)g.last=I(g.last,0,107)?g.last:null;
+  if(!Array.isArray(g.groups)||g.groups.length>20)return null;
+  g.groups=g.groups.map(x=>{if(!O(x)||!['set','run','col'].includes(x.t)||!C(x.c)||!x.c.length||x.c.length>(x.t==='run'?12:40)||!I(x.o,0,n-1))return null;
+    if(x.t==='set'&&!I(x.v,1,12))return null;if(x.t==='col'&&!I(x.k,0,3))return null;if(x.t==='run'&&(!I(x.lo,1,12)||x.lo+x.c.length-1>12))return null;
+    const r={};for(const k of Object.keys(x))if(k==='t'||k==='o'||(k==='v'&&x.t==='set')||(k==='k'&&x.t==='col')||(k==='lo'&&x.t==='run'))r[k]=x[k];else if(k==='c')r.c=x.c.slice();return r});
+  if(g.groups.some(x=>!x))return null;
+  const all=g.hands.flat().concat(g.deck,g.disc,g.groups.flatMap(x=>x.c));if(all.length!==108||new Set(all).size!==108)return null;
+  g.fx=O(g.fx)&&typeof g.fx.k==='string'&&I(g.fx.s,0,n-1)?{k:S(g.fx.k,8),s:g.fx.s,x:I(g.fx.x,0,30)?g.fx.x:null,id:I(g.fx.id,0,1e9)?g.fx.id:0}:null;
+  g.hist=Array.isArray(g.hist)?g.hist.slice(-60).filter(O).map(h=>({out:I(h.out,0,n-1)?h.out:0,sc:Array.isArray(h.sc)?h.sc.map(x=>I(x,0,2000)?x:0).slice(0,n):[],done:Array.isArray(h.done)?h.done.map(Boolean).slice(0,n):[],ph:Array.isArray(h.ph)?h.ph.map(x=>I(x,0,10)?x:0).slice(0,n):[]})):[];
+  if(g.phase==='play'&&!I(g.turn,0,n-1))return null;
+  return g;
+}
+//P10-END
+
+//QWIXX-START
+// ===== Qwixx: Würfelspiel mit vier Farbreihen =====
+// Reihen: 0 Rot (2→12), 1 Gelb (2→12), 2 Grün (12→2), 3 Blau (12→2). Kreuze nur von links nach rechts.
+const QX_RULES={bots:'normal'};
+const QR=g=>Object.assign({},QX_RULES,g.rules||{});
+const QX_ROW=['Rot','Gelb','Grün','Blau'];
+const qxNum=(r,i)=>r<2?i+2:12-i;            // Position → Zahl
+const qxPos=(r,v)=>r<2?v-2:12-v;            // Zahl → Position
+const qxTri=n=>n*(n+1)/2;
+function qxScore(sh){return sh.r.reduce((a,row,ri)=>a+qxTri(row.length+(sh.lk[ri]?1:0)),0)-5*sh.pen}
+function qxStart(g){
+  const n=g.players.length;g.sheets=g.players.map(()=>({r:[[],[],[],[]],lk:[false,false,false,false],pen:0}));
+  g.locked=[-1,-1,-1,-1];g.round=0;g.match=(g.match||0)+1;g.active=Math.floor(Math.random()*n);g.turn=g.active;
+  g.phase='roll';g.dice=null;g.wc=g.players.map(()=>null);g.cc=null;g.done=0;g.fx=null;g.msg=nm(g,g.active)+' würfelt zuerst.';
+}
+// darf in Reihe r die Zahl v angekreuzt werden?
+function qxCan(g,s,r,v){
+  if(!I2(r,0,3)||!I2(v,2,12)||g.locked[r]>=0)return false;
+  const row=g.sheets[s].r[r],p=qxPos(r,v),last=row.length?row[row.length-1]:-1;
+  if(p<=last)return false;if(p===10&&row.length<5)return false;return true;
+}
+function I2(x,lo,hi){return Number.isInteger(x)&&x>=lo&&x<=hi}
+function qxRoll(g,s){
+  if(g.phase!=='roll'||g.active!==s)return false;
+  const d=()=>1+Math.floor(Math.random()*6);
+  g.dice={w:[d(),d()],c:[0,1,2,3].map(r=>g.locked[r]>=0?null:d())};g.rollId=((g.rollId||0)+1)%1e6;
+  g.phase='white';g.wc=g.players.map(()=>null);g.cc=null;g.round++;
+  g.msg=nm(g,s)+' würfelt: Weiß '+(g.dice.w[0]+g.dice.w[1])+'.';g.fx=null;return true;
+}
+// 1. Aktion: alle dürfen die Summe der weißen Würfel in einer Reihe ankreuzen (row) oder passen (-1)
+function qxWhite(g,s,row){
+  if(g.phase!=='white'||g.wc[s]!=null)return false;
+  if(row!==-1){const v=g.dice.w[0]+g.dice.w[1];if(!qxCan(g,s,row,v))return false}
+  g.wc[s]=row;
+  if(g.wc.every(x=>x!=null))qxResolveWhite(g);
+  return true;
+}
+function qxCross(g,s,r,v){const sh=g.sheets[s],p=qxPos(r,v);sh.r[r].push(p);if(p===10){sh.lk[r]=true;return true}return false}
+function qxResolveWhite(g){
+  const v=g.dice.w[0]+g.dice.w[1],locks=new Set();
+  g.wc.forEach((r,s)=>{if(r>=0&&qxCross(g,s,r,v))locks.add(r)});
+  locks.forEach(r=>{g.locked[r]=g.wc.findIndex((x,s)=>x===r&&g.sheets[s].lk[r])});
+  const who=g.wc.map((r,s)=>r>=0?nm(g,s)+' '+QX_ROW[r]:null).filter(Boolean);
+  g.msg=(who.length?'Weiß '+v+': '+who.join(', ')+'.':'Niemand kreuzt die weiße '+v+' an.')+(locks.size?' 🔒 '+[...locks].map(r=>QX_ROW[r]).join(' und ')+' abgeschlossen!':'');
+  g.fx={k:'white',id:((g.fx&&g.fx.id)||0)+1};
+  if(qxEnded(g))return qxEnd(g);
+  if(g.dice.c.some((x,r)=>x!=null&&g.locked[r]<0)){g.phase='color';g.turn=g.active}else qxFinishTurn(g);
+}
+// 2. Aktion (nur aktiver Spieler): ein weißer + ein farbiger Würfel in der Reihe dieser Farbe – oder passen
+function qxColor(g,s,wi,r){
+  if(g.phase!=='color'||g.active!==s)return false;
+  if(wi===-1){g.cc=-1;qxFinishTurn(g);return true}
+  if(!I2(wi,0,1)||!I2(r,0,3)||g.dice.c[r]==null)return false;
+  const v=g.dice.w[wi]+g.dice.c[r];if(!qxCan(g,s,r,v))return false;
+  g.cc={wi,r};const lock=qxCross(g,s,r,v);if(lock)g.locked[r]=s;
+  g.msg=nm(g,s)+' kreuzt '+QX_ROW[r]+' '+v+' an.'+(lock?' 🔒 '+QX_ROW[r]+' abgeschlossen!':'');g.fx={k:'color',id:((g.fx&&g.fx.id)||0)+1};
+  qxFinishTurn(g);return true;
+}
+function qxFinishTurn(g){
+  const s=g.active;
+  if(g.wc[s]===-1&&!(g.cc&&g.cc!==-1)){g.sheets[s].pen++;g.msg+=' ❌ '+nm(g,s)+' bekommt einen Fehlwurf.'}
+  if(qxEnded(g))return qxEnd(g);
+  g.active=(g.active+1)%g.players.length;g.turn=g.active;g.phase='roll';g.dice=g.dice;g.cc=null;
+}
+const qxEnded=g=>g.locked.filter(x=>x>=0).length>=2||g.sheets.some(sh=>sh.pen>=4);
+function qxEnd(g){g.phase='over';g.turn=-1;g.msg+=' Spielende!'}
+function qxStandings(g){return g.players.map((p,s)=>({s,t:qxScore(g.sheets[s])})).sort((a,b)=>b.t-a.t)}
+function qxPlaces(g){const st=qxStandings(g),pl=Array(g.players.length).fill(0);st.forEach((x,i)=>{pl[x.s]=i>0&&x.t===st[i-1].t?pl[st[i-1].s]:i});return pl}
+// ----- Computergegner -----
+function qxBest(g,s,opts,tol){
+  // opts: [{r,v,...}] → beste Option nach „übersprungenen Feldern“, null wenn keine gut genug
+  let best=null;
+  for(const o of opts){if(!qxCan(g,s,o.r,o.v))continue;const row=g.sheets[s].r[o.r],last=row.length?row[row.length-1]:-1,p=qxPos(o.r,o.v);
+    let cost=p-last-1;if(p===10)cost-=3;// Abschließen ist attraktiv
+    if(!best||cost<best.cost)best=Object.assign({cost},o)}
+  return best&&best.cost<=tol?best:null;
+}
+function qxBotStep(g){
+  const lv=QR(g).bots,tol=lv==='easy'?2:lv==='hard'?1:1;
+  if(g.phase==='roll'){if(!g.players[g.active].bot)return false;return qxRoll(g,g.active)}
+  if(g.phase==='white'){
+    const s=g.players.findIndex((p,i)=>p.bot&&g.wc[i]==null);if(s<0)return false;
+    const v=g.dice.w[0]+g.dice.w[1],act=s===g.active;
+    const b=qxBest(g,s,[0,1,2,3].map(r=>({r,v})),act?tol:(lv==='easy'?Math.floor(Math.random()*3):tol-(lv==='hard'?0:0)));
+    return qxWhite(g,s,b?b.r:-1);
+  }
+  if(g.phase==='color'){
+    const s=g.active;if(!g.players[s].bot)return false;
+    const opts=[];[0,1].forEach(wi=>[0,1,2,3].forEach(r=>{if(g.dice.c[r]!=null)opts.push({wi,r,v:g.dice.w[wi]+g.dice.c[r]})}));
+    const noneYet=g.wc[s]===-1;
+    const b=qxBest(g,s,opts,noneYet?(lv==='hard'?2:3):tol);
+    return b?qxColor(g,s,b.wi,b.r):qxColor(g,s,-1);
+  }
+  return false;
+}
+function cleanQwixx(g){
+  const I=I2,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+  if(!['lobby','closed','roll','white','color','over'].includes(g.phase))return null;
+  if('host' in g)g.host=S(g.host,64);if('bots' in g)g.bots=I(g.bots,0,4)?g.bots:0;
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal'}}
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
+  if('msg' in g)g.msg=S(g.msg,400);
+  for(const k of ['round','match','rollId'])if(k in g)g[k]=I(g[k],0,1e6)?g[k]:0;
+  if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
+  if(!Array.isArray(g.players)||g.players.length<2||g.players.length>5||!g.players.every(O))return null;
+  const n=g.players.length;g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
+  if(!Array.isArray(g.sheets)||g.sheets.length!==n)return null;
+  for(const sh of g.sheets){
+    if(!O(sh)||!Array.isArray(sh.r)||sh.r.length!==4||!Array.isArray(sh.lk)||sh.lk.length!==4||!I(sh.pen,0,4))return null;
+    for(let r=0;r<4;r++){const row=sh.r[r];if(!Array.isArray(row)||row.some((p,i)=>!I(p,0,10)||(i&&p<=row[i-1])))return null;if(row.includes(10)&&row.length<6)return null;sh.lk[r]=!!sh.lk[r]&&row.includes(10)}
+  }
+  g.locked=Array.isArray(g.locked)&&g.locked.length===4&&g.locked.every(x=>I(x,-1,n-1))?g.locked:null;if(!g.locked)return null;
+  g.active=I(g.active,0,n-1)?g.active:0;g.turn=I(g.turn,-1,n-1)?g.turn:-1;
+  g.dice=O(g.dice)&&Array.isArray(g.dice.w)&&g.dice.w.length===2&&g.dice.w.every(x=>I(x,1,6))&&Array.isArray(g.dice.c)&&g.dice.c.length===4&&g.dice.c.every(x=>x===null||I(x,1,6))?{w:g.dice.w.slice(),c:g.dice.c.slice()}:null;
+  if((g.phase==='white'||g.phase==='color')&&!g.dice)return null;
+  g.wc=Array.isArray(g.wc)&&g.wc.length===n&&g.wc.every(x=>x===null||I(x,-1,3))?g.wc:g.players.map(()=>null);
+  g.cc=g.cc===-1||g.cc===null?g.cc:O(g.cc)&&I(g.cc.wi,0,1)&&I(g.cc.r,0,3)?{wi:g.cc.wi,r:g.cc.r}:null;
+  if('done' in g)g.done=I(g.done,0,1e6)?g.done:0;
+  g.fx=O(g.fx)&&typeof g.fx.k==='string'?{k:S(g.fx.k,8),id:I(g.fx.id,0,1e9)?g.fx.id:0}:null;
+  return g;
+}
+//QWIXX-END
+
 /* ---------- Grundlagen ---------- */
 const SB_URL='https://xatfnfirvkvoxnitysmj.supabase.co';
 const SB_KEY='sb_publishable_JV8pQLw5a7tLFJXZ1yZZPg_V8XN7K_4';
@@ -2286,7 +2676,7 @@ const FELT={green:['Grün','#2c8a55','#17603a','#0c3d22'],blue:['Blau','#2f6fb0'
   purple:['Lila','#7a4bb0','#53307f','#2e1a4a'],teal:['Türkis','#24a098','#147068','#0a403b'],black:['Schwarz','#4a4a4a','#2a2a2a','#111']};
 const FRONTS=[['classic','Klassisch'],['dark','Dunkel'],['vintage','Vintage'],['gold','Gold',40],['neon','Neon',100],['diamond','Diamant',300]];
 const BACKS=[['red','Rot'],['blue','Blau'],['black','Schwarz'],['gold','Gold',20],['flame','Flammen','bob'],['star','Sterne','stars5'],['legend','Legende',200],
-  ['wizard','Zauberer',{g:'stich',k:'wins',n:3,t:'3× Wizard gewonnen'}],['crystal','Kristall',{g:'stich',k:'hits',n:50,t:'50 richtige Wizard-Ansagen'}],['dice','Würfel',{g:'dice',k:'kn',n:1,t:'1× Kniffel geworfen'}],['owl','Eule',{g:'cabo',k:'wins',n:3,t:'3× Cabo gewonnen'}]];
+  ['wizard','Zauberer',{g:'stich',k:'wins',n:3,t:'3× Wizard gewonnen'}],['crystal','Kristall',{g:'stich',k:'hits',n:50,t:'50 richtige Wizard-Ansagen'}],['dice','Würfel',{g:'dice',k:'kn',n:1,t:'1× Kniffel geworfen'}],['owl','Eule',{g:'cabo',k:'wins',n:3,t:'3× Cabo gewonnen'}],['rainbow','Regenbogen',{g:'p10',k:'wins',n:3,t:'3× Phase 10 gewonnen'}],['cross','Kreuze',{g:'qwixx',k:'wins',n:3,t:'3× Qwixx gewonnen'}]];
 // Würfel-Designs für Kniffel
 const DICES=[['white','Klassisch'],['black','Schwarz'],['ruby','Rubin'],['gold','Gold',{g:'dice',k:'best',n:250,t:'250 Punkte in Kniffel'}],
   ['neon','Neon',{g:'dice',k:'kn',n:5,t:'5× Kniffel geworfen'}],['diamond','Diamant',{g:'dice',k:'wins',n:25,t:'25× Kniffel gewonnen'}]];
@@ -2608,10 +2998,12 @@ const ACH2=[['🧙','Zauberlehrling','Eine Partie Wizard gewonnen',x=>x.stich.wi
   ['🎲','Kniffel!','Einen Kniffel (5 Gleiche) geworfen',x=>x.dice.kn>=1],['🍀','Glückspilz','10 Kniffel geworfen',x=>x.dice.kn>=10],
   ['💯','Highscore','300 Punkte in einer Partie Kniffel',x=>x.dice.best>=300],['🏅','Würfelkönig','10× Kniffel gewonnen',x=>x.dice.wins>=10],
   ['🦉','Gutes Gedächtnis','Eine Partie Cabo gewonnen',x=>x.cabo.wins>=1],['📣','Volltreffer','10× richtig CABO gerufen',x=>x.cabo.hits>=10],
-  ['💥','Kamikaze','Eine Kamikaze-Runde (zwei 12er, zwei 13er)',x=>x.cabo.kn>=1],['🧠','Gedächtniskünstler','10× Cabo gewonnen',x=>x.cabo.wins>=10]];
-const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof g==='object'?g:{};return {stich:Object.assign({},z,o.stich||{}),dice:Object.assign({},z,o.dice||{}),cabo:Object.assign({},z,o.cabo||{})}};
+  ['💥','Kamikaze','Eine Kamikaze-Runde (zwei 12er, zwei 13er)',x=>x.cabo.kn>=1],['🧠','Gedächtniskünstler','10× Cabo gewonnen',x=>x.cabo.wins>=10],
+  ['🔟','Phasen-Profi','Eine Partie Phase 10 gewonnen',x=>x.p10.wins>=1],['🌈','Phasenmeister','10× Phase 10 gewonnen',x=>x.p10.wins>=10],
+  ['✖️','Kreuzritter','Eine Partie Qwixx gewonnen',x=>x.qwixx.wins>=1],['🚀','Qwixx-Rekord','100 Punkte in einer Partie Qwixx',x=>x.qwixx.best>=100]];
+const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof g==='object'?g:{};return {stich:Object.assign({},z,o.stich||{}),dice:Object.assign({},z,o.dice||{}),cabo:Object.assign({},z,o.cabo||{}),p10:Object.assign({},z,o.p10||{}),qwixx:Object.assign({},z,o.qwixx||{})}};
 function ach2Html(g){const x=gsFill(g),got=ACH2.filter(a=>a[3](x)).length;
-  return '<div class="panel"><h3>Wizard, Kniffel & Cabo · '+got+' von '+ACH2.length+'</h3><div class="ach">'+ACH2.map(a=>{const ok=a[3](x);
+  return '<div class="panel"><h3>Wizard, Kniffel, Cabo, Phase 10 & Qwixx · '+got+' von '+ACH2.length+'</h3><div class="ach">'+ACH2.map(a=>{const ok=a[3](x);
     return '<div class="ac'+(ok?' on':'')+'"><span>'+a[0]+'</span><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></div>'}).join('')+'</div></div>'}
 const allRewards=()=>[...SURF.map(x=>[x[1],x[3]]),...FRONTS.map(x=>[x[1],x[2]]),...BACKS.map(x=>[x[1]+' (Rücken)',x[2]]),...DICES.map(x=>[x[1]+' (Würfel)',x[2]])].filter(x=>x[1]&&typeof x[1]==='object');
 async function loadGS(){if(!me)return;try{const g=await store.rpc('game_stats',{p_uid:myId});if(!g)return;const prev=myGS;
@@ -3072,7 +3464,7 @@ function drawHome(){
   if(!me)h+='<div class="panel"><label for="name">Dein Name</label><input id="name" data-k="name" maxlength="16" autocomplete="off" placeholder="z. B. Max" value="'+esc(drafts.name||'')+'"></div>';
   if(store.online){
     const tb=savedTable();
-    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Kniffel · 🦉 Cabo</p></div>'+
+    h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Kniffel · 🦉 Cabo · 🔟 Phase 10 · ✖️ Qwixx</p></div>'+
       (tb?'<div class="panel"><button class="ghost" data-a="resume-local">📝 Kniffel am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button></div>':'')+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
     h+=questPanel()+friendsPlaying();
@@ -3088,7 +3480,7 @@ function drawHome(){
     '<button class="ghost" data-a="go" data-v="ach"><b>🏅</b>Erfolge</button>'+
     '<button class="ghost" data-a="go" data-v="design"><b>🎨</b>Design</button>'+
     '<button class="ghost" data-a="go" data-v="settings"><b>⚙️</b>Einstellungen</button></div>';
-  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div><div class="panel">'+CB_RULES_TXT+'</div>'+
+  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div><div class="panel">'+CB_RULES_TXT+'</div><div class="panel">'+P10_RULES_TXT+'</div><div class="panel">'+QX_RULES_TXT+'</div>'+
     (navigator.standalone||matchMedia('(display-mode: standalone)').matches?'':'<p class="note" style="text-align:center">Tipp: Über „Teilen“ → „Zum Home-Bildschirm“ (iPhone) bzw. Menü → „App installieren“ (Android) hast du das Spiel als App.</p>');
   return h;
 }
@@ -3143,9 +3535,9 @@ function drawFriends(){
 }
 function otherStatsHtml(){
   const gs=gameStats&&typeof gameStats==='object'?gameStats:{};
-  return ['stich','dice','cabo'].map(k=>{const x=gs[k]||{},n=+x.played||0;
+  return ['stich','dice','cabo','p10','qwixx'].map(k=>{const x=gs[k]||{},n=+x.played||0;
     return '<h3 style="margin:18px 0 8px">'+GAMES[k].icon+' '+GAMES[k].name+'</h3><div class="stats">'+[
-      [n,'Partien'],[n?(+x.wins||0)+'×':'–','Gewonnen'],[n?(k==='cabo'?+x.low:+x.best):'–',k==='cabo'?'Bester Endstand':'Bestwert'],[n?+x.avg:'–','Punkteschnitt']
+      [n,'Partien'],[n?(+x.wins||0)+'×':'–','Gewonnen'],[n?(k==='cabo'||k==='p10'?+x.low:+x.best):'–',k==='cabo'||k==='p10'?'Bester Endstand':'Bestwert'],[n?+x.avg:'–','Punkteschnitt']
     ].map(y=>'<div class="stat"><b>'+esc(y[0])+'</b><span>'+y[1]+'</span></div>').join('')+'</div>'}).join('');
 }
 function drawProfile(){
@@ -3180,7 +3572,7 @@ function drawRanking(){
   const gtabs='<div class="rkg">'+Object.entries(GAMES).map(([k,x])=>'<button class="'+(rankGame===k?'on':'')+'" data-a="rk-game" data-v="'+k+'"><span>'+x.icon+'</span>'+x.name+'</button>').join('')+'</div>';
   const mtabs='<div class="row" style="margin-bottom:12px"><button class="'+(rankMode==='all'?'':'ghost')+'" data-a="rk-mode" data-v="all">Gesamt</button><button class="'+(rankMode==='month'?'':'ghost')+'" data-a="rk-mode" data-v="month">Saison '+esc(mName)+'</button></div>';
   if(rankGame!=='arsch'){
-    const lowBest=rankGame==='cabo',gr=rankRows.slice().filter(x=>x.played>0||x.uid===myId).sort((a,b)=>b.points-a.points||b.wins-a.wins||(lowBest?(a.best??1e9)-(b.best??1e9):(b.best??-1e9)-(a.best??-1e9)));
+    const lowBest=rankGame==='cabo'||rankGame==='p10',gr=rankRows.slice().filter(x=>x.played>0||x.uid===myId).sort((a,b)=>b.points-a.points||b.wins-a.wins||(lowBest?(a.best??1e9)-(b.best??1e9):(b.best??-1e9)-(a.best??-1e9)));
     h=backBtn+'<h2>Rangliste</h2>'+gtabs+mtabs+'<div class="panel"><table class="rk"><tr><th>#</th><th>Spieler</th><th>Punkte</th><th>Siege</th><th>'+(lowBest?'Bester':'Best')+'</th></tr>'+
       gr.map((x,i)=>'<tr class="'+(x.uid===myId?'me':'')+'" data-a="go" data-v="profile" data-u="'+x.uid+'" style="cursor:pointer"><td>'+(i<3&&x.played?['🥇','🥈','🥉'][i]:i+1)+'</td><td><span class="rkn">'+avatar(x.avatar,x.display,0,24)+esc(x.display)+'</span><small class="rkp">'+x.played+' Partien</small></td><td><b>'+x.points+'</b></td><td>'+x.wins+'</td><td>'+(x.best==null?'–':x.best)+'</td></tr>').join('')+'</table></div>'+
       '<p class="note">Punkte: Für jeden Mitspieler, den du in einer Partie hinter dir lässt, gibt es einen Punkt. '+(lowBest?'„Bester“ ist dein niedrigster Endstand.':'„Best“ ist deine höchste Punktzahl.')+' Gezählt werden Partien mit Konto'+(rankMode==='month'?' aus diesem Monat':'')+'.</p>';
@@ -3207,7 +3599,7 @@ function drawDesign(){
     return '<button class="opt'+(T[k]===v&&!PEEK?' on':'')+(ok?'':' lock')+(pv?' peek':'')+'" data-a="'+(ok?'th':'peek')+'" data-k="'+k+'" data-v="'+v+'">'+prev(v,ex)+'<span>'+l+'</span>'+(req?'<small>'+(ok?'freigeschaltet':reqText(req))+'</small>':'')+'</button>'}).join('')+'</div>';
   const peekNote='<p class="note" style="margin-bottom:0">Tipp auf ein gesperrtes Design für eine kurze Vorschau.</p>';
   h+='<div class="panel"><h3>Tisch</h3>'+lockOpt('surface',SURF.map(x=>[x[0],x[1],x[3],x[2]]),(v,e)=>'<span style="font-size:24px">'+e+'</span>')+
-    '<p class="note" style="margin-bottom:0">Besondere Tische gibt es für oft Präsident werden'+(me?' (bisher '+presCount+'×)':' (nur mit Konto)')+' – und für Siege bei Wizard, Kniffel und Cabo.</p></div>';
+    '<p class="note" style="margin-bottom:0">Besondere Tische gibt es für oft Präsident werden'+(me?' (bisher '+presCount+'×)':' (nur mit Konto)')+' – und für Siege in den anderen Spielen.</p></div>';
   h+='<div class="panel"><h3>Filzfarbe</h3>'+opt('felt',Object.entries(FELT).map(([v,f])=>[v,f[0],'<span class="sw" style="background:radial-gradient('+f[1]+','+f[3]+')"></span>']))+
     '<p class="note" style="margin-bottom:0">Gilt für den Filz- und den Schreibtisch.</p></div>';
   h+='<div class="panel"><h3>Karten</h3>'+lockOpt('cards',FRONTS,v=>'<span class="mini cf-'+v+'">A<i>♥</i></span>')+'</div>';
@@ -3438,7 +3830,9 @@ const GAMES={
   arsch:{name:'Arschloch',icon:'🃏',min:3,max:8,desc:'Präsident oder Arschloch – wer zuerst alle Karten los ist, gewinnt.'},
   stich:{name:'Wizard',icon:'🧙',min:3,max:6,desc:'Sag an, wie viele Stiche du holst – mit Zauberern, Narren und auf Wunsch 7 Sonderkarten.'},
   dice:{name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'},
-  cabo:{name:'Cabo',icon:'🦉',min:2,max:5,desc:'Merk dir deine verdeckten Karten, tausch clever und ruf CABO, wenn du die wenigsten Punkte hast.'}};
+  cabo:{name:'Cabo',icon:'🦉',min:2,max:5,desc:'Merk dir deine verdeckten Karten, tausch clever und ruf CABO, wenn du die wenigsten Punkte hast.'},
+  p10:{name:'Phase 10',icon:'🔟',min:2,max:6,desc:'Schaff die 10 Phasen der Reihe nach – Drillinge, Folgen, Farben. Mit Jokern und Aussetzen.'},
+  qwixx:{name:'Qwixx',icon:'✖️',min:2,max:5,desc:'Würfeln und ankreuzen – alle machen mit, auch wenn sie nicht dran sind. Reihen abschließen!'}};
 const gameOf=g=>g&&GAMES[g.game]?g.game:'arsch';
 let rstore=null,trickHold=0,diceAnim=0;
 const RS=()=>rstore||store;
@@ -3456,6 +3850,8 @@ function newRoomData(game){
   if(game==='stich'){d.game='stich';d.rules=Object.assign({},ST_RULES);d.bots=store.online?0:2}
   else if(game==='dice'){d.game='dice';d.rules=Object.assign({},DC_RULES);d.bots=store.online?0:1}
   else if(game==='cabo'){d.game='cabo';d.rules=Object.assign({},CB_RULES);d.bots=store.online?0:2}
+  else if(game==='p10'){d.game='p10';d.rules=Object.assign({},P10_RULES);d.bots=store.online?0:2}
+  else if(game==='qwixx'){d.game='qwixx';d.rules=Object.assign({},QX_RULES);d.bots=store.online?0:2}
   else d.bots=store.online?0:2;
   return d;
 }
@@ -3476,7 +3872,7 @@ function localTableStore(){
 function savedTable(){try{const s=JSON.parse(ls.get('al_table')||'null');return s&&s.phase!=='over'&&s.phase!=='closed'?s:null}catch(e){return null}}
 
 // ----- Laufende Partien: Hilfen -----
-function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':k==='cabo'?['peek','play','act'].includes(G.phase):false}
+function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':k==='cabo'?['peek','play','act'].includes(G.phase):k==='p10'?G.phase==='play':k==='qwixx'?['roll','white','color'].includes(G.phase):false}
 // Welcher Sitz wird von diesem Geraet gesteuert? (am Tisch-Handy: jeder menschliche Spieler)
 function ctrlSeat(){
   if(!G||!G.players)return -1;
@@ -3493,9 +3889,13 @@ function onGameOther(g,prev){
   if(k==='dice'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
   if(k==='cabo'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='cabo'){cbAnnounce(nm(g,g.fx.s));sfx('turn')}else if(f==='swap'||f==='xswap')sfx('deal');else if(f==='miss')sfx('lose');else sfx('card');setTimeout(render,1600)}
   if(k==='cabo'&&prev&&g.round!==prev.round){sfx('deal');cbSel.clear();cbOpp=null;cbShow=null}
+  if(k==='p10'&&prev){if(g.round!==prev.round){sfx('deal');p10Sel.clear();p10Stage=[]}else if(g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='lay')sfx('win');else if(f==='skip'){sfx('lose');if(g.fx.x===mySeatOf(g))toast('⏭ Du musst einmal aussetzen!')}else if(f==='hit')sfx('deal');else sfx('card')}
+    const ms=mySeatOf(g);if(ms>=0&&g.hands[ms])[...p10Sel].forEach(c=>{if(!g.hands[ms].includes(c))p10Sel.delete(c)});if(ms>=0&&g.hands[ms])p10Stage=p10Stage.map(x=>x.filter(c=>g.hands[ms].includes(c))).filter(x=>x.length)}
+  if(k==='qwixx'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
+  if(k==='qwixx'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)&&g.locked.some((x,r)=>x>=0&&prev.locked[r]<0))sfx('win');
   const cs=(()=>{const t=G;G=g;const r=ctrlSeat();G=t;return r})();
   if(prev&&g.v!==prev.v&&g.turn!==prev.turn&&cs>=0&&g.turn===cs&&!g.local)setTimeout(()=>sfx('turn'),250);
-  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):k==='cabo'?cbPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
+  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):k==='cabo'?cbPlaces(g):k==='p10'?p10Places(g):k==='qwixx'?qxPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
   if(g.phase==='over'&&!g.local&&store.online&&seen.recG!==code+':'+g.match){seen.recG=code+':'+g.match;const c=code;setTimeout(()=>store.rpc&&store.rpc('record_game',{p_code:c}).then(()=>setTimeout(loadGS,800)).catch(()=>{}),1200)}
   G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();
   const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
@@ -3505,11 +3905,11 @@ function otherBot(){
   if(!G||botTimer||G.paused||!otherRunning())return;
   const k=gameOf(G),isHost=G.host===myId||G.local,me_=mySeat();
   if(!isHost&&me_<0)return;
-  const need=k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
+  const need=k==='p10'?!!(G.phase==='play'&&G.players[G.turn]&&G.players[G.turn].bot):k==='qwixx'?(G.phase==='roll'?!!G.players[G.active].bot:G.phase==='white'?G.players.some((p,s)=>p.bot&&G.wc[s]==null):G.phase==='color'?!!G.players[G.active].bot:false):k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
   if(!need)return;
   const v=G.v,delay=(k==='dice'?750:950)+(trickHold>Date.now()?trickHold-Date.now():0)+(isHost?0:7000+Math.max(0,me_)*1500);
   botTimer=setTimeout(()=>{botTimer=null;if(!G||G.paused)return;if(G.v!==v){maybeBot();return}if(busy){setTimeout(maybeBot,300);return}
-    const g=clone(G);const ok=k==='stich'?stBotStep(g):k==='cabo'?cbBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
+    const g=clone(G);const ok=k==='stich'?stBotStep(g):k==='cabo'?cbBotStep(g):k==='p10'?p10BotStep(g):k==='qwixx'?qxBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
 }
 function othersTotal(){return G.local?(G.names||[]).length+(G.bots||0):Math.min(lobby.length,8)+(G.bots||0)}
 
@@ -3517,8 +3917,10 @@ function othersTotal(){return G.local?(G.names||[]).length+(G.bots||0):Math.min(
 function otherAct(a,v,el,g,s){
   const k=gameOf(G),host=G.host===myId||G.local,info=GAMES[k];
   if(k==='cabo'&&a.startsWith('cb-'))return cbAct(a,v);
+  if(k==='p10'&&a.startsWith('p10-'))return p10Act(a,v);
+  if(k==='qwixx'&&a.startsWith('qx-'))return qxAct(a,v);
   switch(a){
-    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:k==='cabo'?CB_RULES:DC_RULES,g.rules||{});
+    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:k==='cabo'?CB_RULES:k==='p10'?P10_RULES:k==='qwixx'?QX_RULES:DC_RULES,g.rules||{});
       g.rules[key]=v==='true'?true:v==='false'?false:v;if(k==='dice'&&key==='mode'&&v==='real')g.bots=0;commit(g);return true}
     case 'bot+':if(host&&othersTotal()<info.max&&!(k==='dice'&&DR(G).mode==='real')){g.bots=(g.bots||0)+1;commit(g)}return true;
     case 'bot-':if(host&&g.bots>0){g.bots--;commit(g)}return true;
@@ -3528,9 +3930,9 @@ function otherAct(a,v,el,g,s){
     case 'start':{if(!host)return true;const t=othersTotal();if(t<info.min||t>info.max)return true;
       const pl=G.local?(G.names||[]).map((x,i)=>({id:'L'+i,name:x,bot:false})):lobby.slice(0,8).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
       for(let i=0;i<(g.bots||0);i++)pl.push({id:'bot'+i,name:BOTS[i],bot:true});
-      g.players=pl;if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else dcStart(g);cbSel.clear();cbOpp=null;commit(g);return true}
-    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else dcStart(g);commit(g)}return true;
-    case 'next':if(G.phase==='rend'&&(s>=0||G.local)&&Date.now()-(seen.endAt||0)>=2500){if(k==='stich'){stNext(g);commit(g)}else if(k==='cabo'&&cbNextRound(g)){cbSel.clear();cbOpp=null;cbShow=null;commit(g)}}return true;
+      g.players=pl;if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else if(k==='p10'){p10Start(g);p10Sel.clear();p10Stage=[]}else if(k==='qwixx')qxStart(g);else dcStart(g);cbSel.clear();cbOpp=null;commit(g);return true}
+    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else if(k==='p10')p10Start(g);else if(k==='qwixx')qxStart(g);else dcStart(g);commit(g)}return true;
+    case 'next':if(G.phase==='rend'&&(s>=0||G.local)&&Date.now()-(seen.endAt||0)>=2500){if(k==='stich'){stNext(g);commit(g)}else if(k==='cabo'&&cbNextRound(g)){cbSel.clear();cbOpp=null;cbShow=null;commit(g)}else if(k==='p10'&&p10NextHand(g)){p10Sel.clear();p10Stage=[];commit(g)}}return true;
     case 'lv-end':closeModal();if(s>=0||G.local){g.phase='over';g.paused=null;g.turn=-1;if(k==='stich'&&G.phase!=='rend'&&G.phase!=='over'){/* Runde abbrechen */}commit(g)}return true;
     // Wizard
     case 'st-trump':{const c=ctrlSeat();if(stSetTrump(g,c,+v))commit(g);return true}
@@ -3571,10 +3973,12 @@ function drawOther(app,top,host){
   if(G.phase==='lobby')return drawOtherLobby(app,top,host,k);
   if(k==='stich')return drawStich(app,top);
   if(k==='cabo')return drawCabo(app,top);
+  if(k==='p10')return drawP10(app,top);
+  if(k==='qwixx')return drawQwixx(app,top);
   return drawDice(app,top);
 }
 function drawOtherLobby(app,top,host,k){
-  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):k==='cabo'?CR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
+  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):k==='cabo'?CR(G):k==='p10'?PR(G):k==='qwixx'?QR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
   const seg=(key,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[key])===String(v)?'on':'')+'" data-a="rule" data-k="'+key+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
   let li='';
   if(G.local){li=(G.names||[]).map((x,i)=>'<li><span>'+avatar({e:'🎲',c:hashCol(x)},x,0,34)+esc(x)+'</span><button class="small ghost" data-a="ln-del" data-v="'+i+'">✕</button></li>').join('')}
@@ -3583,6 +3987,7 @@ function drawOtherLobby(app,top,host,k){
   for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[r.bots||'normal']+'</span></li>';
   const canBots=!(k==='dice'&&r.mode==='real');
   let set='';
+  if((k==='p10'||k==='qwixx')&&(G.bots||0))set='<div class="panel"><h3>Einstellungen</h3>'+(host?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'<p class="note" style="margin:0">Computer: '+({easy:'leicht',normal:'normal',hard:'schwer'}[r.bots]||'normal')+'</p>')+'</div>';
   if(k==='cabo')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Gedächtnis-Hilfe<small>Karten, die du kennst, bleiben für dich sichtbar (leichter als das Original).</small></span>'+seg('help',[[false,'aus'],[true,'an']])+'</div>'+
     ((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'')
@@ -3604,7 +4009,7 @@ function drawOtherLobby(app,top,host,k){
     '<div class="panel"><label>'+(G.local?'Wer spielt mit?':'Am Tisch')+' ('+t+' von '+info.min+'–'+info.max+')</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul>'+nameAdd+'</div>'+friendInvitePanel()+
     (host?(canBots?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=info.max?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+((G.bots||0)>0?'':'disabled')+'>− Computer</button></div>':'')+
       '<button data-a="start" '+(okStart?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<info.min?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens '+info.min+' Spieler.</p>':'')
-      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:k==='cabo'?CB_RULES_TXT:DC_RULES_TXT)+'</div>');
+      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:k==='cabo'?CB_RULES_TXT:k==='p10'?P10_RULES_TXT:k==='qwixx'?QX_RULES_TXT:DC_RULES_TXT)+'</div>');
 }
 
 // ----- Wizard-Ansicht -----
@@ -3882,6 +4287,158 @@ const CB_RULES_TXT='<details><summary>Regeln Cabo</summary>Ziel: am Ende einer R
 // Einblendung, wenn jemand CABO ruft
 function cbAnnounce(name){const el=document.createElement('div');el.className='cbann';el.innerHTML='<b>📣 CABO!</b><span>'+esc(name)+' hat gerufen – alle anderen haben noch einen Zug</span>';
   document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+
+// ===================== Phase 10 =====================
+let p10Sel=new Set(),p10Stage=[],p10SortCol=false;
+const P10_CC=['r','y','g','b'];
+function p10Card(c,cls,attrs){
+  if(c==null)return '<div class="pc back'+(cls?' '+cls:'')+'" '+(attrs||'')+'><span>10</span></div>';
+  if(p10W(c))return '<div class="pc wild'+(cls?' '+cls:'')+'" '+(attrs||'')+'><b>J</b><i>Joker</i></div>';
+  if(p10S(c))return '<div class="pc skip'+(cls?' '+cls:'')+'" '+(attrs||'')+'><b>⏭</b><i>Aussetzen</i></div>';
+  return '<div class="pc c'+P10_CC[p10C(c)]+(cls?' '+cls:'')+'" '+(attrs||'')+'><b>'+p10V(c)+'</b></div>';
+}
+function p10Sorted(h){return h.slice().sort((a,b)=>{const k=c=>p10W(c)?200:p10S(c)?300:p10SortCol?p10C(c)*20+p10V(c):p10V(c)*4+p10C(c);return k(a)-k(b)})}
+// Folge in richtiger Reihenfolge anzeigen (Joker an ihren Platz)
+function p10Show(gr){
+  if(gr.t!=='run')return gr.c;
+  const nat=gr.c.filter(p10N),w=gr.c.filter(p10W),out=[];
+  for(let v=gr.lo;v<gr.lo+gr.c.length;v++){const c=nat.find(x=>p10V(x)===v);out.push(c!=null?c:w.pop())}
+  return out.filter(x=>x!=null);
+}
+function p10Act(a,v){
+  const s=mySeat(),g=clone(G);if(s<0)return true;const my=G.turn===s&&G.phase==='play';
+  switch(a){
+    case 'p10-sel':{const c=+v;if(!G.hands[s].includes(c))return true;p10Sel.has(c)?p10Sel.delete(c):p10Sel.add(c);render();return true}
+    case 'p10-sort':p10SortCol=!p10SortCol;render();return true;
+    case 'p10-draw':if(my&&p10Draw(g,s,v==='disc'?'disc':'deck')){sfx('card');commit(g)}return true;
+    case 'p10-stage':{if(!p10Sel.size)return true;p10Stage.push([...p10Sel]);p10Sel.clear();render();return true}
+    case 'p10-unstage':p10Stage=[];p10Sel.clear();render();return true;
+    case 'p10-lay':{const def=P10_PH[G.ph[s]],grs=p10Stage.slice();if(p10Sel.size)grs.push([...p10Sel]);
+      if(grs.length!==def.length){toast('Deine Phase braucht '+def.length+' Gruppe'+(def.length>1?'n':'')+'.');return true}
+      if(p10Lay(g,s,grs)){p10Stage=[];p10Sel.clear();sfx('win');commit(g)}else toast('Das passt nicht zu Phase '+(G.ph[s]+1)+': '+P10_TXT[G.ph[s]]+'.');return true}
+    case 'p10-hint':{const p=p10Plan(G.hands[s],G.ph[s]);if(p.groups){p10Stage=p.groups.slice(0,-1).map(x=>x.slice());p10Sel=new Set(p.groups[p.groups.length-1]);render()}else toast('Dir fehlen noch '+p.miss+' Karte'+(p.miss===1?'':'n')+' für deine Phase.');return true}
+    case 'p10-hit':{const gi=+v,c=[...p10Sel][0];if(c==null){toast('Wähl erst eine Karte aus deiner Hand.');return true}
+      if(!G.laid[s]){toast('Anlegen geht erst, wenn du deine eigene Phase ausgelegt hast.');return true}
+      if(p10Hit(g,s,c,gi)){p10Sel.delete(c);sfx('deal');commit(g)}else toast('Die Karte passt hier nicht.');return true}
+    case 'p10-disc':{if(!my||!G.drew)return true;if(p10Sel.size!==1){toast('Wähl genau eine Karte zum Abwerfen.');return true}const c=[...p10Sel][0];
+      if(p10S(c)){openModal('<h2>⏭ Wer soll aussetzen?</h2><div class="col">'+G.players.map((p,t)=>t===s?'':'<button class="ghost" data-a="p10-skipto" data-v="'+t+'" '+(G.skip[t]>0&&G.players.some((_,u)=>u!==s&&G.skip[u]===0)?'disabled':'')+'>'+esc(p.name)+' · Phase '+(G.ph[t]+1)+'</button>').join('')+'</div><button class="ghost" data-a="modal-x" style="margin-top:8px">Abbrechen</button>');return true}
+      if(p10Discard(g,s,c)){p10Sel.clear();p10Stage=[];sfx('card');commit(g)}return true}
+    case 'p10-skipto':{closeModal();const c=[...p10Sel][0];if(p10Discard(g,s,c,+v)){p10Sel.clear();p10Stage=[];sfx('card');commit(g)}return true}
+    case 'p10-block':openModal('<h2>📒 Punkte</h2>'+p10Block(G)+'<button class="ghost" data-a="modal-x" style="margin-top:10px">Schließen</button>');return true;
+  }
+  return false;
+}
+function p10Block(g){return '<div class="blockw"><table class="rk block"><tr><th>R</th>'+g.players.map(p=>'<th>'+esc(p.name.slice(0,7))+'</th>').join('')+'</tr>'+
+  (g.hist||[]).map((h,r)=>'<tr><td>'+(r+1)+'</td>'+h.sc.map((x,s)=>'<td>'+(h.done[s]?'✅':'')+(h.out===s?'🏁':'')+'<b>'+x+'</b></td>').join('')+'</tr>').join('')+
+  '<tr class="sum"><td>Σ</td>'+g.pts.map((x,s)=>'<td><b>'+x+'</b><br><small>Phase '+Math.min(g.ph[s]+1,10)+(g.ph[s]>=10?' ✓':'')+'</small></td>').join('')+'</tr></table></div>'}
+function drawP10(app,top){
+  const n=G.players.length,me_=mySeat();
+  if(G.phase==='over'||G.phase==='rend'){
+    const over=G.phase==='over',h=G.hist[G.hist.length-1],medal=['🥇','🥈','🥉'],pl=p10Places(G);
+    if(!over){const ek=code+':'+G.match+':'+G.round;if(seen.endK!==ek){seen.endK=ek;seen.endAt=Date.now()}}
+    const cd=over?0:Math.max(0,3-Math.ceil((Date.now()-seen.endAt)/1000));if(cd>0)setTimeout(render,400);
+    setHTML(app,top+'<h1 style="margin-top:6px">'+(over?'Endstand':'Runde '+G.round+' vorbei')+'</h1><p class="note" style="text-align:center">'+esc(G.msg||'')+'</p>'+
+      '<div class="panel"><ul class="plist">'+p10Standings(G).map(x=>'<li><span>'+(over?(medal[pl[x.s]]||''):'')+' '+esc(nm(G,x.s))+(h&&h.done[x.s]?' ✅':'')+'</span><span class="p10st"><b>'+(x.ph>=10?'Fertig!':'Phase '+(x.ph+1))+'</b><small>'+x.pts+' Punkte'+(h?' (+'+h.sc[x.s]+')':'')+'</small></span></li>').join('')+'</ul></div>'+
+      '<div class="panel"><h3>Punkte</h3>'+p10Block(G)+'</div>'+
+      (over?(me_>=0?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>':(me_>=0?'<button data-a="next" '+(cd>0?'disabled':'')+'>Nächste Runde'+(cd>0?' ('+cd+')':'')+'</button>':'')));
+    return;
+  }
+  const my=me_>=0&&G.turn===me_&&G.phase==='play',fx=G.fx;
+  let opps='';
+  for(let k=1;k<=n;k++){const s=((me_<0?0:me_)+k)%n;if(s===me_)continue;const p=G.players[s];
+    opps+='<div class="opp p10o'+(G.turn===s&&!G.paused?' turn':'')+(fx&&fx.k==='skip'&&fx.x===s?' fxs':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.skip[s]?'<span class="tag">⏭</span>':'')+'</div>'+
+      '<div class="r"><span class="bp'+(G.laid[s]?' ok':'')+'">Phase '+(G.ph[s]+1)+(G.laid[s]?' ✓':'')+'</span></div><div class="c">'+G.hands[s].length+' Karten · '+G.pts[s]+' P</div></div>'}
+  const top1=G.disc.length?G.disc[G.disc.length-1]:null,canDraw=my&&!G.drew;
+  const table='<div class="table p10t"><div class="cbpiles"><div class="cbpile"><small>Stapel · '+G.deck.length+'</small>'+p10Card(null,'stack'+(canDraw?' pick':''),canDraw?'data-a="p10-draw" data-v="deck"':'')+'</div>'+
+    '<div class="cbpile"><small>Ablage</small>'+(top1!=null?p10Card(top1,canDraw&&!p10S(top1)?'pick':'',canDraw&&!p10S(top1)?'data-a="p10-draw" data-v="disc"':''):'<div class="pc empty"></div>')+'</div></div><div class="msg">'+esc(G.msg||'')+'</div></div>';
+  // ausliegende Phasen
+  const canHit=my&&G.drew&&me_>=0&&G.laid[me_]&&p10Sel.size===1;
+  const laid=G.groups.length?'<div class="panel p10laid"><h3>Ausgelegt</h3>'+G.groups.map((gr,gi)=>{const ok=canHit&&p10Fit(gr,[...p10Sel][0]);
+    return '<div class="p10g'+(ok?' hit':'')+(fx&&fx.k==='hit'&&fx.x===gi?' fx':'')+'" '+(canHit?'data-a="p10-hit" data-v="'+gi+'"':'')+'><small>'+esc(nm(G,gr.o))+' · '+(gr.t==='set'?'Satz '+gr.v:gr.t==='run'?'Folge '+gr.lo+'–'+(gr.lo+gr.c.length-1):'Farbe '+P10_COL[gr.k])+'</small><div class="p10gc">'+p10Show(gr).map(c=>p10Card(c,'mini')).join('')+'</div></div>'}).join('')+'</div>':'';
+  let mine='',panel='';
+  if(me_>=0){
+    const H=p10Sorted(G.hands[me_]),staged=new Set(p10Stage.flat());
+    mine='<div class="mebar" data-a="pinfo" data-v="me"><span>'+esc(nm(G,me_))+'</span><span>Phase '+(G.ph[me_]+1)+(G.laid[me_]?' ✓':'')+' · '+G.pts[me_]+' P</span></div>'+
+      '<div class="p10goal"><b>Phase '+(G.ph[me_]+1)+':</b> '+esc(P10_TXT[G.ph[me_]])+'<button class="small ghost" data-a="p10-sort">'+(p10SortCol?'nach Zahl':'nach Farbe')+'</button></div>'+
+      '<div class="p10hand">'+H.filter(c=>!staged.has(c)).map(c=>p10Card(c,(p10Sel.has(c)?'sel':'')+(G.last===c&&my?' new':''),'data-a="p10-sel" data-v="'+c+'" data-key="h'+c+'"')).join('')+'</div>'+
+      (p10Stage.length?'<div class="p10stage">'+p10Stage.map((gc,i)=>'<div><small>Gruppe '+(i+1)+'</small><div class="p10gc">'+gc.map(c=>p10Card(c,'mini')).join('')+'</div></div>').join('')+'<button class="small ghost" data-a="p10-unstage">Zurücknehmen</button></div>':'');
+    if(my&&!G.drew)panel='<div class="panel act"><b>Du bist dran – zieh eine Karte</b><div class="row"><button data-a="p10-draw" data-v="deck">🂠 Vom Stapel</button><button class="ghost" data-a="p10-draw" data-v="disc" '+(top1!=null&&!p10S(top1)?'':'disabled')+'>Ablage nehmen</button></div></div>';
+    else if(my){
+      const def=P10_PH[G.ph[me_]],layBtns=G.laid[me_]?'':
+        (def.length>1&&p10Stage.length<def.length-1?'<button class="ghost" data-a="p10-stage" '+(p10Sel.size?'':'disabled')+'>Gruppe '+(p10Stage.length+1)+' merken</button>':'<button data-a="p10-lay" '+(p10Sel.size?'':'disabled')+'>✅ Phase auslegen</button>')+'<button class="ghost" data-a="p10-hint">💡 Vorschlag</button>';
+      panel='<div class="panel act"><b>'+(G.laid[me_]?'Leg passende Karten an die ausgelegten Gruppen an – oder wirf ab':'Wähl Karten für deine Phase – oder wirf eine Karte ab')+'</b>'+
+        '<div class="row wrap">'+layBtns+'<button class="'+(G.laid[me_]?'':'ghost')+'" data-a="p10-disc" '+(p10Sel.size===1?'':'disabled')+'>Abwerfen</button></div>'+(G.laid[me_]&&p10Sel.size===1?'<span class="note">Tipp auf eine leuchtende Gruppe zum Anlegen.</span>':'')+'</div>';
+    }else panel='<p class="note" style="text-align:center">'+(G.turn>=0?esc(nm(G,G.turn))+' ist dran …':'')+(G.skip[me_]?' · Du musst einmal aussetzen ⏭':'')+'</p>';
+    panel+='<button class="ghost" data-a="p10-block">📒 Punkte</button>';
+  }else mine='<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+(mySeat()>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  setHTML(app,top+'<div class="opps'+(n>3?' many':'')+'">'+opps+'</div>'+table+pz+laid+mine+panel);
+}
+const P10_RULES_TXT='<details><summary>Regeln Phase 10</summary>Wer zuerst alle 10 Phasen der Reihe nach schafft, gewinnt. Jeder bekommt 10 Karten.<br><br>'+
+  '<b>Die Phasen:</b> '+P10_TXT.map((t,i)=>(i+1)+'. '+t).join(' · ')+'.<br>Drilling/Vierling = gleiche Zahlen, Folge = aufeinanderfolgende Zahlen (Farbe egal), Farbe = gleiche Farbe.<br><br>'+
+  '<b>Dein Zug:</b> Zieh vom Stapel oder nimm die oberste Karte der Ablage. Wenn du kannst, leg deine Phase komplett aus. Danach darfst du Karten an alle ausliegenden Gruppen anlegen. Zum Schluss wirfst du eine Karte ab.<br><br>'+
+  '<b>Joker</b> ersetzen jede Zahl und Farbe (jede Gruppe braucht aber mindestens eine echte Karte). <b>Aussetzen</b> wirfst du ab und bestimmst, wer einmal aussetzen muss.<br><br>'+
+  '<b>Rundenende:</b> Wer keine Karten mehr hat, beendet die Runde. Wer seine Phase geschafft hat, macht nächste Runde mit der nächsten weiter, die anderen wiederholen. Strafpunkte für Handkarten: 1–9 = 5, 10–12 = 10, Aussetzen = 15, Joker = 25. Schaffen mehrere Phase 10 gleichzeitig, gewinnt wer die wenigsten Punkte hat.</details>';
+
+// ===================== Qwixx =====================
+const QX_CLS=['qr','qy','qg','qb'];
+function qxDie(v,cls){return v==null?'':'<span class="qd '+cls+'">'+dieHtml(v,'','')+'</span>'}
+function qxAct(a,v){
+  const s=mySeat(),g=clone(G);if(s<0)return true;
+  switch(a){
+    case 'qx-roll':if(qxRoll(g,s)){sfx('deal');commit(g)}return true;
+    case 'qx-w':if(qxWhite(g,s,+v)){sfx(+v>=0?'deal':'pop');commit(g)}return true;
+    case 'qx-c':{if(v==='-1'){if(G.wc[s]===-1){openModal('<h2>❌ Fehlwurf?</h2><p class="note">Du hast in diesem Zug noch nichts angekreuzt. Wenn du jetzt passt, bekommst du einen Fehlwurf (−5 Punkte).</p><div class="row"><button data-a="qx-c-ok">Ja, passen</button><button class="ghost" data-a="modal-x">Zurück</button></div>');return true}
+      if(qxColor(g,s,-1))commit(g);return true}
+      const [wi,r]=String(v).split(':').map(Number);if(qxColor(g,s,wi,r)){sfx('deal');commit(g)}return true}
+    case 'qx-c-ok':closeModal();if(qxColor(g,s,-1)){sfx('lose');commit(g)}return true;
+  }
+  return false;
+}
+function qxSheet(sh,s,opts){
+  // opts: Map "r:v" -> {a,v} anklickbar
+  return '<div class="qsheet">'+[0,1,2,3].map(r=>{const row=sh.r[r],lockedBy=G.locked[r];
+    return '<div class="qrow '+QX_CLS[r]+(lockedBy>=0?' locked':'')+'">'+[...Array(11)].map((_,i)=>{const num=qxNum(r,i),x=row.includes(i),past=!x&&row.length&&i<row[row.length-1],o=opts&&opts.get(r+':'+num);
+      return '<span class="qc'+(x?' x':'')+(past?' past':'')+(o?' can':'')+(i===10?' last':'')+'" '+(o?'data-a="'+o.a+'" data-v="'+o.v+'"':'')+'>'+num+'</span>'}).join('')+
+      '<span class="qc lk'+(sh.lk[r]?' x':'')+'">🔒</span><span class="qn">'+(row.length+(sh.lk[r]?1:0))+'</span></div>'}).join('')+
+    '<div class="qfoot"><span>Fehlwürfe '+[0,1,2,3].map(i=>'<i class="'+(i<sh.pen?'on':'')+'">✕</i>').join('')+'</span><b>'+qxScore(sh)+' Punkte</b></div></div>';
+}
+function drawQwixx(app,top){
+  const n=G.players.length,me_=mySeat();
+  if(G.phase==='over'){
+    const st=qxStandings(G),pl=qxPlaces(G),medal=['🥇','🥈','🥉'];
+    setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><p class="note" style="text-align:center">'+esc(G.msg||'')+'</p><div class="panel"><ul class="plist">'+st.map(x=>{const sh=G.sheets[x.s];
+      return '<li><span>'+(medal[pl[x.s]]||'')+' '+esc(nm(G,x.s))+'</span><span class="p10st"><b>'+x.t+' Punkte</b><small>'+[0,1,2,3].map(r=>'<i class="qdot '+QX_CLS[r]+'"></i>'+qxTri(sh.r[r].length+(sh.lk[r]?1:0))).join(' ')+(sh.pen?' · −'+sh.pen*5:'')+'</small></span></li>'}).join('')+'</ul></div>'+
+      (me_>=0?'<h3>Dein Block</h3>'+qxSheet(G.sheets[me_],me_,null):'')+
+      (me_>=0?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');
+    return;
+  }
+  const d=G.dice,ws=d?d.w[0]+d.w[1]:0,rolling=diceAnim>Date.now();
+  let opps='';
+  for(let k=1;k<=n;k++){const s=((me_<0?0:me_)+k)%n;if(s===me_)continue;const p=G.players[s],sh=G.sheets[s];
+    opps+='<div class="opp qxo'+(G.active===s?' turn':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.active===s?'<span class="tag">🎲</span>':'')+'</div>'+
+      '<div class="qbars">'+[0,1,2,3].map(r=>'<span class="'+QX_CLS[r]+'"><i style="width:'+Math.round((sh.r[r].length+(sh.lk[r]?1:0))/12*100)+'%"></i></span>').join('')+'</div>'+
+      '<div class="c">'+qxScore(sh)+' P'+(sh.pen?' · ✕'+sh.pen:'')+(G.phase==='white'?(G.wc[s]==null?' · wählt …':' · ✓'):'')+'</div></div>'}
+  const dice=d?'<div class="qdice'+(rolling?' rolling':'')+'">'+qxDie(d.w[0],'qw')+qxDie(d.w[1],'qw')+d.c.map((x,r)=>G.locked[r]>=0?'':qxDie(x,QX_CLS[r])).join('')+'</div>':'';
+  const table='<div class="table qxt">'+(d&&G.phase!=='roll'?dice+'<div class="qsum">Weiß: <b>'+ws+'</b></div>':G.phase==='roll'?(d?dice:'')+'<div class="qsum">'+esc(nm(G,G.active))+' würfelt …</div>':'')+'<div class="msg">'+esc(G.msg||'')+'</div></div>';
+  let mine='',panel='';
+  if(me_>=0){
+    const sh=G.sheets[me_],opts=new Map(),act=G.active===me_;
+    if(G.phase==='white'&&G.wc[me_]==null&&!rolling)[0,1,2,3].forEach(r=>{if(qxCan(G,me_,r,ws))opts.set(r+':'+ws,{a:'qx-w',v:r})});
+    if(G.phase==='color'&&act&&!rolling)[0,1].forEach(wi=>[0,1,2,3].forEach(r=>{if(d.c[r]==null)return;const v=d.w[wi]+d.c[r];if(qxCan(G,me_,r,v)&&!opts.has(r+':'+v))opts.set(r+':'+v,{a:'qx-c',v:wi+':'+r})}));
+    mine='<div class="mebar" data-a="pinfo" data-v="me"><span>'+esc(nm(G,me_))+'</span><span>'+qxScore(sh)+' Punkte</span></div>'+qxSheet(sh,me_,opts);
+    if(G.phase==='roll'&&act)panel='<button data-a="qx-roll" class="bigroll">🎲 Würfeln</button>';
+    else if(G.phase==='white'&&G.wc[me_]==null)panel='<div class="panel act"><b>Weiße Summe '+ws+': in einer Reihe ankreuzen?</b><span class="note">Tippe die leuchtende Zahl an'+(act?' – danach darfst du noch Weiß + Farbe nutzen.':'.')+'</span><button class="ghost" data-a="qx-w" data-v="-1">Nicht ankreuzen</button></div>';
+    else if(G.phase==='color'&&act)panel='<div class="panel act"><b>Weiß + Farbe: noch eine Zahl ankreuzen?</b><span class="note">Kombiniere einen weißen mit einem farbigen Würfel – die passenden Zahlen leuchten.</span><button class="ghost" data-a="qx-c" data-v="-1">Nichts mehr ankreuzen</button></div>';
+    else panel='<p class="note" style="text-align:center">'+(G.phase==='white'?'Warte auf die anderen …':G.phase==='color'?esc(nm(G,G.active))+' wählt Weiß + Farbe …':esc(nm(G,G.active))+' ist dran …')+'</p>';
+  }else mine='<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+(mySeat()>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  setHTML(app,top+'<div class="opps'+(n>3?' many':'')+'">'+opps+'</div>'+table+pz+mine+panel);
+}
+const QX_RULES_TXT='<details><summary>Regeln Qwixx</summary>Kreuze in den vier Farbreihen möglichst viele Zahlen an – immer von links nach rechts. Übersprungene Zahlen sind verloren.<br><br>'+
+  '<b>Ein Zug:</b> Der aktive Spieler würfelt mit 6 Würfeln. 1. Alle dürfen die Summe der beiden weißen Würfel in einer beliebigen Reihe ankreuzen. 2. Nur der aktive Spieler darf zusätzlich einen weißen mit einem farbigen Würfel kombinieren und die Summe in der Reihe dieser Farbe ankreuzen. Kreuzt der aktive Spieler gar nichts an, bekommt er einen Fehlwurf (−5).<br><br>'+
+  '<b>Abschließen:</b> Die Zahl ganz rechts darfst du erst mit mindestens 5 Kreuzen in der Reihe ankreuzen – dann bekommst du das Schloss als Extrakreuz, und die Reihe ist für alle zu. Der Würfel dieser Farbe fällt weg.<br><br>'+
+  '<b>Ende:</b> sobald zwei Reihen abgeschlossen sind oder jemand 4 Fehlwürfe hat. Punkte je Reihe: 1 Kreuz = 1, 2 = 3, 3 = 6, 4 = 10 … 12 = 78. Die meisten Punkte gewinnen.</details>';
 </script>
 </body>
 </html>
