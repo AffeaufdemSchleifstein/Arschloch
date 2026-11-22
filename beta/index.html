@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-zYpzqvPdCSmw5Vw3gyXwagEkW/DMOz1suUoInBk92J8=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XFxz2Eh9TpKuoC01clBmk68icX7gBPcG1IjtHtLv/yI=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -894,6 +894,20 @@ body[data-surface=mystic] .table{border:10px solid #2f3b3a;background:radial-gra
 .rkg button span{font-size:22px;line-height:1}
 .rkg button.on{background:var(--gold);color:var(--onGold);border-color:transparent}
 .rk .rkp{display:block;font-size:11px;color:var(--mute);margin-left:30px}
+/* Erfolge & Freischaltungen im Spiel */
+.opp[data-a="pinfo"],.mebar[data-a="pinfo"],.pil,th[data-a="pinfo"]{cursor:pointer}
+.mebar[data-a="pinfo"]::after{content:'🏅';font-size:13px;margin-left:6px;opacity:.75}
+.pih{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pih b{display:block;font-size:19px}.pih small{color:var(--mute);font-size:12.5px}
+.pitabs{display:flex;width:100%;margin-bottom:10px}.pitabs button{flex:1}
+.pibody{max-height:58vh;overflow-y:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.pibody .panel{margin-bottom:10px}
+.rews{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.rew{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);opacity:.5;filter:grayscale(.8)}
+.rew.on{opacity:1;filter:none;border-color:rgba(95,224,138,.5);background:rgba(95,224,138,.08)}
+.rew.unk{opacity:.7}
+.rew b{font-size:12.5px}.rew small{font-size:10.5px;color:var(--mute);line-height:1.25}
+.rew.on small{color:#9ff0bd}
 </style>
 </head>
 <body>
@@ -2230,6 +2244,40 @@ function achHtml(st){
     return '<div class="ac'+(ok?' on':'')+'"><span>'+a[0]+'</span><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></div>'}).join('')+'</div></div>';
 }
 
+// ----- Erfolge & Freischaltungen eines Spielers (auch mitten im Spiel) -----
+const pinfoTab={t:'ach'};
+async function showPinfo(uid,name,bot){
+  const head='<div class="pih">'+avatar(null,name,0,44)+'<div><b>'+esc(name)+'</b><small>'+(uid===myId?'Das bist du':'Mitspieler')+'</small></div></div>';
+  if(bot){openModal(head+'<p class="note">Computergegner sammeln keine Erfolge. 🤖</p><button class="ghost" data-a="modal-x">Schließen</button>');return}
+  if(!store.online||!/^[0-9a-f-]{36}$/.test(String(uid))){openModal(head+'<p class="note">'+(uid===myId?'Erfolge gibt es nur mit Konto.':'Spielt ohne Konto – keine Erfolge.')+'</p><button class="ghost" data-a="modal-x">Schließen</button>');return}
+  openModal(head+'<p class="note">Lade …</p>');
+  let st=null,gs=null;
+  try{[st,gs]=await Promise.all([store.rpc('get_stats',{p_uid:uid}),store.rpc('game_stats',{p_uid:uid})])}catch(e){}
+  if(!modalOpen)return;
+  if(!st){openModal(head+'<p class="note">'+(uid===myId?'Erfolge gibt es nur mit Konto.':'Spielt ohne Konto – keine Erfolge.')+'</p><button class="ghost" data-a="modal-x">Schließen</button>');return}
+  pinfoData={uid,name,st,gs};pinfoTab.t='ach';drawPinfo();
+}
+let pinfoData=null;
+function drawPinfo(){
+  const d=pinfoData;if(!d)return;const {st,gs}=d;
+  const head='<div class="pih">'+avatar(st.avatar||null,d.name,st.wins,44)+'<div><b>'+esc(d.name)+'</b><small>'+(st.wins||0)+'× Präsident · '+(st.rounds||0)+' Runden Arschloch</small></div></div>';
+  const tabs='<div class="seg pitabs"><button class="'+(pinfoTab.t==='ach'?'on':'')+'" data-a="pi-tab" data-v="ach">🏅 Erfolge</button><button class="'+(pinfoTab.t==='rew'?'on':'')+'" data-a="pi-tab" data-v="rew">🎁 Freischaltungen</button></div>';
+  let body='';
+  if(pinfoTab.t==='ach')body=achHtml(st)+ach2Html(gs);
+  else{
+    const groups=[['Tische',SURF.map(x=>[x[1],x[3],'<span style="font-size:20px">'+x[2]+'</span>'])],['Karten',FRONTS.map(x=>[x[1],x[2],'<span class="mini cf-'+x[0]+'">A<i>♥</i></span>'])],
+      ['Kartenrücken',BACKS.map(x=>[x[1],x[2],'<span class="mini cb-'+x[0]+'"></span>'])],['Würfel',DICES.map(x=>[x[1],x[2],'<span class="mdie md-'+x[0]+'"><i></i><i></i><i></i></span>'])],
+      ['Spezial-Emotes',SPECIAL.map(x=>[x[2],x[0],'<span style="font-size:20px">'+x[1]+'</span>'])]];
+    let got=0,all=0;
+    body=groups.map(([t,l])=>'<div class="panel"><h3>'+t+'</h3><div class="rews">'+l.filter(x=>x[1]).map(([n,req,ic])=>{const ok=reqFor(req,st,gs);all++;if(ok)got++;
+      return '<div class="rew'+(ok?' on':ok===null?' unk':'')+'">'+ic+'<b>'+esc(n)+'</b><small>'+(ok?'✓ freigeschaltet':ok===null?'nicht sichtbar':esc(reqText(req).replace('🔒 ','')))+'</small></div>'}).join('')+'</div></div>').join('');
+    body='<p class="note" style="text-align:center;margin:0 0 8px">'+got+' von '+all+' besonderen Designs freigeschaltet</p>'+body;
+  }
+  openModal(head+tabs+'<div class="pibody">'+body+'</div><button class="ghost" data-a="modal-x" style="margin-top:10px">Schließen</button>');
+}
+function pinfoSeat(v){if(v==='me')return showPinfo(myId,me?me.display:(myName||'Du'),false);
+  if(G&&G.players&&G.players[+v]){const p=G.players[+v];return showPinfo(p.id,p.name,!!p.bot)}}
+
 /* ---------- Design ---------- */
 const SURF=[['felt','Filz','🟩'],['desk','Schreibtisch','🗄️'],['wood','Holzplatte','🪵'],['grass','Rasen','🌱'],['marble','Marmor','🏛️'],['space','Weltraum','🌌'],
   ['gold','Goldfilz','🥇',20],['throne','Thron','👑',70],['lava','Lava','🌋',150],['diamond','Diamant','💎',300],
@@ -2244,6 +2292,7 @@ const DICES=[['white','Klassisch'],['black','Schwarz'],['ruby','Rubin'],['gold',
   ['neon','Neon',{g:'dice',k:'kn',n:5,t:'5× Kniffel geworfen'}],['diamond','Diamant',{g:'dice',k:'wins',n:25,t:'25× Kniffel gewonnen'}]];
 let myGS=null;
 function unlockedReq(req){if(!req)return true;if(!me)return false;if(typeof req==='number')return presCount>=req;if(typeof req==='object')return !!(myGS&&myGS[req.g]&&(+myGS[req.g][req.k]||0)>=req.n);if(req==='stars5')return !!(quests&&quests.stars>=5);return !!(myStats&&myStats[req]>=1)}
+function reqFor(req,st,gs){if(!req)return true;if(!st)return false;if(typeof req==='number')return (+st.wins||0)>=req;if(typeof req==='object')return !!(gs&&gs[req.g]&&(+gs[req.g][req.k]||0)>=req.n);if(req==='stars5')return null;return (+st[req]||0)>=1}
 function reqText(req){if(req&&typeof req==='object')return '🔒 '+req.t;return typeof req==='number'?'🔒 '+req+'× Präsident':req==='stars5'?'🔒 5 Tagessterne':'🔒 Erfolg „Bombe auf Bombe“'}
 const BGS=[['bar','Bar','#5a3820'],['night','Nacht','#1a2550'],['living','Wohnzimmer','#6b5442'],['neon','Neon','#5a1a6d'],['concrete','Beton','#4a4d52']];
 const ACC={gold:['Gold','#f2c14e','#2b2100'],mint:['Mint','#5fe0b5','#06281c'],pink:['Pink','#ff7ab6','#3a0820'],sky:['Himmelblau','#6cc4ff','#06243a'],orange:['Orange','#ff9b42','#3a1a00'],white:['Weiß','#f2f2f2','#1a1a1a']};
@@ -2826,6 +2875,8 @@ function act(a,v,el){
     case 'av-clear':if(me)saveAvatar({});return;
     case 'push-off':return disablePush();
     case 'rk-mode':rankMode=v;return go('ranking');
+    case 'pinfo':if(el.dataset.u){const u=el.dataset.u,l=lobby.find(x=>x.id===u);return showPinfo(u,l?l.name:'Spieler',false)}return pinfoSeat(v);
+    case 'pi-tab':pinfoTab.t=v==='rew'?'rew':'ach';return drawPinfo();
     case 'rk-game':rankGame=GAMES[v]?v:'arsch';return go('ranking');
     case 'cdlock':case 'thlock':case 'peek':{sfx('pop');return peekStart(el.dataset.k,v)}
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
@@ -3244,7 +3295,7 @@ function drawGame(app){
 
   if(G.phase==='lobby'){
     const t=total();
-    let li=lobby.slice(0,8).map((p,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(p.av,p.name,p.wins,34)+'<span class="dot'+(online.has(p.id)||p.id===myId?' on':'')+'"></span></span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+
+    let li=lobby.slice(0,8).map((p,i)=>'<li style="--i:'+i+'"><span data-a="pinfo" data-u="'+esc(p.id)+'" class="pil"><span class="avw">'+avatar(p.av,p.name,p.wins,34)+'<span class="dot'+(online.has(p.id)||p.id===myId?' on':'')+'"></span></span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+
       (p.id===G.host?'<span class="tag gold">Host</span>':host&&store.online?'<button class="small ghost" data-a="kick" data-v="'+esc(p.id)+'" title="Entfernen">✕</button>':'')+'</li>').join('');
     const LV={easy:'leicht',normal:'normal',hard:'schwer'};
     for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[G.botLevel||'normal']+'</span></li>';
@@ -3304,7 +3355,7 @@ function drawGame(app){
     const st=lost?'Ass-Ende ✗':place>=0?'fertig ('+(place+1)+'.)':G.passed.includes(s)?'passt':'';
     const oh=open?'<div class="oh">'+G.hands[s].map(c=>isSpec(c)?'<span class="oc">'+SPEC_UI[c][0]+'</span>':'<span class="oc'+(su(c)===1||su(c)===2?' red':'')+'">'+RANKS[rk(c)]+'<i>'+SUITS[su(c)]+'</i></span>').join('')+'</div>':'';
     const conn=p.bot||!store.online||online.has(p.id);
-    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+(cnt===1&&G.phase==='play'?' lastc':'')+'" data-s="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+(isTeam(G)?'<span class="tdot t'+(s%2)+'"></span>':'')+crownOf(G,s)+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(realOpen?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+(cnt===1?' Karte':' Karten'))+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
+    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+(cnt===1&&G.phase==='play'?' lastc':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n"><span class="avw">'+avOf(p.id,p.name,p.bot)+'<span class="dot'+(conn?' on':'')+'" title="'+(conn?'verbunden':'nicht verbunden')+'"></span></span>'+(isTeam(G)?'<span class="tdot t'+(s%2)+'"></span>':'')+crownOf(G,s)+esc(p.name)+'</div><div class="r">'+esc(roleOf(G,s))+(realOpen?(roleOf(G,s)?' · ':'')+'spielt offen':'')+'</div><div class="c"><span>'+(place>=0||lost?'–':cnt+(cnt===1?' Karte':' Karten'))+'</span><span>'+(G.turn===s&&G.phase==='play'&&!p.bot?'<span id="tm" class="tm"></span>':st)+'</span></div>'+oh+'</div>';
   }
   const inStock=G.phase==='stock'&&G.stock&&G.stock.length===2;
   const pk=inStock?'stock'+G.round:pileKey(G);
@@ -3365,7 +3416,7 @@ function drawGame(app){
     const lbl=G.turn===me_?(G.solo?'Du legst allein weiter':'Du bist dran')+(R(G).aceRule&&G.hands[me_].length&&G.hands[me_].every(c=>rk(c)===ACE(G))?' · ⚠ Ass-Ende = letzter Platz':''):esc(nm(G,G.turn))+(G.solo?' legt allein weiter':' ist dran');
     stHtml='<div class="tbar'+(G.turn===me_?' me':'')+'"><span class="tl">'+lbl+'</span><div class="tt"><i id="tbarI"></i></div><b id="tbarN"></b></div>';
   }else if(G.phase==='play'||G.phase==='end')stHtml='';
-  const meHtml=me_>=0?'<div class="mebar"><span>'+(isTeam(G)?'<span class="tdot t'+(me_%2)+'"></span>':'')+crownOf(G,me_)+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
+  const meHtml=me_>=0?'<div class="mebar" data-a="pinfo" data-v="me"><span>'+(isTeam(G)?'<span class="tdot t'+(me_%2)+'"></span>':'')+crownOf(G,me_)+esc(nm(G,me_))+(roleOf(G,me_)?' · '+esc(roleOf(G,me_)):'')+((G.open||[]).includes(me_)?' · du spielst offen':'')+'</span><span>'+((G.ms&&G.ms[me_]&&G.ms[me_].pts)||0)+' Pkt · '+G.hands[me_].length+' Karten</span></div>':'';
   const handHtml='<div class="hand'+(dealAnim?' deal':'')+(wishUi?' mini':'')+'">'+hand+'</div>';
   const left=inStock&&G.turn===me_?'<button class="ghost" data-a="skip">Liegen lassen</button>':'<button class="'+(passOk?'passbtn'+(legalMoves(G,me_).length?'':' must'):'ghost')+'" data-a="pass" '+(passOk?'':'disabled')+'>'+(G.solo&&G.turn===me_?'Aufhören':'Passen')+'</button>';
   const showHg=G.phase==='play'&&G.turn===me_&&!G.paused;
@@ -3527,7 +3578,7 @@ function drawOtherLobby(app,top,host,k){
   const seg=(key,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[key])===String(v)?'on':'')+'" data-a="rule" data-k="'+key+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
   let li='';
   if(G.local){li=(G.names||[]).map((x,i)=>'<li><span>'+avatar({e:'🎲',c:hashCol(x)},x,0,34)+esc(x)+'</span><button class="small ghost" data-a="ln-del" data-v="'+i+'">✕</button></li>').join('')}
-  else li=lobby.slice(0,8).map((p,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(p.av,p.name,p.wins,34)+'<span class="dot'+(online.has(p.id)||p.id===myId?' on':'')+'"></span></span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+
+  else li=lobby.slice(0,8).map((p,i)=>'<li style="--i:'+i+'"><span data-a="pinfo" data-u="'+esc(p.id)+'" class="pil"><span class="avw">'+avatar(p.av,p.name,p.wins,34)+'<span class="dot'+(online.has(p.id)||p.id===myId?' on':'')+'"></span></span>'+esc(p.name)+(p.id===myId?' (du)':'')+'</span>'+
       (p.id===G.host?'<span class="tag gold">Host</span>':host&&store.online?'<button class="small ghost" data-a="kick" data-v="'+esc(p.id)+'" title="Entfernen">✕</button>':'')+'</li>').join('');
   for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[r.bots||'normal']+'</span></li>';
   const canBots=!(k==='dice'&&r.mode==='real');
@@ -3595,7 +3646,7 @@ function drawStich(app,top){
   const trumpTxt=G.trump>=0?ST_GEM[G.trump]+' '+ST_SUITS[G.trump]:'kein Trumpf',blind=stBlind(G)&&G.phase!=='juggle';
   let opps='';
   for(let i=1;i<=n;i++){const s=((viewS<0?0:viewS)+i)%n;if(s===viewS)continue;const p=G.players[s];
-    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'"><div class="n">'+(p.bot?avOf(p.id,p.name,true):avOf(p.id,p.name,false))+(s===G.dealer?'<span title="Geber">🎴</span>':'')+esc(p.name)+'</div>'+
+    opps+='<div class="opp'+(G.turn===s&&!G.paused?' turn':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n">'+(p.bot?avOf(p.id,p.name,true):avOf(p.id,p.name,false))+(s===G.dealer?'<span title="Geber">🎴</span>':'')+esc(p.name)+'</div>'+
       '<div class="bids">'+(G.bids[s]==null?'<span class="bp wait">'+(G.phase==='bid'&&G.turn===s?'sagt an …':'Ansage …')+'</span>':'<span class="bp" title="Ansage">🎯 '+G.bids[s]+'</span><span class="bp '+(G.won[s]===G.bids[s]?'ok':G.won[s]>G.bids[s]?'over':'')+'" title="Stiche">✋ '+G.won[s]+'</span>')+'</div>'+
       '<div class="c">'+G.hands[s].length+' Karten · '+G.scores[s]+' P</div>'+(blind&&G.hands[s].length?'<div class="ocard">'+G.hands[s].map(c=>stCardHtml(c,'mini')).join('')+'</div>':'')+'</div>'}
   const showLast=!G.trick.length&&G.lastTrick&&trickHold>Date.now();
@@ -3636,7 +3687,7 @@ function drawStich(app,top){
       stCardHtml(c,(sel.has(c)?'sel':'')+(stLock&&stLock.c===c?' locked':'')+(G.phase==='play'&&myTurn?(can(c)?' ok':' no'):''),'data-key="h'+c+'" '+(selectable?'data-a="st-sel" data-v="'+c+'"':''))).join('')+'</div>'+
       (blind?'<p class="note" style="text-align:center;margin:4px 0 0">🙈 Runde 1: Deine Karte siehst du nicht – aber die der anderen.</p>':'');
   }
-  const meB=viewS>=0?'<div class="mebar"><span>'+(G.local?'🎲 ':'')+esc(nm(G,viewS))+(viewS===G.dealer?' 🎴':'')+'</span><span>'+(G.bids[viewS]==null?'Ansage …':'🎯 '+G.bids[viewS]+' · ✋ '+G.won[viewS])+' · '+G.scores[viewS]+' P</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const meB=viewS>=0?'<div class="mebar"'+(G.local?'':' data-a="pinfo" data-v="me"')+'><span>'+(G.local?'🎲 ':'')+esc(nm(G,viewS))+(viewS===G.dealer?' 🎴':'')+'</span><span>'+(G.bids[viewS]==null?'Ansage …':'🎯 '+G.bids[viewS]+' · ✋ '+G.won[viewS])+' · '+G.scores[viewS]+' P</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
   const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+((mySeat()>=0||G.local)&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
   setHTML(app,top+'<div class="opps'+(n>4?' many':'')+'">'+opps+'</div>'+table+pz+meB+(G.local&&cs>=0&&G.phase!=='juggle'?'<p class="note" style="text-align:center;margin:4px 0">📱 Gib das Handy an <b>'+esc(nm(G,cs))+'</b></p>':'')+hand+panel);
 }
@@ -3654,7 +3705,7 @@ function drawDice(app,top){
     if(!real&&myTurn&&s===cs&&G.rolls>0&&!rolling){const p=dcScoreOf(k,G.dice);return '<td class="pot'+(p?'':' zero')+'" data-a="dc-score" data-v="'+k+'">'+(p||'0')+'</td>'}
     if(canEdit(s))return '<td class="ed empty" data-a="dc-cell" data-v="'+s+':'+k+'">+</td>';
     return '<td></td>'};
-  const head='<tr><th></th>'+G.players.map((p,s)=>'<th data-ps="'+s+'" class="'+(!real&&G.turn===s&&G.phase==='play'?'cur':'')+'">'+esc(p.name.slice(0,8))+'</th>').join('')+'</tr>';
+  const head='<tr><th></th>'+G.players.map((p,s)=>'<th data-ps="'+s+'" '+(G.local?'':'data-a="pinfo" data-v="'+s+'" ')+'class="'+(!real&&G.turn===s&&G.phase==='play'?'cur':'')+'">'+esc(p.name.slice(0,8))+'</th>').join('')+'</tr>';
   const row=k=>'<tr><td class="cn">'+DC_NAME[k]+'</td>'+G.players.map((_,s)=>cell(s,k)).join('')+'</tr>';
   const sum=(lbl,f,cls)=>'<tr class="'+(cls||'sum')+'"><td class="cn">'+lbl+'</td>'+tot.map(f).join('')+'</tr>';
   const sheet='<div class="blockw"><table class="dsheet">'+head+DC_UPPER.map(row).join('')+
@@ -3782,7 +3833,7 @@ function drawCabo(app,top){
   let opps='';
   for(let k=1;k<=n;k++){const s=((me_<0?0:me_)+k)%n;if(s===me_)continue;const p=G.players[s];
     const pick=act==='spy'||(act==='swap'&&s!==G.caboBy);
-    opps+='<div class="opp cbo'+(G.turn===s&&!G.paused&&G.phase!=='peek'?' turn':'')+'" data-s="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.caboBy===s?'<span class="tag gold">📣 CABO</span>':'')+'</div>'+
+    opps+='<div class="opp cbo'+(G.turn===s&&!G.paused&&G.phase!=='peek'?' turn':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.caboBy===s?'<span class="tag gold">📣 CABO</span>':'')+'</div>'+
       '<div class="cbol">'+G.lines[s].map((c,j)=>{const sel=cbOpp&&cbOpp[0]===s&&cbOpp[1]===j,face=c.up||cbShown(s,j);
         return cbCard(face?c.v:null,'mini'+(sel?' sel':'')+(fxHit(s,j)?' fx':'')+(G.caboBy===s&&act==='swap'?' lockd':''),pick?'data-a="cb-opp" data-v="'+s+':'+j+'"':'')}).join('')+'</div>'+
       '<div class="c">'+G.totals[s]+' Punkte'+(G.phase==='peek'?' · '+(G.ready[s]?'bereit ✓':'schaut …'):'')+'</div></div>'}
@@ -3818,7 +3869,7 @@ function drawCabo(app,top){
       panel='<div class="panel act"><b>'+CB_ACT_TXT[act]+'</b><span class="note">'+t+'</span><div class="row"><button data-a="cb-do" '+(ok?'':'disabled')+'>'+(act==='swap'?'Tauschen':'Anschauen')+'</button><button class="ghost" data-a="cb-skip">Überspringen</button></div></div>';
     }else panel='<p class="note" style="text-align:center">'+(G.turn>=0?esc(nm(G,G.turn))+' ist dran …':'')+(G.caboBy>=0?' · 📣 '+esc(nm(G,G.caboBy))+' hat CABO gerufen':'')+'</p>'+pts;
   }
-  const meB=me_>=0?'<div class="mebar"><span>'+esc(nm(G,me_))+(G.caboBy===me_?' 📣':'')+'</span><span>'+G.totals[me_]+' Punkte · '+G.lines[me_].length+' Karten</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const meB=me_>=0?'<div class="mebar" data-a="pinfo" data-v="me"><span>'+esc(nm(G,me_))+(G.caboBy===me_?' 📣':'')+'</span><span>'+G.totals[me_]+' Punkte · '+G.lines[me_].length+' Karten</span></div>':'<p class="note" style="text-align:center">Du schaust zu.</p>';
   const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+(mySeat()>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
   setHTML(app,top+'<div class="opps cbops'+(n>3?' many':'')+'">'+opps+'</div>'+table+pz+meB+mine+panel);
 }
