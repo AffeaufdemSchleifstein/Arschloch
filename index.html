@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-R0T8C1/N/A2vIk9cODRiupIq6Cdve4/LR95u6VCXIco=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-zYpzqvPdCSmw5Vw3gyXwagEkW/DMOz1suUoInBk92J8=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -888,6 +888,12 @@ body[data-surface=mystic] .table{border:10px solid #2f3b3a;background:radial-gra
 .cbann b{font-size:38px;color:#ffb36b;letter-spacing:1px;text-shadow:0 2px 10px rgba(255,120,40,.6)}
 .cbann span{font-size:14px;color:#f3e6d8}
 @keyframes cbann{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}20%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-60%) scale(.96)}}
+/* Rangliste: Spielauswahl */
+.rkg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.rkg button{height:auto;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;background:rgba(255,255,255,.06);color:var(--mute);border:1px solid var(--line)}
+.rkg button span{font-size:22px;line-height:1}
+.rkg button.on{background:var(--gold);color:var(--onGold);border-color:transparent}
+.rk .rkp{display:block;font-size:11px;color:var(--mute);margin-left:30px}
 </style>
 </head>
 <body>
@@ -1926,7 +1932,7 @@ function writeErr(e){toast(navigator.onLine===false?'Keine Internetverbindung.':
 let store=null,ready=false,offlineMode=false,me=null,myId=null,myName='',hashCode='';
 let view='home',viewArg=null,drafts={},acctTab='register',acctErr='',busyUi=false;
 let code=null,G=null,lobby=[],sub=null,sel=new Set(),wishSel=[],seen={},busy=false,botTimer=null,stale=false,loadTimer=null,enterT;
-let rankMode='all',monthWinner=null,ovOpen=false,fGames={},lockOn=false,lockV=-1,quests=null;
+let rankMode='all',rankGame='arsch',monthWinner=null,ovOpen=false,fGames={},lockOn=false,lockV=-1,quests=null;
 const QUEST_TXT={play3:'Spiele 3 Runden',play5:'Spiele 5 Runden',pres1:'Werde 1× Präsident',pres2:'Werde 2× Präsident',bomb1:'Lege eine Bombe',notlast3:'Werde 3× nicht Arschloch',aces3:'Bekomm 3 Asse auf die Hand',top2:'Lande 2× auf Platz 1 oder 2'};
 const qDone=q=>(+q.have||0)>=(+q.need||1);
 async function loadQuests(announce){
@@ -2325,7 +2331,7 @@ async function go(v,arg){
   if(v==='friends')loadFriends();
   if(v==='ranking'){rankRows=null;
     const d=new Date(),m0=new Date(d.getFullYear(),d.getMonth(),1),pm=new Date(d.getFullYear(),d.getMonth()-1,1),f=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-01';
-    try{rankRows=rankMode==='month'?await store.rpc('ranking_month2',{p_month:f(m0)}):await store.rpc('ranking')}catch(e){rankRows=[]}
+    try{rankRows=rankGame!=='arsch'?await store.rpc('ranking_game',{p_game:rankGame,p_month:rankMode==='month'?f(m0):null}):rankMode==='month'?await store.rpc('ranking_month2',{p_month:f(m0)}):await store.rpc('ranking')}catch(e){rankRows=[]}
     try{const l=(await store.rpc('ranking_month',{p_month:f(pm)})||[]).filter(x=>x.rounds>0).sort((a,b)=>b.points-a.points);
       monthWinner=l.length?{name:l[0].display,points:l[0].points,month:pm.toLocaleDateString('de-DE',{month:'long'})}:null}catch(e){monthWinner=null}
     render()}
@@ -2820,6 +2826,7 @@ function act(a,v,el){
     case 'av-clear':if(me)saveAvatar({});return;
     case 'push-off':return disablePush();
     case 'rk-mode':rankMode=v;return go('ranking');
+    case 'rk-game':rankGame=GAMES[v]?v:'arsch';return go('ranking');
     case 'cdlock':case 'thlock':case 'peek':{sfx('pop');return peekStart(el.dataset.k,v)}
     case 'wheel':wheelOpen=!wheelOpen;chatOpen=false;return renderChat();
     case 'emote':wheelOpen=false;renderChat();return send('emote',v);
@@ -3118,10 +3125,19 @@ function drawRanking(){
   let h=backBtn+'<h2>Rangliste</h2>';
   if(!me)return h+needAccount('die Rangliste');
   if(!rankRows)return h+'<p class="note">Lade …</p>';
-  const rows=rankRows.slice().filter(x=>rankMode!=='month'||x.rounds>0||x.uid===myId).sort((a,b)=>b.points-a.points||b.avg-a.avg);
   const mName=new Date().toLocaleDateString('de-DE',{month:'long'});
-  h='<button class="back" data-a="go" data-v="home">‹ Zurück</button><h2>Rangliste</h2>'+
-    '<div class="row" style="margin-bottom:12px"><button class="'+(rankMode==='all'?'':'ghost')+'" data-a="rk-mode" data-v="all">Gesamt</button><button class="'+(rankMode==='month'?'':'ghost')+'" data-a="rk-mode" data-v="month">Saison '+esc(mName)+'</button></div>'+
+  const gtabs='<div class="rkg">'+Object.entries(GAMES).map(([k,x])=>'<button class="'+(rankGame===k?'on':'')+'" data-a="rk-game" data-v="'+k+'"><span>'+x.icon+'</span>'+x.name+'</button>').join('')+'</div>';
+  const mtabs='<div class="row" style="margin-bottom:12px"><button class="'+(rankMode==='all'?'':'ghost')+'" data-a="rk-mode" data-v="all">Gesamt</button><button class="'+(rankMode==='month'?'':'ghost')+'" data-a="rk-mode" data-v="month">Saison '+esc(mName)+'</button></div>';
+  if(rankGame!=='arsch'){
+    const lowBest=rankGame==='cabo',gr=rankRows.slice().filter(x=>x.played>0||x.uid===myId).sort((a,b)=>b.points-a.points||b.wins-a.wins||(lowBest?(a.best??1e9)-(b.best??1e9):(b.best??-1e9)-(a.best??-1e9)));
+    h=backBtn+'<h2>Rangliste</h2>'+gtabs+mtabs+'<div class="panel"><table class="rk"><tr><th>#</th><th>Spieler</th><th>Punkte</th><th>Siege</th><th>'+(lowBest?'Bester':'Best')+'</th></tr>'+
+      gr.map((x,i)=>'<tr class="'+(x.uid===myId?'me':'')+'" data-a="go" data-v="profile" data-u="'+x.uid+'" style="cursor:pointer"><td>'+(i<3&&x.played?['🥇','🥈','🥉'][i]:i+1)+'</td><td><span class="rkn">'+avatar(x.avatar,x.display,0,24)+esc(x.display)+'</span><small class="rkp">'+x.played+' Partien</small></td><td><b>'+x.points+'</b></td><td>'+x.wins+'</td><td>'+(x.best==null?'–':x.best)+'</td></tr>').join('')+'</table></div>'+
+      '<p class="note">Punkte: Für jeden Mitspieler, den du in einer Partie hinter dir lässt, gibt es einen Punkt. '+(lowBest?'„Bester“ ist dein niedrigster Endstand.':'„Best“ ist deine höchste Punktzahl.')+' Gezählt werden Partien mit Konto'+(rankMode==='month'?' aus diesem Monat':'')+'.</p>';
+    if(gr.length<2)h+='<button class="ghost" data-a="go" data-v="friends">Freunde hinzufügen</button>';
+    return h;
+  }
+  const rows=rankRows.slice().filter(x=>rankMode!=='month'||x.rounds>0||x.uid===myId).sort((a,b)=>b.points-a.points||b.avg-a.avg);
+  h=backBtn+'<h2>Rangliste</h2>'+gtabs+mtabs+
     (monthWinner?'<div class="panel mwin"><span>👑</span><div><b>Monatssieger '+esc(monthWinner.month)+'</b><span>'+esc(monthWinner.name)+' mit '+monthWinner.points+' Punkten</span></div></div>':'');
   h+='<div class="panel"><table class="rk"><tr><th>#</th><th>Spieler</th><th>Punkte</th><th>Präs.</th><th>Schnitt</th></tr>'+
     rows.map((x,i)=>'<tr class="'+(x.uid===myId?'me':'')+'" data-a="go" data-v="profile" data-u="'+x.uid+'" style="cursor:pointer"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td><span class="rkn">'+avatar(x.avatar,x.display,x.wins,24)+esc(x.display)+'</span></td><td><b>'+x.points+'</b></td><td>'+pct(x.wins,x.rounds)+'</td><td>'+(x.rounds?x.avg+' %':'–')+'</td></tr>').join('')+'</table></div>'+
