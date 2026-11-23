@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-zglCLBV4pj1iqbTD6mtkaQitX5lMcMvBC+5dD7UnKKo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eVxODw9lagBxay/jASaKM/dY4knnCiSThbwoHqOOGs8=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1257,16 +1257,19 @@ body.low.xl-back .card.back{animation:none}
 /* Sprechblasen der Computer */
 .float.bub.quip{width:max-content;max-width:min(230px,78vw);font-size:13px;line-height:1.3;text-align:left;background:#fff;color:#1a1a1a;border-radius:14px;padding:8px 11px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .float.bub.quip b{color:#b8122e;font-size:11.5px}
-/* Coach */
-#coach{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 14px);width:min(440px,calc(100vw - 20px));z-index:60;background:rgba(18,20,30,.96);border:1px solid rgba(140,160,255,.35);
-  border-radius:18px;padding:12px 14px 10px;box-shadow:0 18px 50px rgba(0,0,0,.6);transform:translate(-50%,140%);opacity:0;transition:transform .55s var(--e-spring),opacity .3s;pointer-events:none}
-#coach.on{transform:translate(-50%,0);opacity:1;pointer-events:auto}
-#coach .ch{display:flex;align-items:center;gap:8px;margin-bottom:6px}#coach .ch span{color:var(--mute);font-size:13px;flex:1}
-#coach .cx{width:30px;height:30px;padding:0;margin:0;border-radius:50%;background:rgba(255,255,255,.08);color:var(--text)}
-#coach ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
-#coach li{font-size:13.5px;line-height:1.35;padding:7px 10px 7px 30px;border-radius:10px;position:relative;background:rgba(255,255,255,.05)}
-#coach li::before{position:absolute;left:9px;top:7px}#coach li.good::before{content:"✅"}#coach li.bad::before{content:"💡"}
-#coach .cl{background:none;color:var(--mute);font-size:12px;height:auto;padding:6px 0 0;margin:0;width:auto}
+/* Coach: kleine Pille oben rechts, klappt beim Antippen auf */
+#coach{position:fixed;right:10px;top:calc(env(safe-area-inset-top) + 58px);z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+  transform:translateX(130%);opacity:0;transition:transform .45s var(--e-spring),opacity .25s;pointer-events:none}
+#coach.on{transform:none;opacity:1;pointer-events:auto}
+#coach .cpill{width:auto;height:auto;margin:0;padding:6px 11px;border-radius:999px;font-size:12.5px;font-weight:700;background:rgba(22,24,36,.92);color:#fff;border:1px solid rgba(140,160,255,.45);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#coach .cbody{display:none;width:min(290px,calc(100vw - 20px));background:rgba(18,20,30,.97);border:1px solid rgba(140,160,255,.35);border-radius:14px;padding:9px 10px 6px;box-shadow:0 14px 36px rgba(0,0,0,.55)}
+#coach.open .cbody{display:block;animation:rowIn .35s var(--e-spring)}
+#coach .ch{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12.5px}#coach .ch b{flex:1;color:var(--mute);font-weight:600}
+#coach .cx{width:24px;height:24px;padding:0;margin:0;border-radius:50%;background:rgba(255,255,255,.08);color:var(--text);font-size:12px}
+#coach ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+#coach li{font-size:12.5px;line-height:1.3;padding:5px 8px 5px 26px;border-radius:9px;position:relative;background:rgba(255,255,255,.05)}
+#coach li::before{position:absolute;left:7px;top:5px;font-size:11px}#coach li.good::before{content:"✅"}#coach li.bad::before{content:"💡"}
+#coach .cl{background:none;color:var(--mute);font-size:11px;height:auto;padding:4px 0 0;margin:0;width:auto}
 /* Spieleabend */
 .evbtn{margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:2px;background:linear-gradient(120deg,#ff5f6d,#ffc371);color:#2a0a00;height:auto;padding:10px}
 .evbtn b{font-size:15.5px}.evbtn small{font-size:11.5px;opacity:.85}
@@ -5117,8 +5120,10 @@ function cleanQuip(q,g){if(!q||typeof q!=='object'||!Number.isInteger(q.s)||!g.p
 var coachLog=[],coachOn=ls.get('al_coach')!=='0';
 function coachShow(title,tips){if(!coachOn||!tips.length||document.body.classList.contains('tv'))return;
   let el=document.getElementById('coach');if(!el){el=document.createElement('div');el.id='coach';document.body.appendChild(el)}
-  el.innerHTML='<div class="ch"><b>🧠 Coach</b><span>'+esc(title)+'</span><button class="cx" data-a="coach-x">✕</button></div><ul>'+tips.slice(0,3).map(t=>'<li class="'+(t[0]==='+'?'good':'bad')+'">'+esc(t.slice(1))+'</li>').join('')+'</ul><button class="cl" data-a="coach-off">Tipps ausschalten</button>';
-  el.classList.remove('on');void el.offsetWidth;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),14000)}
+  // kleine Pille oben rechts – erst beim Antippen klappen die Tipps auf, nach kurzer Zeit verschwindet sie wieder
+  const bad=tips.filter(t=>t[0]!=='+').length;
+  el.innerHTML='<button class="cpill" data-a="coach-open">🧠 '+(bad?bad+' Tipp'+(bad>1?'s':''):'👍')+'</button><div class="cbody"><div class="ch"><b>'+esc(title)+'</b><button class="cx" data-a="coach-x">✕</button></div><ul>'+tips.slice(0,3).map(t=>'<li class="'+(t[0]==='+'?'good':'bad')+'">'+esc(t.slice(1))+'</li>').join('')+'</ul><button class="cl" data-a="coach-off">Tipps ausschalten</button></div>';
+  el.classList.remove('on','open');void el.offsetWidth;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),6000)}
 function coachRound(g,prev){const k=gameOf(g),me_=mySeatOf(g);if(me_<0)return;const T_=[],P=plusRoundPlaces(g),n=g.players.length;
   try{
   if(k==='arsch'){
@@ -5158,9 +5163,8 @@ function coachRound(g,prev){const k=gameOf(g),me_=mySeatOf(g);if(me_<0)return;co
 function coachDice(prev,g,me_){const sh0=prev.sheet[me_],sh1=g.sheet[me_];const cat=DC_CATS.find(c=>sh0[c]==null&&sh1[c]!=null);if(!cat||prev.rolls<1)return;
   const d=prev.dice,got=sh1[cat],open=DC_CATS.filter(c=>sh0[c]==null);const val=c=>{const s=dcScoreOf(c,d);return c==='ch'?s-8:DC_UPPER.includes(c)?s+(s>=3*(+c[1])?4:-3):s};
   let best=open.reduce((a,c)=>val(c)>val(a)?c:a,open[0]);const T_=[];
-  if(best!==cat&&val(best)-val(cat)>=6)T_.push('-'+DC_NAME[cat]+' für '+got+' Punkte – '+DC_NAME[best]+' hätte '+dcScoreOf(best,d)+' gebracht.');
-  else if(got>=25||(DC_UPPER.includes(cat)&&got>=3*(+cat[1])))T_.push('+'+DC_NAME[cat]+' für '+got+' – gute Wahl!');
-  if(got===0&&cat!=='kn'&&open.includes('kn')&&open.length>4)T_.push('-Streich lieber den Kniffel oder die Einser als eine Kategorie, die noch viele Punkte bringen kann.');
+  if(best!==cat&&val(best)-val(cat)>=10)T_.push('-'+DC_NAME[cat]+' für '+got+' Punkte – '+DC_NAME[best]+' hätte '+dcScoreOf(best,d)+' gebracht.');
+  if(got===0&&cat!=='kn'&&open.includes('kn')&&dcScoreOf('kn',d)===0&&!T_.length&&open.length>4)T_.push('-Streich lieber den Kniffel oder die Einser als eine Kategorie, die noch viele Punkte bringen kann.');
   if(cat==='ch'&&open.length>6)T_.push('-Die Chance ist dein Joker für später – nimm sie nicht zu früh.');
   if(T_.length)coachShow('Dein Zug',T_);
 }
@@ -5237,7 +5241,8 @@ function plusAct(a,v,el){
       .catch(e=>{const m=String(e&&e.message);toast(/not enough/.test(m)?'Nicht genug Chips.':/owned/.test(m)?'Hast du schon.':/not in shop/.test(m)?'Nicht mehr im Shop – der Shop hat sich gerade erneuert.':'Kauf hat nicht geklappt.')});return true}
     case 'x-equip':{const x=xParse(v);if(!x||!ownedX(v))return true;T[x.key]=v;saveTheme();applyTheme();sfx('pop');xItemModal(v);render();return true}
     case 'x-try':{const x=xParse(v);if(!x)return true;closeModal();PEEK={k:x.key,v,label:x.name};applyTheme();clearTimeout(peekT);peekT=setTimeout(()=>{PEEK=null;applyTheme();render()},4000);toast('👀 Vorschau: '+x.name);return true}
-    case 'coach-x':{const e=document.getElementById('coach');if(e)e.classList.remove('on');return true}
+    case 'coach-x':{const e=document.getElementById('coach');if(e)e.classList.remove('on','open');return true}
+    case 'coach-open':{const e=document.getElementById('coach');if(!e)return true;e.classList.toggle('open');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on','open'),e.classList.contains('open')?12000:4000);return true}
     case 'coach-off':coachOn=false;ls.set('al_coach','0');{const e=document.getElementById('coach');if(e)e.classList.remove('on')}toast('Coach-Tipps aus – in den Einstellungen wieder einschaltbar.');return true;
     case 'coach-tog':coachOn=!coachOn;ls.set('al_coach',coachOn?'1':'0');render();return true;
     case 'ev-open':evOpen();return true;
