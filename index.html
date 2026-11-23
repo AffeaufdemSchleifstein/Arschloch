@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-uKsF1/fLXPJCfviut2lzij75dn2PfviNioxOY4kZfWk=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FjuqxtxolnXEDi07vT1f7MmC4qdeFahPftahRSA2QTs=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1218,6 +1218,7 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 .top .tb .iconbtn{width:30px;height:30px;font-size:14px;border-radius:9px;flex:0 0 auto}
 .top .tb .iconbtn.lv{background:rgba(255,90,90,.16);border-color:rgba(255,90,90,.35)}
 @media (max-width:340px){.top .tb .iconbtn{width:28px;height:28px;font-size:13px}}
+.tbres{display:flex;gap:8px;align-items:stretch}.tbres button{margin:0}.tbres .tbx{flex:0 0 52px;width:52px;padding:0;font-size:18px}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
@@ -3689,6 +3690,8 @@ function act(a,v,el){
     case 'newroom':if(!needName())return;return openNewRoom();
     case 'create-local':return createLocalTable(false);
     case 'resume-local':return createLocalTable(true);
+    case 'drop-local':return openModal('<h2>Tischspiel beenden?</h2><p>Das angefangene Kniffel am Tisch wird gelöscht und verschwindet vom Startbildschirm.</p><button data-a="drop-local-ok">Ja, beenden</button><button class="ghost" data-a="modal-x" style="margin-top:8px">Abbrechen</button>');
+    case 'drop-local-ok':ls.set('al_table','');closeModal();toast('Tischspiel beendet.');return render();
     case 'join':return joinRoom();
     case 'resume':return enter(v);
     case 'leave':return leaveMenu();
@@ -3947,7 +3950,7 @@ function drawHome(){
   if(store.online){
     const tb=savedTable();
     h+='<div class="panel"><button data-a="newroom">Neues Spiel starten</button><p class="note" style="margin:10px 0 0;text-align:center">🃏 Arschloch · 🧙 Wizard · 🎲 Kniffel · 🦉 Cabo · 🔟 Phase 10 · ✖️ Qwixx</p></div>'+
-      (tb?'<div class="panel"><button class="ghost" data-a="resume-local">📝 Kniffel am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button></div>':'')+
+      (tb?'<div class="panel tbres"><button class="ghost" data-a="resume-local">📝 Kniffel am Tisch fortsetzen ('+esc((tb.names||[]).join(', ')||'Tisch')+')</button><button class="ghost tbx" data-a="drop-local" title="Tischspiel beenden" aria-label="Tischspiel beenden">✕</button></div>':'')+
       '<div class="panel"><label for="code">Raumcode von einem Freund</label><div class="row"><input id="code" data-k="code" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD" value="'+esc(drafts.code||'')+'" style="text-transform:uppercase;letter-spacing:4px"><button class="ghost" data-a="join">Beitreten</button></div></div>';
     h+=questPanel()+friendsPlaying();
     if(myGames.length)h+='<div class="panel"><h3>Meine Partien</h3><ul class="plist">'+myGames.map((x,i)=>
