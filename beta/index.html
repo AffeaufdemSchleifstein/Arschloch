@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eVxODw9lagBxay/jASaKM/dY4knnCiSThbwoHqOOGs8=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-CCBjh29Znb9ZDivA4TstmX0UpEv6Qdj+s6ptQMe8JyM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1208,6 +1208,9 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 .ptime{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 12px}
 .ptime span{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;color:var(--mute)}
 .ptime b{color:var(--text)}
+/* Blasen und Hinweise bleiben immer im Bild */
+.float.bub{width:max-content;max-width:min(220px,calc(100vw - 24px));overflow-wrap:anywhere}
+#toast{max-width:calc(100vw - 24px);width:max-content;white-space:normal;text-align:center}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
@@ -3393,7 +3396,10 @@ function floatAt(uid,html,cls,ms){
   const a=anchorFor(uid)||document.querySelector('#app .table')||document.querySelector('#app');if(!a)return;const r=a.getBoundingClientRect(),el=document.createElement('div');
   el.className='float '+cls;el.innerHTML=html;el.style.left=Math.min(innerWidth-50,Math.max(50,r.left+r.width/2))+'px';
   const isOpp=a.classList.contains('opp');el.style.top=Math.max(cls==='bub'?60:96,isOpp?r.top+r.height*(cls==='bub'?.35:.95):r.top+4)+'px';
-  document.body.appendChild(el);setTimeout(()=>el.remove(),ms);
+  document.body.appendChild(el);
+  // nie über den Bildschirmrand hinaus: Mitte so verschieben, dass die ganze Blase sichtbar bleibt
+  const w=el.offsetWidth,l=parseFloat(el.style.left);if(w)el.style.left=Math.min(innerWidth-8-w/2,Math.max(8+w/2,l))+'px';
+  setTimeout(()=>el.remove(),ms);
 }
 function rnd(a,b){return a+Math.random()*(b-a)}
 function parts(n,emo,cls,spread,extra){let h='';for(let i=0;i<n;i++){const a=(i/n)*6.283+rnd(-.3,.3),d=spread*rnd(.6,1.1);
