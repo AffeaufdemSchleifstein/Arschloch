@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-CCBjh29Znb9ZDivA4TstmX0UpEv6Qdj+s6ptQMe8JyM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-uKsF1/fLXPJCfviut2lzij75dn2PfviNioxOY4kZfWk=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1211,6 +1211,13 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 /* Blasen und Hinweise bleiben immer im Bild */
 .float.bub{width:max-content;max-width:min(220px,calc(100vw - 24px));overflow-wrap:anywhere}
 #toast{max-width:calc(100vw - 24px);width:max-content;white-space:normal;text-align:center}
+/* Kopfzeile im Spiel: passt immer in die Breite */
+.top{flex-wrap:nowrap;min-width:0}
+.top .rinfo{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+.top .tb{display:flex;align-items:center;gap:4px;flex:0 1 auto;min-width:0;flex-wrap:wrap;justify-content:flex-end}
+.top .tb .iconbtn{width:30px;height:30px;font-size:14px;border-radius:9px;flex:0 0 auto}
+.top .tb .iconbtn.lv{background:rgba(255,90,90,.16);border-color:rgba(255,90,90,.35)}
+@media (max-width:340px){.top .tb .iconbtn{width:28px;height:28px;font-size:13px}}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
@@ -4164,7 +4171,7 @@ function topBar(){
   const s=mySeat(),on=RS().online,canPause=running()&&s>=0&&on&&!G.paused;
   return '<div class="top"><span class="rinfo">'+(G&&GAMES[gameOf(G)]?GAMES[gameOf(G)].icon+' ':'')+'<b>'+esc(G&&G.local?'Tisch':code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
     (on?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat (T)" style="position:relative">💬'+(chatUnread+dmTotal()?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+(chatUnread+dmTotal())+'</span>':'')+'</button>':'')+
-    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="linkbtn" data-a="leave">Verlassen</button></span></div>'+
+    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="iconbtn lv" data-a="leave" title="Verlassen" aria-label="Verlassen">🚪</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
