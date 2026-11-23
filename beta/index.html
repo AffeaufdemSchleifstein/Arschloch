@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FjuqxtxolnXEDi07vT1f7MmC4qdeFahPftahRSA2QTs=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-515VherKXMmhKloVL1pBLecoiQE87mpb2m2KoiuctkU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1219,6 +1219,10 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 .top .tb .iconbtn.lv{background:rgba(255,90,90,.16);border-color:rgba(255,90,90,.35)}
 @media (max-width:340px){.top .tb .iconbtn{width:28px;height:28px;font-size:13px}}
 .tbres{display:flex;gap:8px;align-items:stretch}.tbres button{margin:0}.tbres .tbx{flex:0 0 52px;width:52px;padding:0;font-size:18px}
+/* Phase 10: gerade gezogene Karte bleibt markiert, bis du abwirfst */
+.pc.drawn{box-shadow:0 0 0 3px #ffd23f,0 0 16px rgba(255,210,63,.7);transform:translateY(-6px);position:relative}
+.pc.drawn::after{content:"NEU";position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#ffd23f;color:#2a1a00;font-size:9px;font-weight:900;letter-spacing:.04em;padding:1px 5px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.pc.drawn.sel{transform:translateY(-12px)}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
@@ -4148,7 +4152,7 @@ function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
   let h=backBtn+'<h2>Einstellungen</h2>'+
     '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
-    '<div class="panel"><h3>Coach</h3><ul class="plist"><li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">🧠 Tipps nach jeder Runde</b><span class="note">Kurze Hinweise, was gut lief und was du besser machen kannst</span></span><button class="small'+(coachOn?'':' ghost')+'" data-a="coach-tog">'+(coachOn?'An':'Aus')+'</button></li></ul></div>'+
+    '<div class="panel"><h3>Coach</h3><ul class="plist"><li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">🧠 Tipps nach jeder Runde</b><span class="note">Kurze Hinweise, was gut lief und was du besser machen kannst</span></span><button class="small'+(coachOn?'':' ghost')+'" data-a="coach-tog">'+(coachOn?'An':'Aus')+'</button></li><li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">🤖 Sprüche der Computer</b><span class="note">Kommentare der Computergegner in Sprechblasen</span></span><button class="small'+(quipsOn?'':' ghost')+'" data-a="quip-tog">'+(quipsOn?'An':'Aus')+'</button></li></ul></div>'+
     '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+tg('shake','Schütteln zum Würfeln','Im Kniffel das Handy schütteln statt tippen')+
       (me?'<li><span style="display:flex;flex-direction:column"><b>Erinnerung an Tagesaufgaben</b><span class="note">Push-Nachricht am Abend, wenn noch Aufgaben offen sind'+(SET.push?'':' (braucht Benachrichtigungen)')+'</span></span><button class="sw2'+(me.quest_push!==false?' on':'')+'" data-a="qpush" aria-label="Erinnerung an Tagesaufgaben"><i></i></button></li>':'')+'</ul></div>';
   let push;
@@ -4903,7 +4907,7 @@ function drawP10(app,top){
     const H=p10Sorted(G.hands[me_]),staged=new Set(p10Stage.flat());
     mine='<div class="mebar" data-a="pinfo" data-v="me"><span>'+esc(nm(G,me_))+'</span><span>Phase '+(G.ph[me_]+1)+(G.laid[me_]?' ✓':'')+' · '+G.pts[me_]+' P</span></div>'+
       '<div class="p10goal"><b>Phase '+(G.ph[me_]+1)+':</b> '+esc(P10_TXT[G.ph[me_]])+'<button class="small ghost" data-a="p10-sort">'+(p10SortCol?'nach Zahl':'nach Farbe')+'</button></div>'+
-      '<div class="p10hand">'+H.filter(c=>!staged.has(c)).map(c=>p10Card(c,(p10Sel.has(c)?'sel':'')+(G.last===c&&my?' new':''),'data-a="p10-sel" data-v="'+c+'" data-key="h'+c+'"')).join('')+'</div>'+
+      '<div class="p10hand">'+H.filter(c=>!staged.has(c)).map(c=>p10Card(c,(p10Sel.has(c)?'sel':'')+(G.last===c&&my?' new':'')+(G.last===c&&my&&G.drew&&G.turn===me_?' drawn':''),'data-a="p10-sel" data-v="'+c+'" data-key="h'+c+'"')).join('')+'</div>'+
       (p10Stage.length?'<div class="p10stage">'+p10Stage.map((gc,i)=>'<div><small>Gruppe '+(i+1)+'</small><div class="p10gc">'+gc.map(c=>p10Card(c,'mini')).join('')+'</div></div>').join('')+'<button class="small ghost" data-a="p10-unstage">Zurücknehmen</button></div>':'');
     if(my&&!G.drew)panel='<div class="panel act"><b>Du bist dran – zieh eine Karte</b><div class="row"><button data-a="p10-draw" data-v="deck">🂠 Vom Stapel</button><button class="ghost" data-a="p10-draw" data-v="disc" '+(top1!=null&&!p10S(top1)?'':'disabled')+'>Ablage nehmen</button></div></div>';
     else if(my){
@@ -5120,9 +5124,10 @@ function plusRoundPlaces(g){const k=gameOf(g),n=g.players.length,P=Array(n).fill
   }catch(e){}
   return P;
 }
-var lastQuip=0;
+var lastQuip=0,quipsOn=ls.get('al_quips')==='1'; // Sprüche der Computer: standardmäßig aus
 // Wird beim Speichern vom Host aufgerufen: Computer sagen manchmal etwas
 function plusQuip(prev,g){
+  if(!quipsOn)return;
   if(!g.players||!g.players.some(p=>p.bot)||!prev||!prev.players)return;
   let s=-1,t='';
   if(ROUND_END(g)&&!ROUND_END(prev)){const P=plusRoundPlaces(g),bots=g.players.map((p,i)=>i).filter(i=>g.players[i].bot&&PERSONA[g.players[i].name]);
@@ -5239,7 +5244,7 @@ function plusDecorate(h){if(!code||!G)return h;let pre='',post='';
   return pre+h+post}
 // Neuer Spielstand: Sprüche zeigen, Coach füttern
 function plusOnState(g,prev){
-  if(g.quip&&(!prev||!prev.quip||prev.quip.id!==g.quip.id)&&g.players[g.quip.s]){const p=g.players[g.quip.s],pe=PERSONA[p.name];
+  if(quipsOn&&g.quip&&(!prev||!prev.quip||prev.quip.id!==g.quip.id)&&g.players[g.quip.s]){const p=g.players[g.quip.s],pe=PERSONA[p.name];
     setTimeout(()=>{floatAt(p.id,'<b>'+esc(p.name)+'</b><br>'+esc(g.quip.t),'bub quip',4600);const l=[...document.querySelectorAll('.float.quip')].pop();if(l){const r=l.getBoundingClientRect();let dx=0;if(r.right>innerWidth-8)dx=innerWidth-8-r.right;if(r.left+dx<8)dx=8-r.left;if(dx)l.style.left=(parseFloat(l.style.left)+dx)+'px'}},250)}
   if(!prev||!prev.players||tvMode)return;const me_=mySeatOf(g);if(me_<0)return;const k=gameOf(g);
   if(k==='arsch'&&g.pile&&g.pile.by===me_&&g.pile.cards&&(!prev.pile||pileKey(g)!==pileKey(prev))&&prev.hands&&prev.hands[me_]){
@@ -5260,6 +5265,7 @@ function plusAct(a,v,el){
     case 'coach-x':{const e=document.getElementById('coach');if(e)e.classList.remove('on','open');return true}
     case 'coach-open':{const e=document.getElementById('coach');if(!e)return true;e.classList.toggle('open');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on','open'),e.classList.contains('open')?12000:4000);return true}
     case 'coach-off':coachOn=false;ls.set('al_coach','0');{const e=document.getElementById('coach');if(e)e.classList.remove('on')}toast('Coach-Tipps aus – in den Einstellungen wieder einschaltbar.');return true;
+    case 'quip-tog':quipsOn=!quipsOn;ls.set('al_quips',quipsOn?'1':'0');render();return true;
     case 'coach-tog':coachOn=!coachOn;ls.set('al_coach',coachOn?'1':'0');render();return true;
     case 'ev-open':evOpen();return true;
     case 'ev-tog':evOpen.tog(v);return true;
