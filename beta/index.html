@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UX1HeeXapqVznyWeYm1xLSkxgR/Moe6z0No7utMy+8M=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-T10/nyUu6TuPEIkOMW5CAy9dzm3l+Tx6I8tRaLJEPaw=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1202,6 +1202,12 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 .peekq{margin:0 0 4px;color:var(--gold)}
 .dsqp{display:flex;justify-content:center;gap:8px;margin:2px 0 8px;position:sticky;top:-20px;z-index:2;padding:6px 0;background:#24170e}
 .dsqp .card{margin:0}
+.ptime{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 12px}
+.ptime span{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;color:var(--mute)}
+.ptime b{color:var(--text)}
+.ptime{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 12px}
+.ptime span{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;color:var(--mute)}
+.ptime b{color:var(--text)}
 </style>
 </head>
 <body>
@@ -2637,6 +2643,17 @@ const SLOT=new URLSearchParams(location.search).get('slot')||'';
 const LOW=/Android/i.test(navigator.userAgent)||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
 const BOTS=['Big Yaro','Big Snake','Hörgerät','Gundi','Boceta','Skebodi','Klangschalen Uschi'];
 const STATUS={home:'online',lobby:'in der Lobby',bots:'spielt gegen Bots',game:'im Spiel'};
+// „zuletzt online …“
+function seenTxt(ts){if(!ts)return 'offline';const t=new Date(ts),d=(Date.now()-t.getTime())/1000;if(!(d>=0))return 'offline';
+  const hm=t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  if(d<90)return 'gerade eben online';if(d<3600)return 'offline · zuletzt vor '+Math.max(2,Math.round(d/60))+' Min.';
+  const today=new Date();today.setHours(0,0,0,0);const ys=new Date(today);ys.setDate(ys.getDate()-1);
+  if(t>=today)return 'offline · zuletzt heute '+hm;if(t>=ys)return 'offline · zuletzt gestern '+hm;
+  if(d<7*86400)return 'offline · zuletzt '+t.toLocaleDateString('de-DE',{weekday:'long'})+' '+hm;
+  return 'offline · zuletzt am '+t.toLocaleDateString('de-DE',{day:'numeric',month:'short'})}
+const onTxt=f=>f.online?STATUS[f.status]||'online':seenTxt(f.seen);
+// Spielzeit: 45 Min. · 3,5 Std. · 120 Std.
+function playTxt(sec){sec=+sec||0;if(sec<3600)return Math.round(sec/60)+' Min.';const h=sec/3600;return (h<10?h.toFixed(1).replace('.',','):Math.round(h))+' Std.'}
 const $=s=>document.querySelector(s);
 const esc=s=>(typeof s==='string'?s:typeof s==='number'?String(s):'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const ls={get(k){try{return localStorage.getItem(k+SLOT)}catch(e){return null}},set(k,v){try{localStorage.setItem(k+SLOT,v)}catch(e){}}};
@@ -3868,7 +3885,7 @@ function friendInvitePanel(){
   if(!me||!store.online||!code||(G&&G.local))return '';
       const inLobby=new Set(lobby.map(p=>p.id)),on=friends.filter(f=>f.rel==='friend'&&!inLobby.has(f.uid)).sort((a,b)=>b.online-a.online);
       return '<div class="panel"><h3>Freunde einladen</h3>'+(on.length?'<ul class="plist">'+on.map(f=>{const sent=seen['inv'+f.uid]&&Date.now()-seen['inv'+f.uid]<5000,again=!!seen['inv'+f.uid];
-        return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
+        return '<li><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,36)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+onTxt(f)+'</span></span></span>'+
         '<button class="small'+(f.online?'':' ghost')+'" data-a="fr-inv" data-v="'+f.uid+'" '+(sent?'disabled':'')+'>'+(sent?'Eingeladen ✓':again?'Nochmal einladen':'Einladen')+'</button></li>'}).join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde – füg sie auf der Startseite unter „Freunde“ hinzu.</p>')+'</div>';
 }
 function watchBtn(uid){const x=fGames[uid];if(!x||x.code===code)return '';
@@ -3886,7 +3903,7 @@ function drawFriends(){
     '<p class="note" style="margin-bottom:0">Dein Benutzername: <b>'+esc(me.display)+'</b></p></div>';
   const inc=friends.filter(f=>f.rel==='incoming'),out=friends.filter(f=>f.rel==='outgoing'),fr=friends.filter(f=>f.rel==='friend');
   if(inc.length)h+='<div class="panel"><h3>Anfragen</h3><ul class="plist">'+inc.map(f=>'<li><span>'+avatar(f.avatar,f.display,f.wins,32)+esc(f.display)+'</span><span class="row" style="flex:0 0 auto"><button class="small ghost" data-a="fr-no" data-v="'+f.uid+'">Ablehnen</button><button class="small" data-a="fr-yes" data-v="'+f.uid+'">Annehmen</button></span></li>').join('')+'</ul></div>';
-  h+='<div class="panel"><h3>Deine Freunde ('+fr.length+')</h3>'+(fr.length?'<ul class="plist">'+fr.map((f,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,40)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+(f.online?STATUS[f.status]||'online':'offline')+'</span></span></span>'+
+  h+='<div class="panel"><h3>Deine Freunde ('+fr.length+')</h3>'+(fr.length?'<ul class="plist">'+fr.map((f,i)=>'<li style="--i:'+i+'"><span><span class="avw">'+avatar(f.avatar,f.display,f.wins,40)+'<span class="dot'+(f.online?' on':'')+'"></span></span><span style="display:flex;flex-direction:column"><b style="font-size:16px">'+esc(f.display)+'</b><span class="note">'+onTxt(f)+'</span></span></span>'+
     watchBtn(f.uid)+'<button class="small ghost dmb" data-a="dm-to" data-v="'+f.uid+'" title="Privatchat">💬'+(dmUnread[f.uid]?'<span class="badge">'+dmUnread[f.uid]+'</span>':'')+'</button><button class="small ghost" data-a="go" data-v="profile" data-u="'+f.uid+'">Profil</button></li>').join('')+'</ul>':'<p class="note" style="margin:0">Noch keine Freunde. Füg sie oben über ihren Benutzernamen hinzu.</p>')+'</div>';
   if(out.length)h+='<div class="panel"><h3>Gesendet</h3><ul class="plist">'+out.map(f=>'<li><span>'+esc(f.display)+'</span><span class="tag">wartet</span></li>').join('')+'</ul></div>';
   return h;
@@ -3905,7 +3922,8 @@ function drawProfile(){
   if(!p)return h+'<h2>Statistik</h2><p class="note">Lade …</p>';
   if(p.err)return h+'<h2>Statistik</h2><p class="note">Konnte nicht geladen werden.</p>';
   const r=p.rounds||0,tw=(p.wins||0)+(gameStats&&typeof gameStats==='object'?Object.values(gameStats).reduce((a,x)=>a+(+(x||{}).wins||0),0):0);
-  h+='<div class="phead"><span data-a="avbig" data-v="profile" style="cursor:zoom-in">'+avatar(p.avatar,p.display,tw,64)+'</span></div><div class="head"><h2>'+(mine?'Deine Statistik':esc(p.display))+'</h2>'+(mine?'':'<span class="tag"><span class="dot'+(p.online?' on':'')+'" style="display:inline-block;width:8px;height:8px;margin-right:5px"></span>'+(p.online?STATUS[p.status]||'online':'offline')+'</span>')+'</div>';
+  h+='<div class="phead"><span data-a="avbig" data-v="profile" style="cursor:zoom-in">'+avatar(p.avatar,p.display,tw,64)+'</span></div><div class="head"><h2>'+(mine?'Deine Statistik':esc(p.display))+'</h2>'+(mine?'':'<span class="tag"><span class="dot'+(p.online?' on':'')+'" style="display:inline-block;width:8px;height:8px;margin-right:5px"></span>'+onTxt(p)+'</span>')+'</div>'+
+    '<div class="ptime"><span>⏱️ <b>'+playTxt(p.play)+'</b> gespielt</span></div>';
   const lv=SPECIAL.filter(x=>tw>=x[0]).length,nx=SPECIAL[lv];
   h+='<div class="panel tier"><div class="tb"><span class="te">'+(lv?SPECIAL[lv-1][1]:'🃏')+'</span><div><b>Sieg-Stufe '+lv+(lv?' · '+esc(SPECIAL[lv-1][2]):'')+'</b><span>'+tw+' Siege'+(nx?' · nächste Stufe bei '+nx[0]+' ('+nx[1]+' '+esc(nx[2])+')':' · höchste Stufe erreicht!')+'</span></div></div>'+
     (nx?'<div class="bar"><i style="width:'+Math.min(100,Math.round((tw-(lv?SPECIAL[lv-1][0]:0))*100/(nx[0]-(lv?SPECIAL[lv-1][0]:0))))+'%"></i></div>':'')+
