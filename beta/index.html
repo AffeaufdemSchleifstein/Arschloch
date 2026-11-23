@@ -1219,10 +1219,9 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 .top .tb .iconbtn.lv{background:rgba(255,90,90,.16);border-color:rgba(255,90,90,.35)}
 @media (max-width:340px){.top .tb .iconbtn{width:28px;height:28px;font-size:13px}}
 .tbres{display:flex;gap:8px;align-items:stretch}.tbres button{margin:0}.tbres .tbx{flex:0 0 52px;width:52px;padding:0;font-size:18px}
-/* Phase 10: gerade gezogene Karte bleibt markiert, bis du abwirfst */
-.pc.drawn{box-shadow:0 0 0 3px #ffd23f,0 0 16px rgba(255,210,63,.7);transform:translateY(-6px);position:relative}
-.pc.drawn::after{content:"NEU";position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#ffd23f;color:#2a1a00;font-size:9px;font-weight:900;letter-spacing:.04em;padding:1px 5px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
-.pc.drawn.sel{transform:translateY(-12px)}
+/* Phase 10: gerade gezogene Karte – nur ein kleines blaues „NEU“-Schild, damit sie nicht wie eine ausgewählte Karte aussieht */
+.pc.drawn{position:relative}
+.pc.drawn::after{content:"NEU";position:absolute;top:-8px;left:-6px;background:#2fb6ff;color:#002033;font-size:9px;font-weight:900;letter-spacing:.04em;padding:1px 5px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.45);transform:rotate(-8deg)}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
