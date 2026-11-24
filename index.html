@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-515VherKXMmhKloVL1pBLecoiQE87mpb2m2KoiuctkU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8R57i3el7u2YEStFVXA30kK+vvcWMzvA8PnItSJjRDU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1222,6 +1222,10 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 /* Phase 10: gerade gezogene Karte – nur ein kleines blaues „NEU“-Schild, damit sie nicht wie eine ausgewählte Karte aussieht */
 .pc.drawn{position:relative}
 .pc.drawn::after{content:"NEU";position:absolute;top:-8px;left:-6px;background:#2fb6ff;color:#002033;font-size:9px;font-weight:900;letter-spacing:.04em;padding:1px 5px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.45);transform:rotate(-8deg)}
+/* Phase 10: Auswählen und Abwählen gleich weich */
+.p10hand .pc{transition:transform .32s var(--e-spring),box-shadow .2s}
+.p10hand .pc.sel{transition:transform .32s var(--e-spring),box-shadow .2s}
+.pc.skip i{font-size:8.5px;letter-spacing:-.02em;max-width:100%;overflow:hidden;white-space:nowrap}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
@@ -3912,9 +3916,11 @@ function setHTML(el,h){if(el&&el.id==='app'&&code)h=plusDecorate(h);const t=docu
   const wrap=document.createElement('div');wrap.appendChild(t.content);mkids(el,wrap)}
 // Handkarten gleiten nach, wenn sich die Hand veraendert
 const FLIP_EASE=(()=>{try{return CSS.supports('transition-timing-function','linear(0,1)')?'linear(0,.006,.025 2.8%,.101 6.1%,.539 18.9%,.721 25.3%,.849 31.5%,.937 38.1%,.968 41.8%,.991 45.7%,1.006 50.1%,1.015 55%,1.017 63.9%,1.001)':'cubic-bezier(.22,1,.36,1)'}catch(e){return 'cubic-bezier(.22,1,.36,1)'}})();
-const FLIPSEL='.hand>.card[data-v],.shand>.scard[data-key],.dice>.die';
-function flipPrep(root){const m=new Map();if(REDUCED.matches||document.body.classList.contains('low'))return m;root.querySelectorAll(FLIPSEL).forEach(e=>m.set(e,e.getBoundingClientRect()));return m}
-function flipRun(m){m.forEach((r,e)=>{if(!e.isConnected)return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
+const FLIPSEL='.hand>.card[data-v],.shand>.scard[data-key],.dice>.die,.p10hand>.pc[data-key],.cbmine>.cbc';
+// Position ohne Anheben/Verschieben durch CSS (z. B. ausgewählte Karte) – sonst würde die Auswahl selbst als Bewegung animiert
+function flipPos(e){const r=e.getBoundingClientRect();let tx=0,ty=0;try{const t=getComputedStyle(e).transform;if(t&&t!=='none'){const M=new DOMMatrixReadOnly(t);tx=M.e;ty=M.f}}catch(x){}return {left:r.left-tx,top:r.top-ty}}
+function flipPrep(root){const m=new Map();if(REDUCED.matches||document.body.classList.contains('low'))return m;root.querySelectorAll(FLIPSEL).forEach(e=>m.set(e,flipPos(e)));return m}
+function flipRun(m){m.forEach((r,e)=>{if(!e.isConnected)return;const n=flipPos(e),dx=r.left-n.left,dy=r.top-n.top;
   if(Math.abs(dx)<1&&Math.abs(dy)<1)return;try{e.animate([{translate:dx+'px '+dy+'px'},{translate:'0 0'}],{duration:420,easing:FLIP_EASE})}catch(x){}})}
 function render(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;doRender()})}
 // Hintergrund-Aktualisierungen nicht anzeigen, solange jemand tippt
@@ -4877,6 +4883,7 @@ function p10Act(a,v){
 function p10Block(g){return '<div class="blockw"><table class="rk block"><tr><th>R</th>'+g.players.map(p=>'<th>'+esc(p.name.slice(0,7))+'</th>').join('')+'</tr>'+
   (g.hist||[]).map((h,r)=>'<tr><td>'+(r+1)+'</td>'+h.sc.map((x,s)=>'<td>'+(h.done[s]?'✅':'')+(h.out===s?'🏁':'')+'<b>'+x+'</b></td>').join('')+'</tr>').join('')+
   '<tr class="sum"><td>Σ</td>'+g.pts.map((x,s)=>'<td><b>'+x+'</b><br><small>Phase '+Math.min(g.ph[s]+1,10)+(g.ph[s]>=10?' ✓':'')+'</small></td>').join('')+'</tr></table></div>'}
+let p10FxSeen=null,p10NewT=0;
 function drawP10(app,top){
   const n=G.players.length,me_=mySeat();
   if(G.phase==='over'||G.phase==='rend'){
@@ -4890,6 +4897,8 @@ function drawP10(app,top){
     return;
   }
   const my=me_>=0&&G.turn===me_&&G.phase==='play',fx=G.fx;
+  // „Plopp“ der neuen Karte nur direkt nach dem Ziehen – nicht bei jedem Antippen erneut
+  if(fx&&fx.id!==p10FxSeen){p10FxSeen=fx.id;p10NewT=Date.now()+700}const popNew=Date.now()<p10NewT;
   let opps='';
   for(let k=1;k<=n;k++){const s=((me_<0?0:me_)+k)%n;if(s===me_)continue;const p=G.players[s];
     opps+='<div class="opp p10o'+(G.turn===s&&!G.paused?' turn':'')+(fx&&fx.k==='skip'&&fx.x===s?' fxs':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'"><div class="n">'+avOf(p.id,p.name,p.bot)+'<b>'+esc(p.name)+'</b>'+(G.skip[s]?'<span class="tag">⏭</span>':'')+'</div>'+
@@ -4906,7 +4915,7 @@ function drawP10(app,top){
     const H=p10Sorted(G.hands[me_]),staged=new Set(p10Stage.flat());
     mine='<div class="mebar" data-a="pinfo" data-v="me"><span>'+esc(nm(G,me_))+'</span><span>Phase '+(G.ph[me_]+1)+(G.laid[me_]?' ✓':'')+' · '+G.pts[me_]+' P</span></div>'+
       '<div class="p10goal"><b>Phase '+(G.ph[me_]+1)+':</b> '+esc(P10_TXT[G.ph[me_]])+'<button class="small ghost" data-a="p10-sort">'+(p10SortCol?'nach Zahl':'nach Farbe')+'</button></div>'+
-      '<div class="p10hand">'+H.filter(c=>!staged.has(c)).map(c=>p10Card(c,(p10Sel.has(c)?'sel':'')+(G.last===c&&my?' new':'')+(G.last===c&&my&&G.drew&&G.turn===me_?' drawn':''),'data-a="p10-sel" data-v="'+c+'" data-key="h'+c+'"')).join('')+'</div>'+
+      '<div class="p10hand">'+H.filter(c=>!staged.has(c)).map(c=>p10Card(c,(p10Sel.has(c)?'sel':'')+(G.last===c&&my&&popNew?' new':'')+(G.last===c&&my&&G.drew&&G.turn===me_?' drawn':''),'data-a="p10-sel" data-v="'+c+'" data-key="h'+c+'"')).join('')+'</div>'+
       (p10Stage.length?'<div class="p10stage">'+p10Stage.map((gc,i)=>'<div><small>Gruppe '+(i+1)+'</small><div class="p10gc">'+gc.map(c=>p10Card(c,'mini')).join('')+'</div></div>').join('')+'<button class="small ghost" data-a="p10-unstage">Zurücknehmen</button></div>':'');
     if(my&&!G.drew)panel='<div class="panel act"><b>Du bist dran – zieh eine Karte</b><div class="row"><button data-a="p10-draw" data-v="deck">🂠 Vom Stapel</button><button class="ghost" data-a="p10-draw" data-v="disc" '+(top1!=null&&!p10S(top1)?'':'disabled')+'>Ablage nehmen</button></div></div>';
     else if(my){
