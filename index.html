@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8R57i3el7u2YEStFVXA30kK+vvcWMzvA8PnItSJjRDU=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nPD54EOJTMZytXuB072jj6qAv3i9ILzUrQC8HibgxEM=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1226,6 +1226,39 @@ button,.gcard,.cbc,.card,.qc,.die{-webkit-user-select:none;user-select:none;touc
 .p10hand .pc{transition:transform .32s var(--e-spring),box-shadow .2s}
 .p10hand .pc.sel{transition:transform .32s var(--e-spring),box-shadow .2s}
 .pc.skip i{font-size:8.5px;letter-spacing:-.02em;max-width:100%;overflow:hidden;white-space:nowrap}
+/* gestochen scharfe Schrift */
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+img{image-rendering:auto}
+/* ===================== Tutto ===================== */
+.tdps{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;margin:4px 0 8px}
+.tdp{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 6px 8px;border-radius:14px;background:rgba(255,255,255,.05);border:1.5px solid transparent;transition:border-color .3s,background-color .3s,transform .4s var(--e-spring)}
+.tdp.turn{border-color:var(--gold);background:rgba(255,210,63,.1);transform:translateY(-2px)}
+.tdp .av{width:30px;height:30px;font-size:15px}
+.tdp .tn{font-size:11.5px;color:var(--mute);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tdp b{font-size:16px}
+.tdp .tbar{display:block;width:100%;height:4px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}.tdp .tbar i{display:block;height:100%;background:linear-gradient(90deg,#4be38f,#ffd23f);transition:width .6s var(--e-out)}
+.tdt{padding:14px 12px 12px;min-height:250px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.tdrow{display:flex;align-items:center;gap:14px;width:100%;justify-content:center}
+.tdcard{width:74px;height:104px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:6px;
+  background:linear-gradient(160deg,#fff,#efe8d8);color:#1d1d1d;border:3px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.45);animation:tdflip .5s var(--e-spring)}
+.tdcard.big{width:104px;height:146px}
+.tdcard .ti{font-size:28px;line-height:1}.tdcard.big .ti{font-size:38px}
+.tdcard b{font-size:12px;line-height:1.1}.tdcard.big b{font-size:14px}
+.tdcard small{font-size:9.5px;line-height:1.2;color:#555}
+.tdcard.back{background:repeating-linear-gradient(45deg,#1b6b3a 0 8px,#155a30 8px 16px);color:#fff;animation:none}.tdcard.back b{font-size:14px;letter-spacing:2px}
+.tdcard.bonus{background:linear-gradient(160deg,#fff7d6,#ffd96a)}.tdcard.x2{background:linear-gradient(160deg,#e2f0ff,#9fc8ff)}
+.tdcard.stop{background:linear-gradient(160deg,#ffe1e1,#ff8a8a)}.tdcard.fire{background:linear-gradient(160deg,#fff0e0,#ffb36b)}
+.tdcard.str{background:linear-gradient(160deg,#e9e9e9,#bdbdbd)}.tdcard.pm{background:linear-gradient(160deg,#f3e6ff,#c9a2ff)}
+.tdcard.clover{background:linear-gradient(160deg,#e3ffe9,#7ee69a)}
+@keyframes tdflip{from{transform:rotateY(90deg) scale(.9);opacity:.3}to{transform:none;opacity:1}}
+.tdinfo{display:flex;flex-direction:column;align-items:flex-start}.tdinfo span{font-size:12px;color:var(--mute)}.tdinfo b{font-size:34px;line-height:1.05}.tdinfo small{font-size:11px;color:var(--mute)}
+.tdkept{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;opacity:.9}
+.tdkept .die.sm{width:32px;height:32px;padding:4px;border-radius:8px;gap:1px}
+.tddice{justify-content:center;flex-wrap:wrap;gap:8px;max-width:300px}.tddice .die{width:44px;height:44px;padding:6px;border-radius:11px}.tddice .die[data-a]{cursor:pointer}
+.tddice .die.held{transform:translateY(-8px);box-shadow:0 0 0 3px var(--gold),0 8px 16px rgba(0,0,0,.4)}
+.tdstreet{display:flex;gap:5px}.tdstreet span{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;background:rgba(255,255,255,.08);color:var(--mute)}
+.tdstreet span.on{background:var(--gold);color:var(--onGold)}
+.tdtutto b{font-size:22px;color:var(--gold)}
 
 /* ===================== DEMO: Shop, Coach, Spieleabend, Fernseher ===================== */
 /* Eigene Shop-Designs */
@@ -1659,6 +1692,7 @@ function cleanGame0(g){
   if(g.game==='cabo')return typeof cleanCabo==='function'?cleanCabo(g):null;
   if(g.game==='p10')return typeof cleanP10==='function'?cleanP10(g):null;
   if(g.game==='qwixx')return typeof cleanQwixx==='function'?cleanQwixx(g):null;
+  if(g.game==='tutto')return typeof cleanTutto==='function'?cleanTutto(g):null;
   if('game' in g&&g.game!=='arsch')return null;
   return cleanArsch(g);
 }
@@ -2744,11 +2778,140 @@ function cleanQwixx(g){
 }
 //QWIXX-END
 
+//TUTTO-START
+// ===== Tutto: Würfeln mit 6 Würfeln und Karten – wer zuerst das Ziel (6000) erreicht, gewinnt =====
+// Wertung: Einer 100, Fünfer 50, Drilling (in EINEM Wurf) Augenzahl×100, drei Einer 1000.
+// Karten (56): Bonus 200–600 (je 5), ×2 (5), Stop (10), Feuerwerk (5), Straße (5), Plus/Minus (5), Kleeblatt (1).
+const TD_RULES={target:6000,bots:'normal'};
+const TR=g=>Object.assign({},TD_RULES,g.rules||{});
+const TD_CARDS=['b200','b300','b400','b500','b600','x2','stop','fire','str','pm','clover'];
+const TD_CARD={b200:['💰','Bonus 200','Tutto bringt 200 Extrapunkte.'],b300:['💰','Bonus 300','Tutto bringt 300 Extrapunkte.'],b400:['💰','Bonus 400','Tutto bringt 400 Extrapunkte.'],
+  b500:['💰','Bonus 500','Tutto bringt 500 Extrapunkte.'],b600:['💰','Bonus 600','Tutto bringt 600 Extrapunkte.'],x2:['✖️2','Doppelt','Tutto verdoppelt alle Punkte dieses Zugs.'],
+  stop:['🛑','Stop','Pech – du setzt aus.'],fire:['🎆','Feuerwerk','Würfeln bis zum Fehlwurf – alle Punkte bleiben!'],str:['🛣️','Straße','Würfle 1–2–3–4–5–6 für 2000 Punkte.'],
+  pm:['➕➖','Plus/Minus','Tutto: +1000 für dich, −1000 für den Führenden. Kein Aufhören!'],clover:['🍀','Kleeblatt','Zweimal hintereinander Tutto = sofort gewonnen!']};
+function tdDeck(){const d=[];['b200','b300','b400','b500','b600','x2','fire','str','pm'].forEach(c=>{for(let i=0;i<5;i++)d.push(c)});for(let i=0;i<10;i++)d.push('stop');d.push('clover');return shuffle(d)}
+// Punkte einer Auswahl aus EINEM Wurf (−1 = ungültig)
+function tdScore(vals){const c=[0,0,0,0,0,0,0];vals.forEach(v=>c[v]++);let p=0;
+  for(let f=1;f<=6;f++){const t=Math.floor(c[f]/3),r=c[f]%3;p+=t*(f===1?1000:f*100);if(r){if(f===1)p+=r*100;else if(f===5)p+=r*50;else return -1}}return p}
+const tdHas=d=>d.some(v=>v===1||v===5)||[2,3,4,6].some(f=>d.filter(v=>v===f).length>=3);
+// alle punktenden Würfel eines Wurfs (Indizes)
+function tdAll(d){const c={};d.forEach(v=>c[v]=(c[v]||0)+1);const take={};for(const f in c){const v=+f;take[v]=v===1||v===5?c[v]:Math.floor(c[v]/3)*3}
+  const idx=[];d.forEach((v,i)=>{if(take[v]>0){idx.push(i);take[v]--}});return idx}
+function tdStart(g){
+  g.rules=TR(g);const n=g.players.length;g.scores=g.players.map(()=>0);g.tut=g.players.map(()=>0);g.deck=tdDeck();g.round=0;g.match=(g.match||0)+1;g.clover=-1;
+  g.turn=Math.floor(Math.random()*n);g.phase='play';g.fx=null;tdNewTurn(g);g.msg=nm(g,g.turn)+' beginnt.';
+}
+function tdNewTurn(g){g.t={card:null,st:'card',dice:[],kept:[],pts:0,bank:0,tuttos:0,street:[],rid:(g.t&&g.t.rid)||0};g.round=(g.round||0)+1}
+const tdFx=(g,k)=>{g.fx={k,id:((g.fx&&g.fx.id)||0)+1}};
+function tdEndTurn(g,gain){const s=g.turn;
+  if(gain)g.scores[s]+=gain;
+  if(g.scores[s]>=TR(g).target){g.phase='over';g.msg='🏆 '+nm(g,s)+' erreicht '+g.scores[s]+' Punkte und gewinnt!';tdFx(g,'win');return}
+  g.turn=(g.turn+1)%g.players.length;tdNewTurn(g);
+}
+// Karte aufdecken (zu Beginn des Zugs oder nach einem Tutto)
+function tdCard(g,s){const t=g.t;if(g.phase!=='play'||g.turn!==s||t.st!=='card')return false;
+  if(!g.deck.length)g.deck=tdDeck();const c=g.deck.pop();t.card=c;t.dice=[];t.kept=[];t.pts=0;t.street=[];t.tuttos=c==='clover'?t.tuttos:0;
+  if(c==='stop'){const lost=t.bank;g.msg='🛑 Stop! '+nm(g,s)+(lost?' verliert '+lost+' Punkte dieses Zugs.':' setzt aus.');tdFx(g,'stop');tdEndTurn(g,0);return true}
+  t.st='roll';g.msg=nm(g,s)+' deckt '+TD_CARD[c][1]+' auf.';tdFx(g,'card');return true}
+function tdLeaders(g){const mx=Math.max(...g.scores);return mx<=0?[]:g.scores.map((x,i)=>x===mx?i:-1).filter(i=>i>=0)}
+function tdRoll(g,s){const t=g.t;if(g.phase!=='play'||g.turn!==s||t.st!=='roll')return false;
+  const n=6-(t.card==='str'?t.street.length:t.kept.length);t.dice=Array.from({length:n},()=>1+Math.floor(Math.random()*6));t.rid=(t.rid||0)+1;
+  if(t.card==='str'){
+    if(!t.dice.some(v=>!t.street.includes(v))){g.msg='💥 Keine neue Zahl – die Straße ist gescheitert.';tdFx(g,'miss');tdEndTurn(g,0);return true}
+    t.st='pick';g.msg=nm(g,s)+' würfelt für die Straße …';return true}
+  if(!tdHas(t.dice)){
+    if(t.card==='fire'){const sum=t.bank+t.pts;g.msg='🎆 Feuerwerk vorbei – '+nm(g,s)+' behält '+sum+' Punkte.';tdFx(g,'fireend');tdEndTurn(g,sum);return true}
+    g.msg='💥 Fehlwurf! '+nm(g,s)+(t.bank+t.pts?' verliert '+(t.bank+t.pts)+' Punkte.':' bekommt nichts.');tdFx(g,'miss');tdEndTurn(g,0);return true}
+  if(t.card==='fire'){tdPick(g,s,tdAll(t.dice));return true}
+  t.st='pick';g.msg='';return true}
+// Würfel beiseitelegen
+function tdPick(g,s,idx){const t=g.t;if(g.phase!=='play'||g.turn!==s||t.st!=='pick')return false;
+  idx=[...new Set(idx)].filter(i=>Number.isInteger(i)&&i>=0&&i<t.dice.length);if(!idx.length)return false;
+  const vals=idx.map(i=>t.dice[i]);
+  if(t.card==='str'){if(new Set(vals).size!==vals.length||vals.some(v=>t.street.includes(v)))return false;
+    t.street=t.street.concat(vals).sort((a,b)=>a-b);t.dice=t.dice.filter((_,i)=>!idx.includes(i));
+    if(t.street.length===6){t.bank+=2000;return tdTutto(g,s,'🛣️ Straße geschafft! +2000')}
+    t.st='roll';g.msg=nm(g,s)+' hat '+t.street.length+' von 6 für die Straße.';return true}
+  const p=tdScore(vals);if(p<0)return false;
+  t.pts+=p;t.kept=t.kept.concat(vals);t.dice=t.dice.filter((_,i)=>!idx.includes(i));
+  if(t.kept.length===6){
+    const c=t.card;let note='';
+    if(c&&c[0]==='b'){const b=+c.slice(1);t.bank+=t.pts+b;note='Tutto! +'+t.pts+' +'+b+' Bonus'}
+    else if(c==='x2'){t.bank=(t.bank+t.pts)*2;note='Tutto! Alles verdoppelt: '+t.bank}
+    else if(c==='pm'){t.bank+=1000;const L=tdLeaders(g).filter(i=>i!==s); // Führende verlieren 1000 (wer selbst allein führt, zieht niemandem etwas ab)
+      L.forEach(i=>{g.scores[i]-=1000});note='Tutto! +1000'+(L.length?' · '+L.map(i=>nm(g,i)).join(', ')+' −1000':'')}
+    else if(c==='fire'){t.kept=[];t.st='roll';tdFx(g,'tutto');g.msg='🎆 Tutto im Feuerwerk – weiter mit allen 6 Würfeln!';return true}
+    else if(c==='clover'){t.tuttos++;if(t.tuttos>=2){g.clover=s;g.phase='over';t.st='tutto';t.dice=[];g.msg='🍀 '+nm(g,s)+' schafft zweimal Tutto mit dem Kleeblatt und gewinnt sofort!';tdFx(g,'win');return true}
+      t.kept=[];t.pts=0;t.st='roll';tdFx(g,'tutto');g.msg='🍀 Erstes Tutto! Noch einmal – dann ist das Spiel gewonnen.';return true}
+    return tdTutto(g,s,note)}
+  t.st='go';g.msg='';return true}
+function tdTutto(g,s,note){const t=g.t;g.tut[s]++;t.st='tutto';t.dice=[];t.pts=0;tdFx(g,'tutto');g.msg='🎉 '+note+' – '+nm(g,s)+' hat '+t.bank+' Punkte in diesem Zug.';return true}
+const tdCanStop=g=>{const t=g.t;return (t.st==='go'&&!['pm','clover','str','fire'].includes(t.card))||t.st==='tutto'};
+function tdStop(g,s){const t=g.t;if(g.phase!=='play'||g.turn!==s||!tdCanStop(g))return false;
+  const sum=t.bank+(t.st==='go'?t.pts:0);g.msg='✅ '+nm(g,s)+' schreibt '+sum+' Punkte auf.';tdFx(g,'bank');tdEndTurn(g,sum);return true}
+// nach einem Tutto: neue Karte ziehen und weiterspielen
+function tdGoOn(g,s){const t=g.t;if(g.phase!=='play'||g.turn!==s||t.st!=='tutto')return false;t.st='card';t.kept=[];return tdCard(g,s)}
+// weiterwürfeln
+function tdAgain(g,s){const t=g.t;if(g.phase!=='play'||g.turn!==s||t.st!=='go')return false;t.st='roll';return tdRoll(g,s)}
+function tdStandings(g){return g.players.map((p,s)=>({s,t:g.scores[s]})).sort((a,b)=>(b.s===g.clover)-(a.s===g.clover)||b.t-a.t)}
+function tdPlaces(g){const st=tdStandings(g),pl=Array(g.players.length).fill(0);st.forEach((x,i)=>{pl[x.s]=i>0&&x.t===st[i-1].t&&x.s!==g.clover&&st[i-1].s!==g.clover?pl[st[i-1].s]:i});return pl}
+// ----- Computergegner -----
+function tdBotStep(g){if(g.phase!=='play')return false;const s=g.turn,p=g.players[s];if(!p||!p.bot)return false;const t=g.t,lv=TR(g).bots,tg=TR(g).target;
+  if(t.st==='card')return tdCard(g,s);
+  if(t.st==='roll')return tdRoll(g,s);
+  if(t.st==='pick'){
+    if(t.card==='str'){const idx=[],seen=new Set();t.dice.forEach((v,i)=>{if(!t.street.includes(v)&&!seen.has(v)){seen.add(v);idx.push(i)}});return tdPick(g,s,idx)}
+    const all=tdAll(t.dice);
+    if(t.kept.length+all.length===6||lv==='easy')return tdPick(g,s,all);
+    // Drillinge und Einer behalten, Fünfer nur wenn nötig – mehr Würfel für den nächsten Wurf
+    const c={};t.dice.forEach(v=>c[v]=(c[v]||0)+1);const want={};for(const f in c){const v=+f;want[v]=v===1?c[v]:v===5?(c[v]>=3?Math.floor(c[v]/3)*3:0):Math.floor(c[v]/3)*3}
+    let idx=[];t.dice.forEach((v,i)=>{if(want[v]>0){idx.push(i);want[v]--}});if(!idx.length)idx=[t.dice.indexOf(5)];
+    return tdPick(g,s,idx)}
+  if(t.st==='go'){const left=6-t.kept.length,sum=t.bank+t.pts,big=t.card&&(t.card[0]==='b'&&+t.card.slice(1)>=400||t.card==='x2');
+    if(!tdCanStop(g))return tdAgain(g,s);
+    if(g.scores[s]+sum>=tg)return tdStop(g,s);
+    const lim=lv==='hard'?(left>=4?99999:left===3?(big?600:450):left===2?(big?400:300):250):lv==='easy'?250:(left>=4?99999:left===3?400:left===2?(big?350:250):200);
+    return sum>=lim?tdStop(g,s):tdAgain(g,s)}
+  if(t.st==='tutto'){const lim=lv==='hard'?900:lv==='easy'?400:650;
+    if(g.scores[s]+t.bank>=tg||t.bank>=lim)return tdStop(g,s);return tdGoOn(g,s)}
+  return false}
+// ----- Spielstand prüfen -----
+function cleanTutto(g){
+  const I=I2,S=(x,k)=>typeof x==='string'?x.slice(0,k):typeof x==='number'&&isFinite(x)?String(x):'';
+  const O=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+  if(!['lobby','closed','play','over'].includes(g.phase))return null;
+  if('host' in g)g.host=S(g.host,64);if('bots' in g)g.bots=I(g.bots,0,7)?g.bots:0;
+  if('rules' in g){const r=O(g.rules)?g.rules:{};g.rules={target:r.target===10000?10000:r.target===4000?4000:6000,bots:['easy','normal','hard'].includes(r.bots)?r.bots:'normal'}}
+  if('paused' in g)g.paused=O(g.paused)?Object.assign({by:S(g.paused.by,16)},'uid' in g.paused?{uid:S(g.paused.uid,64)}:{}):null;
+  if('msg' in g)g.msg=S(g.msg,400);
+  for(const k of ['round','match'])if(k in g)g[k]=I(g[k],0,1e6)?g[k]:0;
+  if(g.phase==='lobby'||g.phase==='closed'){if(!Array.isArray(g.players))delete g.players;return g}
+  if(!Array.isArray(g.players)||g.players.length<2||g.players.length>8||!g.players.every(O))return null;
+  const n=g.players.length;g.players.forEach(p=>{p.id=S(p.id,64);p.name=S(p.name,20)||'Spieler';if('bot' in p)p.bot=!!p.bot});
+  if(!Array.isArray(g.scores)||g.scores.length!==n||!g.scores.every(x=>I(x,-100000,100000)))return null;
+  g.tut=Array.isArray(g.tut)&&g.tut.length===n&&g.tut.every(x=>I(x,0,10000))?g.tut:g.players.map(()=>0);
+  g.deck=Array.isArray(g.deck)?g.deck.filter(c=>TD_CARDS.includes(c)).slice(0,56):[];
+  g.turn=I(g.turn,0,n-1)?g.turn:0;g.clover=I(g.clover,-1,n-1)?g.clover:-1;
+  const t=g.t;if(!O(t)||!['card','roll','pick','go','tutto'].includes(t.st))return null;
+  if(!(t.card===null||TD_CARDS.includes(t.card)))return null;if(t.st!=='card'&&!t.card)return null;
+  const D=a=>Array.isArray(a)&&a.length<=6&&a.every(x=>I(x,1,6));
+  if(!D(t.dice)||!D(t.kept)||!D(t.street)||t.street.some((v,i)=>i&&v<=t.street[i-1]))return null;
+  if(!I(t.pts,0,100000)||!I(t.bank,0,1000000)||!I(t.tuttos,0,2))return null;
+  if(t.st==='pick'&&!t.dice.length)return null;
+  g.t={card:t.card,st:t.st,dice:t.dice.slice(),kept:t.kept.slice(),pts:t.pts,bank:t.bank,tuttos:t.tuttos,street:t.street.slice(),rid:I(t.rid,0,1e9)?t.rid:0};
+  g.fx=O(g.fx)&&typeof g.fx.k==='string'?{k:S(g.fx.k,8),id:I(g.fx.id,0,1e9)?g.fx.id:0}:null;
+  return g;
+}
+//TUTTO-END
+
 /* ---------- Grundlagen ---------- */
 const SB_URL='https://xatfnfirvkvoxnitysmj.supabase.co';
 const SB_KEY='sb_publishable_JV8pQLw5a7tLFJXZ1yZZPg_V8XN7K_4';
 const SLOT=new URLSearchParams(location.search).get('slot')||'';
-const LOW=/Android/i.test(navigator.userAgent)||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
+// Grafikqualität: automatisch (nur wirklich schwache Geräte sparen), hoch oder sparsam – einstellbar unter Einstellungen
+const GFX=(()=>{try{return localStorage.getItem('al_gfx')||'auto'}catch(e){return 'auto'}})();
+const LOW_AUTO=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=2;
+const LOW=GFX==='low'||(GFX==='auto'&&LOW_AUTO);
 const BOTS=['Big Yaro','Big Snake','Hörgerät','Gundi','Boceta','Skebodi','Klangschalen Uschi'];
 const STATUS={home:'online',lobby:'in der Lobby',bots:'spielt gegen Bots',game:'im Spiel'};
 // „zuletzt online …“
@@ -2911,9 +3074,9 @@ function pickPhoto(){
   const i=document.createElement('input');i.type='file';i.accept='image/*';
   i.onchange=()=>{const f=i.files&&i.files[0];if(!f)return;const r=new FileReader();
     r.onload=()=>{const img=new Image();img.onload=()=>{
-      const S=160,cv=document.createElement('canvas');cv.width=cv.height=S;const x=cv.getContext('2d'),m=Math.min(img.width,img.height);
+      const S=320,cv=document.createElement('canvas');cv.width=cv.height=S;const x=cv.getContext('2d'),m=Math.min(img.width,img.height);
       x.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);
-      let q=.82,d=cv.toDataURL('image/jpeg',q);while(d.length>40000&&q>.4){q-=.12;d=cv.toDataURL('image/jpeg',q)}
+      x.imageSmoothingQuality='high';let q=.88,d=cv.toDataURL('image/jpeg',q);while(d.length>56000&&q>.45){q-=.08;d=cv.toDataURL('image/jpeg',q)}
       saveAvatar({img:d});
     };img.onerror=()=>toast('Das Bild konnte nicht gelesen werden.');img.src=r.result};
     r.readAsDataURL(f)};
@@ -3469,8 +3632,9 @@ const ACH2=[['🧙','Zauberlehrling','Eine Partie Wizard gewonnen',x=>x.stich.wi
   ['🦉','Gutes Gedächtnis','Eine Partie Cabo gewonnen',x=>x.cabo.wins>=1],['📣','Volltreffer','10× richtig CABO gerufen',x=>x.cabo.hits>=10],
   ['💥','Kamikaze','Eine Kamikaze-Runde (zwei 12er, zwei 13er)',x=>x.cabo.kn>=1],['🧠','Gedächtniskünstler','10× Cabo gewonnen',x=>x.cabo.wins>=10],
   ['🔟','Phasen-Profi','Eine Partie Phase 10 gewonnen',x=>x.p10.wins>=1],['🌈','Phasenmeister','10× Phase 10 gewonnen',x=>x.p10.wins>=10],
-  ['✖️','Kreuzritter','Eine Partie Qwixx gewonnen',x=>x.qwixx.wins>=1],['🚀','Qwixx-Rekord','100 Punkte in einer Partie Qwixx',x=>x.qwixx.best>=100]];
-const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof g==='object'?g:{};return {stich:Object.assign({},z,o.stich||{}),dice:Object.assign({},z,o.dice||{}),cabo:Object.assign({},z,o.cabo||{}),p10:Object.assign({},z,o.p10||{}),qwixx:Object.assign({},z,o.qwixx||{})}};
+  ['✖️','Kreuzritter','Eine Partie Qwixx gewonnen',x=>x.qwixx.wins>=1],['🚀','Qwixx-Rekord','100 Punkte in einer Partie Qwixx',x=>x.qwixx.best>=100],
+  ['🍀','Tutto-Profi','Eine Partie Tutto gewonnen',x=>x.tutto.wins>=1],['🎰','Tutto-Maschine','50× Tutto gewürfelt',x=>x.tutto.hits>=50],['☘️','Glückskind','Mit dem Kleeblatt sofort gewonnen',x=>x.tutto.kn>=1]];
+const gsFill=g=>{const z={played:0,wins:0,best:0,avg:0,hits:0,kn:0},o=g&&typeof g==='object'?g:{};return {stich:Object.assign({},z,o.stich||{}),dice:Object.assign({},z,o.dice||{}),cabo:Object.assign({},z,o.cabo||{}),p10:Object.assign({},z,o.p10||{}),qwixx:Object.assign({},z,o.qwixx||{}),tutto:Object.assign({},z,o.tutto||{})}};
 function ach2Html(g){const x=gsFill(g),got=ACH2.filter(a=>a[3](x)).length;
   return '<div class="panel"><h3>Wizard, Kniffel, Cabo, Phase 10 & Qwixx · '+got+' von '+ACH2.length+'</h3><div class="ach">'+ACH2.map(a=>{const ok=a[3](x);
     return '<div class="ac'+(ok?' on':'')+'"><span>'+a[0]+'</span><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></div>'}).join('')+'</div></div>'}
@@ -3690,6 +3854,7 @@ async function acctSubmit(kind){
 
 /* ---------- Aktionen ---------- */
 function act(a,v,el){
+  if(a==='gfx'){try{localStorage.setItem('al_gfx',v)}catch(e){}toast('Grafik wird umgestellt …');setTimeout(()=>location.reload(),450);return}
   if(plusAct(a,v,el))return;
   switch(a){
     case 'go':return go(v,el&&el.dataset.u);
@@ -3928,7 +4093,7 @@ function renderSoft(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&
 let vtRun=null;
 function doRender(){
   const app=$('#app');
-  const rk=G&&['qwixx','dice'].includes(gameOf(G))?'':(G&&G.round);
+  const rk=G&&['qwixx','dice','tutto'].includes(gameOf(G))?'':(G&&G.round);
   const k=code?(!G?'load':G.phase==='lobby'?'lobby':G.phase==='over'?'over':G.phase==='end'&&Date.now()>=endHold?'end'+rk:'game'+rk):'v:'+view;
   const cat=x=>x==null?'':x.startsWith('v:')?x:x.replace(/\d+$/,'');
   // Wechsel zwischen Bildschirmen (Menü-Reiter, Raum betreten, Lobby → Spiel, Endstand) als weiche Überblendung
@@ -3976,7 +4141,7 @@ function drawHome(){
     '<button class="ghost" data-a="go" data-v="settings"><b>⚙️</b>Einstellungen</button>'+
     '<button class="ghost xnav" data-a="go" data-v="shop"><b>🛒'+(WAL&&WAL.daily?'<span class="badge">1</span>':'')+'</b>Shop'+(WAL?'<small>🪙 '+Number(WAL.chips).toLocaleString('de-DE')+'</small>':'')+'</button>'+
     '<button class="ghost" data-a="go" data-v="tv"><b>📺</b>Fernseher</button></div>';
-  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div><div class="panel">'+CB_RULES_TXT+'</div><div class="panel">'+P10_RULES_TXT+'</div><div class="panel">'+QX_RULES_TXT+'</div>'+
+  h+='<div class="panel">'+RULES.replace('Regeln in Kurzform','Regeln Arschloch')+'</div><div class="panel">'+ST_RULES_TXT+'</div><div class="panel">'+DC_RULES_TXT+'</div><div class="panel">'+CB_RULES_TXT+'</div><div class="panel">'+TD_RULES_TXT+'</div><div class="panel">'+P10_RULES_TXT+'</div><div class="panel">'+QX_RULES_TXT+'</div>'+
     (navigator.standalone||matchMedia('(display-mode: standalone)').matches?'':'<p class="note" style="text-align:center">Tipp: Über „Teilen“ → „Zum Home-Bildschirm“ (iPhone) bzw. Menü → „App installieren“ (Android) hast du das Spiel als App.</p>');
   return h;
 }
@@ -4031,7 +4196,7 @@ function drawFriends(){
 }
 function otherStatsHtml(){
   const gs=gameStats&&typeof gameStats==='object'?gameStats:{};
-  return ['stich','dice','cabo','p10','qwixx'].map(k=>{const x=gs[k]||{},n=+x.played||0;
+  return ['stich','dice','cabo','p10','qwixx','tutto'].map(k=>{const x=gs[k]||{},n=+x.played||0;
     return '<h3 style="margin:18px 0 8px">'+GAMES[k].icon+' '+GAMES[k].name+'</h3><div class="stats">'+[
       [n,'Partien'],[n?(+x.wins||0)+'×':'–','Gewonnen'],[n?(k==='cabo'||k==='p10'?+x.low:+x.best):'–',k==='cabo'||k==='p10'?'Bester Endstand':'Bestwert'],[n?+x.avg:'–','Punkteschnitt']
     ].map(y=>'<div class="stat"><b>'+esc(y[0])+'</b><span>'+y[1]+'</span></div>').join('')+'</div>'}).join('');
@@ -4090,7 +4255,7 @@ function lockOptH(k,list,prev){return '<div class="opts">'+list.map(([v,l,req,ex
 // Design schnell im Spiel ändern (🎨 oben in der Leiste)
 let dsOpen=false;
 function openDesignQuick(){
-  const k=G?gameOf(G):'arsch',dice=k==='dice'||k==='qwixx';
+  const k=G?gameOf(G):'arsch',dice=k==='dice'||k==='qwixx'||k==='tutto';
   const dz='<h3>Würfel</h3>'+lockOptH('dice',DICES,v=>'<span class="mdie md-'+v+'"><i></i><i></i><i></i></span>');
   const cz='<h3>Kartenrücken</h3>'+lockOptH('back',BACKS,v=>'<span class="mini cb-'+v+'"></span>')+(k==='arsch'?'<h3>Karten</h3>'+lockOptH('cards',FRONTS,v=>'<span class="mini cf-'+v+'">A<i>♥</i></span>'):'');
   const tz='<h3>Tisch</h3>'+lockOptH('surface',SURF.map(x=>[x[0],x[1],x[3],x[2]]),(v,e)=>'<span style="font-size:22px">'+e+'</span>');
@@ -4156,6 +4321,7 @@ function openSound(){openModal('<h2>🎵 Sound</h2>'+soundInner()+'<button class
 function drawSettings(){
   const tg=(k,label,sub)=>'<li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">'+label+'</b><span class="note">'+sub+'</span></span><button class="sw2'+(SET[k]?' on':'')+'" data-a="set" data-v="'+k+'" aria-label="'+label+'"><i></i></button></li>';
   let h=backBtn+'<h2>Einstellungen</h2>'+
+    '<div class="panel"><h3>Grafik</h3><div class="rl"><span>Qualität<small>'+(GFX==='auto'?'Automatisch – dein Gerät läuft gerade mit '+(LOW?'sparsamer':'voller')+' Grafik.':GFX==='high'?'Alle Effekte und Animationen an.':'Weniger Effekte für ältere Handys.')+'</small></span><div class="seg">'+[['auto','Auto'],['high','Hoch'],['low','Sparsam']].map(([k,l])=>'<button class="'+(GFX===k?'on':'')+'" data-a="gfx" data-v="'+k+'">'+l+'</button>').join('')+'</div></div></div>'+
     '<div class="panel"><h3>Sound</h3>'+soundInner()+'</div>'+
     '<div class="panel"><h3>Coach</h3><ul class="plist"><li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">🧠 Tipps nach jeder Runde</b><span class="note">Kurze Hinweise, was gut lief und was du besser machen kannst</span></span><button class="small'+(coachOn?'':' ghost')+'" data-a="coach-tog">'+(coachOn?'An':'Aus')+'</button></li><li><span style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:16px">🤖 Sprüche der Computer</b><span class="note">Kommentare der Computergegner in Sprechblasen</span></span><button class="small'+(quipsOn?'':' ghost')+'" data-a="quip-tog">'+(quipsOn?'An':'Aus')+'</button></li></ul></div>'+
     '<div class="panel"><ul class="plist">'+tg('vib','Vibration','Bei Bomben und Einladungen')+tg('shake','Schütteln zum Würfeln','Im Kniffel das Handy schütteln statt tippen')+
@@ -4344,6 +4510,7 @@ const GAMES={
   dice:{short:'5 Würfel, 13 Felder',name:'Kniffel',icon:'🎲',min:1,max:8,desc:'5 Würfel, 3 Würfe, 13 Felder – am Handy würfeln oder mit echten Würfeln nur zählen.'},
   cabo:{short:'Merken, tauschen, CABO!',name:'Cabo',icon:'🦉',min:2,max:5,desc:'Merk dir deine verdeckten Karten, tausch clever und ruf CABO, wenn du die wenigsten Punkte hast.'},
   p10:{short:'10 Phasen der Reihe nach',name:'Phase 10',icon:'🔟',min:2,max:6,desc:'Schaff die 10 Phasen der Reihe nach – Drillinge, Folgen, Farben. Mit Jokern und Aussetzen.'},
+  tutto:{short:'Würfel, Karten, Risiko',name:'Tutto',icon:'🍀',min:2,max:8,desc:'Würfeln mit 6 Würfeln und Karten – aufhören oder alles riskieren? Wer zuerst 6000 hat, gewinnt.'},
   qwixx:{short:'Würfeln und ankreuzen',name:'Qwixx',icon:'✖️',min:2,max:5,desc:'Würfeln und ankreuzen – alle machen mit, auch wenn sie nicht dran sind. Reihen abschließen!'}};
 const gameOf=g=>g&&GAMES[g.game]?g.game:'arsch';
 let rstore=null,trickHold=0,diceAnim=0;
@@ -4365,6 +4532,7 @@ function newRoomData(game){
   else if(game==='cabo'){d.game='cabo';d.rules=Object.assign({},CB_RULES);d.bots=store.online?0:2}
   else if(game==='p10'){d.game='p10';d.rules=Object.assign({},P10_RULES);d.bots=store.online?0:2}
   else if(game==='qwixx'){d.game='qwixx';d.rules=Object.assign({},QX_RULES);d.bots=store.online?0:2}
+  else if(game==='tutto'){d.game='tutto';d.rules=Object.assign({},TD_RULES);d.bots=store.online?0:2}
   else d.bots=store.online?0:2;
   return d;
 }
@@ -4385,7 +4553,7 @@ function localTableStore(){
 function savedTable(){try{const s=JSON.parse(ls.get('al_table')||'null');return s&&s.phase!=='over'&&s.phase!=='closed'?s:null}catch(e){return null}}
 
 // ----- Laufende Partien: Hilfen -----
-function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':k==='cabo'?['peek','play','act'].includes(G.phase):k==='p10'?G.phase==='play':k==='qwixx'?['roll','white','color'].includes(G.phase):false}
+function otherRunning(){const k=gameOf(G);return k==='stich'?['trump','werwolf','bid','play','cloud','juggle'].includes(G.phase):k==='dice'?G.phase==='play':k==='cabo'?['peek','play','act'].includes(G.phase):k==='p10'?G.phase==='play':k==='qwixx'?['roll','white','color'].includes(G.phase):k==='tutto'?G.phase==='play':false}
 // Welcher Sitz wird von diesem Geraet gesteuert? (am Tisch-Handy: jeder menschliche Spieler)
 function ctrlSeat(){
   if(!G||!G.players)return -1;
@@ -4405,11 +4573,13 @@ function onGameOther(g,prev){
   if(k==='cabo'&&prev&&g.round!==prev.round){sfx('deal');cbSel.clear();cbOpp=null;cbShow=null;cbThrowMode=false}
   if(k==='p10'&&prev){if(g.round!==prev.round){sfx('deal');p10Sel.clear();p10Stage=[]}else if(g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)){const f=g.fx.k;if(f==='lay')sfx('win');else if(f==='skip'){sfx('lose');if(g.fx.x===mySeatOf(g))toast('⏭ Du musst einmal aussetzen!')}else if(f==='hit')sfx('deal');else sfx('card')}
     const ms=mySeatOf(g);if(ms>=0&&g.hands[ms])[...p10Sel].forEach(c=>{if(!g.hands[ms].includes(c))p10Sel.delete(c)});if(ms>=0&&g.hands[ms])p10Stage=p10Stage.map(x=>x.filter(c=>g.hands[ms].includes(c))).filter(x=>x.length)}
+  if(k==='tutto'&&prev&&prev.t&&g.t&&g.t.rid!==prev.t.rid){sfx('deal');diceAnim=Date.now()+600;setTimeout(render,630)}
+  if(k==='tutto'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)&&mySeatOf(g)!==prev.turn){const f=g.fx.k;sfx(f==='tutto'||f==='win'?'win':f==='miss'||f==='stop'?'lose':'card')}
   if(k==='qwixx'&&prev&&g.rollId!==prev.rollId){sfx('deal');diceAnim=Date.now()+650;setTimeout(render,680)}
   if(k==='qwixx'&&prev&&g.fx&&(!prev.fx||g.fx.id!==prev.fx.id)&&g.locked.some((x,r)=>x>=0&&prev.locked[r]<0))sfx('win');
   const cs=(()=>{const t=G;G=g;const r=ctrlSeat();G=t;return r})();
   if(prev&&g.v!==prev.v&&g.turn!==prev.turn&&cs>=0&&g.turn===cs&&!g.local)setTimeout(()=>sfx('turn'),250);
-  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):k==='cabo'?cbPlaces(g):k==='p10'?p10Places(g):k==='qwixx'?qxPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
+  if(g.phase==='over'&&(!prev||prev.phase!=='over')){const ms=mySeatOf(g),pl=k==='stich'?stPlaces(g):k==='cabo'?cbPlaces(g):k==='p10'?p10Places(g):k==='qwixx'?qxPlaces(g):k==='tutto'?tdPlaces(g):dcPlaces(g);if(ms>=0&&g.players.length>1)setTimeout(()=>sfx(pl[ms]===0?'win':'mid'),400)}
   if(g.phase==='over'&&!g.local&&store.online&&seen.recG!==code+':'+g.match){seen.recG=code+':'+g.match;const c=code;setTimeout(()=>store.rpc&&store.rpc('record_game',{p_code:c}).then(()=>setTimeout(loadGS,800)).catch(()=>{}),1200)}
   G=g;clearTimeout(loadTimer);stale=false;render();maybeBot();
   const st=myStatus();if(st!==lastStatus){lastStatus=st;heartbeat()}
@@ -4419,11 +4589,11 @@ function otherBot(){
   if(!G||botTimer||G.paused||!otherRunning())return;
   const k=gameOf(G),isHost=G.host===myId||G.local,me_=mySeat();
   if(!isHost&&me_<0)return;
-  const need=k==='p10'?!!(G.phase==='play'&&G.players[G.turn]&&G.players[G.turn].bot):k==='qwixx'?(G.phase==='roll'?!!G.players[G.active].bot:G.phase==='white'?G.players.some((p,s)=>p.bot&&G.wc[s]==null):G.phase==='color'?!!G.players[G.active].bot:false):k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)||!!cbBotThrow(G)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
+  const need=k==='p10'||k==='tutto'?!!(G.phase==='play'&&G.players[G.turn]&&G.players[G.turn].bot):k==='qwixx'?(G.phase==='roll'?!!G.players[G.active].bot:G.phase==='white'?G.players.some((p,s)=>p.bot&&G.wc[s]==null):G.phase==='color'?!!G.players[G.active].bot:false):k==='cabo'?(G.phase==='peek'?G.players.some((p,s)=>p.bot&&!G.ready[s]):!!(G.players[G.turn]&&G.players[G.turn].bot)||!!cbBotThrow(G)):k==='stich'?(G.phase==='juggle'?G.players.some((p,s)=>p.bot&&G.jPick&&G.jPick[s]==null):!!(G.players[G.turn]&&G.players[G.turn].bot)):(DR(G).mode==='roll'&&G.players[G.turn]&&G.players[G.turn].bot);
   if(!need)return;
   const v=G.v,delay=(k==='dice'?750:950)+(trickHold>Date.now()?trickHold-Date.now():0)+(isHost?0:7000+Math.max(0,me_)*1500);
   botTimer=setTimeout(()=>{botTimer=null;if(!G||G.paused)return;if(G.v!==v){maybeBot();return}if(busy){setTimeout(maybeBot,300);return}
-    const g=clone(G);const ok=k==='stich'?stBotStep(g):k==='cabo'?cbBotStep(g):k==='p10'?p10BotStep(g):k==='qwixx'?qxBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
+    const g=clone(G);const ok=k==='stich'?stBotStep(g):k==='cabo'?cbBotStep(g):k==='p10'?p10BotStep(g):k==='qwixx'?qxBotStep(g):k==='tutto'?tdBotStep(g):dcBotStep(g);if(ok)commit(g)},delay);
 }
 function othersTotal(){return G.local?(G.names||[]).length+(G.bots||0):Math.min(lobby.length,8)+(G.bots||0)}
 
@@ -4433,9 +4603,10 @@ function otherAct(a,v,el,g,s){
   if(k==='cabo'&&a.startsWith('cb-'))return cbAct(a,v);
   if(k==='p10'&&a.startsWith('p10-'))return p10Act(a,v);
   if(k==='qwixx'&&a.startsWith('qx-'))return qxAct(a,v);
+  if(k==='tutto'&&a.startsWith('td-'))return tdAct(a,v);
   switch(a){
-    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:k==='cabo'?CB_RULES:k==='p10'?P10_RULES:k==='qwixx'?QX_RULES:DC_RULES,g.rules||{});
-      g.rules[key]=v==='true'?true:v==='false'?false:v;if(k==='dice'&&key==='mode'&&v==='real')g.bots=0;commit(g);return true}
+    case 'rule':{if(!host||G.phase!=='lobby')return true;const key=el.dataset.k;g.rules=Object.assign({},k==='stich'?ST_RULES:k==='cabo'?CB_RULES:k==='p10'?P10_RULES:k==='qwixx'?QX_RULES:k==='tutto'?TD_RULES:DC_RULES,g.rules||{});
+      g.rules[key]=v==='true'?true:v==='false'?false:k==='tutto'&&key==='target'?+v:v;if(k==='dice'&&key==='mode'&&v==='real')g.bots=0;commit(g);return true}
     case 'bot+':if(host&&othersTotal()<info.max&&!(k==='dice'&&DR(G).mode==='real')){g.bots=(g.bots||0)+1;commit(g)}return true;
     case 'bot-':if(host&&g.bots>0){g.bots--;commit(g)}return true;
     case 'botlvl':return true;
@@ -4444,8 +4615,8 @@ function otherAct(a,v,el,g,s){
     case 'start':{if(!host)return true;const t=othersTotal();if(t<info.min||t>info.max)return true;
       const pl=G.local?(G.names||[]).map((x,i)=>({id:'L'+i,name:x,bot:false})):lobby.slice(0,8).map(p=>({id:p.id,name:String(p.name||'Spieler').slice(0,16),bot:false}));
       for(let i=0;i<(g.bots||0);i++)pl.push({id:'bot'+i,name:BOTS[i],bot:true});
-      g.players=pl;if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else if(k==='p10'){p10Start(g);p10Sel.clear();p10Stage=[]}else if(k==='qwixx')qxStart(g);else dcStart(g);cbSel.clear();cbOpp=null;commit(g);return true}
-    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else if(k==='p10')p10Start(g);else if(k==='qwixx')qxStart(g);else dcStart(g);commit(g)}return true;
+      g.players=pl;if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else if(k==='p10'){p10Start(g);p10Sel.clear();p10Stage=[]}else if(k==='qwixx')qxStart(g);else if(k==='tutto'){tdStart(g);tdSel.clear()}else dcStart(g);cbSel.clear();cbOpp=null;commit(g);return true}
+    case 'newmatch':if(G.phase==='over'&&(s>=0||G.local)){if(k==='stich')stStart(g);else if(k==='cabo')cbStart(g);else if(k==='p10')p10Start(g);else if(k==='qwixx')qxStart(g);else if(k==='tutto')tdStart(g);else dcStart(g);commit(g)}return true;
     case 'next':if(G.phase==='rend'&&(s>=0||G.local)&&Date.now()-(seen.endAt||0)>=2500){if(k==='stich'){stNext(g);commit(g)}else if(k==='cabo'&&cbNextRound(g)){cbSel.clear();cbOpp=null;cbShow=null;commit(g)}else if(k==='p10'&&p10NextHand(g)){p10Sel.clear();p10Stage=[];commit(g)}}return true;
     case 'lv-end':closeModal();if(s>=0||G.local){g.phase='over';g.paused=null;g.turn=-1;if(k==='stich'&&G.phase!=='rend'&&G.phase!=='over'){/* Runde abbrechen */}commit(g)}return true;
     // Wizard
@@ -4489,10 +4660,11 @@ function drawOther(app,top,host){
   if(k==='cabo')return drawCabo(app,top);
   if(k==='p10')return drawP10(app,top);
   if(k==='qwixx')return drawQwixx(app,top);
+  if(k==='tutto')return drawTutto(app,top);
   return drawDice(app,top);
 }
 function drawOtherLobby(app,top,host,k){
-  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):k==='cabo'?CR(G):k==='p10'?PR(G):k==='qwixx'?QR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
+  const info=GAMES[k],t=othersTotal(),r=k==='stich'?SR(G):k==='cabo'?CR(G):k==='p10'?PR(G):k==='qwixx'?QR(G):k==='tutto'?TR(G):DR(G),LV={easy:'leicht',normal:'normal',hard:'schwer'};
   const seg=(key,opts)=>'<div class="seg">'+opts.map(([v,l])=>'<button class="'+(String(r[key])===String(v)?'on':'')+'" data-a="rule" data-k="'+key+'" data-v="'+v+'">'+l+'</button>').join('')+'</div>';
   let li='';
   if(G.local){li=(G.names||[]).map((x,i)=>'<li><span>'+avatar({e:'🎲',c:hashCol(x)},x,0,34)+esc(x)+'</span><button class="small ghost" data-a="ln-del" data-v="'+i+'">✕</button></li>').join('')}
@@ -4501,7 +4673,8 @@ function drawOtherLobby(app,top,host,k){
   for(let i=0;i<(G.bots||0);i++)li+='<li><span>'+avatar({e:'🤖',c:'#4a4d52'},'',0,34)+BOTS[i]+'</span><span class="tag">Computer · '+LV[r.bots||'normal']+'</span></li>';
   const canBots=!(k==='dice'&&r.mode==='real');
   let set='';
-  if((k==='p10'||k==='qwixx')&&(G.bots||0))set='<div class="panel"><h3>Einstellungen</h3>'+(host?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'<p class="note" style="margin:0">Computer: '+({easy:'leicht',normal:'normal',hard:'schwer'}[r.bots]||'normal')+'</p>')+'</div>';
+  if(k==='tutto')set='<div class="panel"><h3>Einstellungen</h3>'+(host?'<div class="rl"><span>Ziel</span>'+seg('target',[[4000,'4000'],[6000,'6000'],[10000,'10000']])+'</div>'+((G.bots||0)?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':''):'<p class="note" style="margin:0">Ziel: '+r.target+' Punkte</p>')+'</div>';
+  else if((k==='p10'||k==='qwixx')&&(G.bots||0))set='<div class="panel"><h3>Einstellungen</h3>'+(host?'<div class="rl"><span>Computer-Stärke</span>'+seg('bots',[['easy','leicht'],['normal','normal'],['hard','schwer']])+'</div>':'<p class="note" style="margin:0">Computer: '+({easy:'leicht',normal:'normal',hard:'schwer'}[r.bots]||'normal')+'</p>')+'</div>';
   if(k==='cabo')set='<div class="panel"><h3>Einstellungen</h3>'+(host?
     '<div class="rl"><span>Regeln<small>Hausregeln: echtes Kartenspiel mit Jokern (−1) und roten Königen (0), 7 anschauen, 8 blind tauschen, 9 anschauen & tauschen, jederzeit dazwischen werfen. Original: Zahlenkarten 0–13.</small></span>'+seg('mode',[['haus','Hausregeln 🃏'],['orig','Original']])+'</div>'+
     '<div class="rl"><span>Gedächtnis-Hilfe<small>Karten, die du kennst, bleiben für dich sichtbar (leichter als das Original).</small></span>'+seg('help',[[false,'aus'],[true,'an']])+'</div>'+
@@ -4524,7 +4697,7 @@ function drawOtherLobby(app,top,host,k){
     '<div class="panel"><label>'+(G.local?'Wer spielt mit?':'Am Tisch')+' ('+t+' von '+info.min+'–'+info.max+')</label><ul class="plist lob">'+(li||'<li><span class="note">Noch niemand da</span></li>')+'</ul>'+nameAdd+'</div>'+friendInvitePanel()+
     (host?(canBots?'<div class="row" style="margin-bottom:10px"><button class="ghost" data-a="bot+" '+(t>=info.max?'disabled':'')+'>+ Computer</button><button class="ghost" data-a="bot-" '+((G.bots||0)>0?'':'disabled')+'>− Computer</button></div>':'')+
       '<button data-a="start" '+(okStart?'':'disabled')+' style="margin-bottom:14px">Spiel starten</button>'+(t<info.min?'<p class="note" style="text-align:center;margin-top:-6px">Ihr braucht mindestens '+info.min+' Spieler.</p>':'')
-      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:k==='cabo'?CB_RULES_TXT:k==='p10'?P10_RULES_TXT:k==='qwixx'?QX_RULES_TXT:DC_RULES_TXT)+'</div>');
+      :'<p class="note" style="text-align:center">Warte, bis der Host das Spiel startet …</p>')+set+'<div class="panel">'+(k==='stich'?ST_RULES_TXT:k==='cabo'?CB_RULES_TXT:k==='p10'?P10_RULES_TXT:k==='qwixx'?QX_RULES_TXT:k==='tutto'?TD_RULES_TXT:DC_RULES_TXT)+'</div>');
 }
 
 // ----- Wizard-Ansicht -----
@@ -5002,6 +5175,58 @@ const QX_RULES_TXT='<details><summary>Regeln Qwixx</summary>Kreuze in den vier F
   '<b>Abschließen:</b> Die Zahl ganz rechts darfst du erst mit mindestens 5 Kreuzen in der Reihe ankreuzen – dann bekommst du das Schloss als Extrakreuz, und die Reihe ist für alle zu. Der Würfel dieser Farbe fällt weg.<br><br>'+
   '<b>Ende:</b> sobald zwei Reihen abgeschlossen sind oder jemand 4 Fehlwürfe hat. Punkte je Reihe: 1 Kreuz = 1, 2 = 3, 3 = 6, 4 = 10 … 12 = 78. Die meisten Punkte gewinnen.</details>';
 
+// ===================== Tutto =====================
+let tdSel=new Set();
+function tdAct(a,v){
+  const s=mySeat(),g=clone(G);if(s<0||G.turn!==s)return true;
+  switch(a){
+    case 'td-card':if(tdCard(g,s)){sfx(g.t.card==='stop'||!g.t.card?'lose':'card');commit(g)}return true;
+    case 'td-roll':tdSel.clear();if(tdRoll(g,s)){sfx('deal');commit(g)}return true;
+    case 'td-sel':{const i=+v;if(G.t.st!=='pick'||!G.t.dice[i])return true;tdSel.has(i)?tdSel.delete(i):tdSel.add(i);sfx('pop');render();return true}
+    case 'td-all':tdSel=new Set(G.t.card==='str'?(()=>{const seen=new Set(),r=[];G.t.dice.forEach((x,i)=>{if(!G.t.street.includes(x)&&!seen.has(x)){seen.add(x);r.push(i)}});return r})():tdAll(G.t.dice));render();return true;
+    case 'td-pick':if(tdPick(g,s,[...tdSel])){tdSel.clear();sfx(g.t.st==='tutto'?'win':'card');commit(g)}else toast('Diese Würfel zählen so nicht – nur Einer, Fünfer oder Drillinge.');return true;
+    case 'td-again':tdSel.clear();if(tdAgain(g,s)){sfx('deal');commit(g)}return true;
+    case 'td-stop':if(tdStop(g,s)){sfx('win');commit(g)}return true;
+    case 'td-on':if(tdGoOn(g,s)){sfx('card');commit(g)}return true;
+  }
+  return true;
+}
+function tdCardHtml(c,big){if(!c)return '<div class="tdcard back'+(big?' big':'')+'"><b>TUTTO</b></div>';const x=TD_CARD[c],kind=c[0]==='b'?'bonus':c;
+  return '<div class="tdcard '+kind+(big?' big':'')+'"><span class="ti">'+x[0]+'</span><b>'+x[1]+'</b>'+(big?'<small>'+x[2]+'</small>':'')+'</div>'}
+function drawTutto(app,top){
+  const n=G.players.length,me_=mySeat(),tg=TR(G).target,t=G.t;
+  if(G.phase==='over'){const st=tdStandings(G),pl=tdPlaces(G),medal=['🥇','🥈','🥉'];
+    setHTML(app,top+'<h1 style="margin-top:6px">Endstand</h1><p class="note" style="text-align:center">'+esc(G.msg||'')+'</p><div class="panel"><ul class="plist">'+
+      st.map(x=>'<li><span>'+(medal[pl[x.s]]||'')+' '+esc(nm(G,x.s))+(x.s===G.clover?' 🍀':'')+'</span><span class="p10st"><b>'+x.t+' Punkte</b><small>'+G.tut[x.s]+'× Tutto</small></span></li>').join('')+'</ul></div>'+
+      (me_>=0?'<button data-a="newmatch">Neue Partie</button>':'')+'<button class="ghost" data-a="leave" style="margin-top:10px">Verlassen</button>');return}
+  const rolling=diceAnim>Date.now(),act=G.turn===me_&&me_>=0;
+  const ps='<div class="tdps">'+G.players.map((p,s)=>'<div class="tdp'+(G.turn===s?' turn':'')+(s===me_?' me':'')+'" data-s="'+s+'" data-a="pinfo" data-v="'+s+'">'+avOf(p.id,p.name,p.bot)+
+    '<span class="tn">'+esc(p.name)+'</span><b>'+G.scores[s]+'</b><i class="tbar"><i style="width:'+Math.max(0,Math.min(100,G.scores[s]/tg*100)).toFixed(1)+'%"></i></i></div>').join('')+'</div>';
+  const isStr=t.card==='str';
+  const kept=isStr?'<div class="tdstreet">'+[1,2,3,4,5,6].map(f=>'<span class="'+(t.street.includes(f)?'on':'')+'">'+f+'</span>').join('')+'</div>'
+    :(t.kept.length?'<div class="tdkept">'+t.kept.map(v=>dieHtml(v,'sm')).join('')+'</div>':'');
+  const sel=[...tdSel].filter(i=>i<t.dice.length),sv=sel.map(i=>t.dice[i]);
+  const dice=t.dice.length?'<div class="dice tddice'+(rolling?' rolling':'')+'">'+t.dice.map((v,i)=>dieHtml(rolling?1+Math.floor(Math.random()*6):v,(rolling?'roll':'')+(tdSel.has(i)?' held':''),'data-key="td'+i+'"'+(act&&t.st==='pick'&&!rolling?' data-a="td-sel" data-v="'+i+'"':''))).join('')+'</div>':'';
+  const sum=t.bank+(t.st==='go'||t.st==='pick'?t.pts:0);
+  const table='<div class="table tdt"><div class="tdrow">'+tdCardHtml(t.card,true)+'<div class="tdinfo"><span>Dieser Zug</span><b>'+sum+'</b>'+(t.bank&&t.pts?'<small>'+t.bank+' sicher + '+t.pts+'</small>':'')+'</div></div>'+kept+dice+'<div class="msg">'+esc(G.msg||(act?'':nm(G,G.turn)+' ist dran …'))+'</div></div>';
+  let panel='';
+  if(act&&!rolling){const left=6-(isStr?t.street.length:t.kept.length);
+    if(t.st==='card')panel='<button class="bigroll" data-a="td-card">🃏 Karte aufdecken</button>';
+    else if(t.st==='roll')panel='<button class="bigroll" data-a="td-roll">🎲 Würfeln ('+left+' '+(left===1?'Würfel':'Würfel')+')</button>';
+    else if(t.st==='pick'){const pv=isStr?(sv.length&&new Set(sv).size===sv.length&&!sv.some(x=>t.street.includes(x))?'Straße':''):tdScore(sv);
+      panel='<div class="panel act"><b>'+(isStr?'Neue Zahlen für die Straße wählen':'Punktende Würfel beiseitelegen')+'</b><span class="note">'+(isStr?'Jede Zahl nur einmal.':'Einer 100 · Fünfer 50 · Drilling Augen×100 · drei Einer 1000')+'</span>'+
+        '<div class="row"><button data-a="td-pick" '+(sv.length&&(isStr?pv:pv>0)?'':'disabled')+'>Beiseitelegen'+(!isStr&&pv>0?' (+'+pv+')':'')+'</button><button class="ghost" data-a="td-all">Alle punktenden</button></div></div>'}
+    else if(t.st==='go')panel='<div class="panel act"><b>'+(tdCanStop(G)?'Weiterwürfeln oder aufhören?':'Diese Karte erlaubt kein Aufhören – weiter!')+'</b><span class="note">'+left+' Würfel übrig · '+(t.card&&t.card[0]==='b'?'Bonus nur bei Tutto':t.card==='x2'?'Verdopplung nur bei Tutto':TD_CARD[t.card][2])+'</span><div class="row"><button data-a="td-again">🎲 Weiter ('+left+')</button>'+(tdCanStop(G)?'<button class="ghost" data-a="td-stop">✅ Aufhören (+'+sum+')</button>':'')+'</div></div>';
+    else if(t.st==='tutto')panel='<div class="panel act tdtutto"><b>🎉 TUTTO!</b><span class="note">Neue Karte ziehen und weiterspielen – oder '+t.bank+' Punkte sichern. Bei Stop oder Fehlwurf ist alles weg.</span><div class="row"><button data-a="td-on">🃏 Weiter mit neuer Karte</button><button class="ghost" data-a="td-stop">✅ Aufhören (+'+t.bank+')</button></div></div>';
+  }else if(me_<0)panel='<p class="note" style="text-align:center">Du schaust zu.</p>';
+  const pz=G.paused?'<div class="pausebox">⏸ Pausiert von '+esc(G.paused.by)+(mySeat()>=0&&(!G.paused.uid||G.paused.uid===myId)?'<button data-a="unpause">Weiterspielen</button>':'')+'</div>':'';
+  setHTML(app,top+ps+table+pz+panel+'<p class="note" style="text-align:center">Ziel: '+tg+' Punkte</p>');
+}
+const TD_RULES_TXT='<details><summary>Regeln Tutto</summary>Wer zuerst das Ziel (6000 Punkte) erreicht, gewinnt.<br><br>'+
+  '<b>Dein Zug:</b> Deck eine Karte auf und würfle mit 6 Würfeln. Leg nach jedem Wurf mindestens einen punktenden Würfel beiseite: Einer 100, Fünfer 50, Drilling Augenzahl × 100, drei Einer 1000. Drillinge zählen nur, wenn sie in einem Wurf fallen. Dann aufhören (Punkte sichern) oder mit den restlichen Würfeln weiter. Ein Wurf ohne punktende Würfel ist ein <b>Fehlwurf</b> – alle Punkte des Zugs sind weg.<br><br>'+
+  '<b>Tutto:</b> Alle 6 Würfel liegen. Dann gilt die Karte – und du darfst aufhören oder mit einer neuen Karte und allen Würfeln weitermachen.<br><br>'+
+  '<b>Karten:</b> 💰 Bonus 200–600: Extrapunkte bei Tutto · ✖️2: Tutto verdoppelt alle Punkte des Zugs · 🛑 Stop: Zug vorbei (nach einem Tutto sind die Punkte weg) · 🎆 Feuerwerk: würfeln bis zum Fehlwurf, alle Punkte bleiben · 🛣️ Straße: 1–6 würfeln (jeder Wurf mindestens eine neue Zahl) = 2000 · ➕➖ Plus/Minus: Tutto bringt 1000, der Führende verliert 1000, kein Aufhören vorher · 🍀 Kleeblatt: zweimal hintereinander Tutto = sofort gewonnen.</details>';
+
 // ===================== DEMO (nur /beta): Shop, Bot-Persönlichkeiten, Coach, Spieleabend, Fernseher =====================
 
 // ---------- Shop: Katalog (gleiche Formeln wie auf dem Server) ----------
@@ -5126,7 +5351,7 @@ function plusRoundPlaces(g){const k=gameOf(g),n=g.players.length,P=Array(n).fill
   try{
     if(k==='arsch'){(g.order||[]).forEach((s,i)=>{P[s]=i});return P}
     if(k==='stich'){const h=g.hist[g.hist.length-1];return by(h.pts,false)}
-    if(k==='dice')return dcPlaces(g);if(k==='qwixx')return qxPlaces(g);
+    if(k==='dice')return dcPlaces(g);if(k==='qwixx')return qxPlaces(g);if(k==='tutto')return tdPlaces(g);
     if(k==='cabo'){const h=g.hist[g.hist.length-1];return by(h.sc,true)}
     if(k==='p10'){const h=g.hist[g.hist.length-1];return by(h.sc,true)}
   }catch(e){}
@@ -5199,7 +5424,7 @@ function coachDice(prev,g,me_){const sh0=prev.sheet[me_],sh1=g.sheet[me_];const 
 }
 
 // ---------- Spieleabend ----------
-const EV_GAMES=['dice','cabo','arsch','stich','p10','qwixx'];
+const EV_GAMES=['dice','cabo','arsch','stich','p10','qwixx','tutto'];
 function cleanEvening(e,n){if(!e||typeof e!=='object')return null;const list=Array.isArray(e.list)?e.list.filter(x=>EV_GAMES.includes(x)).slice(0,6):[];if(list.length<2)return null;
   const i=Number.isInteger(e.i)&&e.i>=0&&e.i<list.length?e.i:0,pts={};
   if(e.pts&&typeof e.pts==='object')Object.keys(e.pts).slice(0,12).forEach(k=>{const p=e.pts[k];if(typeof k==='string'&&k.length<=40&&p&&typeof p==='object'&&Number.isInteger(p.p)&&p.p>=0&&p.p<1000&&typeof p.n==='string'&&p.n.length<=16)pts[k]={p:p.p,n:p.n}});
@@ -5213,7 +5438,7 @@ function evOpen(){let sel=['dice','cabo','arsch'];
 var evPending=null;
 async function evStart(){const list=evOpen.sel().slice();if(list.length<2)return;evPending={list,i:0,pts:{},res:[]};await createRoom(list[0])}
 function evAfterEnter(){if(!evPending||!G||G.phase!=='lobby'||G.host!==myId)return;const g=clone(G);g.evening=evPending;evPending=null;commit(g)}
-function evPoints(g){const P=k=>{const pl=gameOf(g)==='arsch'?plusRoundPlaces(g):({stich:stPlaces,dice:dcPlaces,cabo:cbPlaces,p10:p10Places,qwixx:qxPlaces}[gameOf(g)])(g);return pl};
+function evPoints(g){const P=k=>{const pl=gameOf(g)==='arsch'?plusRoundPlaces(g):({stich:stPlaces,dice:dcPlaces,cabo:cbPlaces,p10:p10Places,qwixx:qxPlaces,tutto:tdPlaces}[gameOf(g)])(g);return pl};
   const pl=P(),n=g.players.length,e=clone(g.evening);
   g.players.forEach((p,s)=>{const key=p.bot?'bot:'+p.name:p.id;const o=e.pts[key]||{p:0,n:String(p.name).slice(0,16)};o.p+=n-pl[s];e.pts[key]=o});
   const w=g.players[pl.indexOf(0)];e.res.push({g:gameOf(g),w:String(w?w.name:'?').slice(0,16)});return e}
