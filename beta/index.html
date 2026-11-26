@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eAZbSSmYAN2uTxNZLBtfFiXboBVy492p42Uxjs7vwa0=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Cs/B4gzgWsHqZWc+zsWvAfJTyY8HX6cL8WH9C9U/roc=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1356,6 +1356,10 @@ body.tv #app{zoom:var(--tvz,1);max-width:620px}
 body.tv #chatui,body.tv .chatfab,body.tv .hbtns,body.tv .mebar,body.tv .hand,body.tv .actions,body.tv #coach{display:none!important}
 .tvhead{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;padding:6px 10px;margin-bottom:8px;border-radius:12px;background:rgba(255,255,255,.06)}
 .tvhead b{color:var(--gold);letter-spacing:2px}.tvhead button{width:auto;margin:0}
+.dtabs{margin:10px 0 4px}
+.xcard.on{outline:3px solid #fff;outline-offset:-1px}
+.xstage .table{min-height:170px;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px}
+.xstage .pile{display:flex;gap:6px;justify-content:center}
 </style>
 </head>
 <body>
@@ -4037,7 +4041,7 @@ document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='dmsg')act('dsend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
 function openModal(h,sticky){modalOpen=true;dsOpen=false;const m=$('#modal');clearTimeout(modalT);m.classList.remove('out');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
-let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;dsOpen=false;soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
+let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;dsOpen=false;if(xTry){xTry=false;PEEK=null;applyTheme()}soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
 
 /* ---------- Anzeige ---------- */
 const SPEC_UI={100:['🃏','Joker'],101:['🃏','Joker'],110:['🔄','Revolution'],120:['⏭️','Aussetzer'],130:['🔁','Wechsel']};
@@ -4119,7 +4123,7 @@ function doRender(){
   if(k!==seen.scr){seen.scr=k;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(enterT);enterT=setTimeout(()=>app.classList.remove('enter'),1500)}
 }
 function draw(){
-  const app=$('#app');if(PEEK&&!(dsOpen&&modalOpen)&&(code||view!=='design')){PEEK=null;clearTimeout(peekT);applyTheme()}
+  const app=$('#app');if(PEEK&&!(dsOpen&&modalOpen)&&!(xTry&&modalOpen)&&(code||view!=='design')){PEEK=null;clearTimeout(peekT);applyTheme()}
   if(code){drawGame(app);renderChat();return}
   renderChat();
   setHTML(app,({friends:drawFriends,profile:drawProfile,ranking:drawRanking,design:drawDesign,account:drawAccount,settings:drawSettings,ach:drawAch,shop:drawShop,tv:drawTvView}[view]||drawHome)());
@@ -4284,6 +4288,10 @@ function drawDesign(){
   let h=backBtn+'<h2>Design</h2>';
   h+='<div class="dprev"><div class="table" style="min-height:150px;flex:0 0 auto;margin-top:0"><div class="pile">'+cardHtml(28)+cardHtml(30)+'<div class="card back" style="margin-left:8px"></div></div><div class="msg">So sieht dein Tisch aus</div></div>'+
     '<div class="dice dpv">'+[6,5,4].map(v=>dieHtml(v,'','')).join('')+'</div>'+pk+'</div>';
+  // zwei Inventare: Standard-Designs und im Shop gekaufte
+  const nOwn=WAL&&WAL.owned?WAL.owned.length:0;
+  h+='<div class="seg dtabs"><button class="'+(designTab==='std'?'on':'')+'" data-a="d-tab" data-v="std">Standard</button><button class="'+(designTab==='shop'?'on':'')+'" data-a="d-tab" data-v="shop">🛒 Aus dem Shop'+(nOwn?' ('+nOwn+')':'')+'</button></div>';
+  if(designTab==='shop')return h+shopInvHtml();
   // Gesperrte Designs: Antippen zeigt 4 Sekunden lang eine Vorschau
   const lockOpt=lockOptH;
   const peekNote='<p class="note" style="margin-bottom:0">Tipp auf ein gesperrtes Design für eine kurze Vorschau.</p>';
@@ -5289,7 +5297,7 @@ function xPrev(x,big){const css=xCss(x),[,a,b,c]=XPAL[x.b];
   return '<span class="xpv xbg" style="background:'+css+'"></span>';
 }
 // ---------- Geldbörse ----------
-var WAL=null,SHOP=null,shopTab='shop';
+var WAL=null,SHOP=null,shopTab='shop',designTab='std',xTry=false;
 const ownedX=id=>!!(WAL&&WAL.owned&&WAL.owned.includes(id));
 async function plusLoad(){if(!me||!store.online)return;try{WAL=await store.rpc('wallet',{});applyTheme();if(!code)render()}catch(e){}}
 async function shopLoad(){try{const [s,w]=await Promise.all([store.rpc('shop_today',{}),store.rpc('wallet',{})]);SHOP=s;WAL=w;render()}catch(e){toast('Shop konnte nicht geladen werden.')}}
@@ -5509,8 +5517,15 @@ function plusAct(a,v,el){
     case 'x-item':xItemModal(v);return true;
     case 'x-buy':{const x=xParse(v);if(!x)return true;store.rpc('buy_item',{p_item:v}).then(w=>{WAL=w;sfx('win');toast('🎉 '+x.name+' gehört jetzt dir!');T[x.key]=v;saveTheme();applyTheme();xItemModal(v);render()})
       .catch(e=>{const m=String(e&&e.message);toast(/not enough/.test(m)?'Nicht genug Chips.':/owned/.test(m)?'Hast du schon.':/not in shop/.test(m)?'Nicht mehr im Shop – der Shop hat sich gerade erneuert.':'Kauf hat nicht geklappt.')});return true}
-    case 'x-equip':{const x=xParse(v);if(!x||!ownedX(v))return true;T[x.key]=v;saveTheme();applyTheme();sfx('pop');xItemModal(v);render();return true}
-    case 'x-try':{const x=xParse(v);if(!x)return true;closeModal();PEEK={k:x.key,v,label:x.name};applyTheme();clearTimeout(peekT);peekT=setTimeout(()=>{PEEK=null;applyTheme();render()},4000);toast('👀 Vorschau: '+x.name);return true}
+    case 'x-equip':{const x=xParse(v);if(!x||!ownedX(v))return true;if(xTry){xTry=false;PEEK=null}T[x.key]=v;saveTheme();applyTheme();sfx('pop');if(view==='design'&&!modalOpen){toast('✓ '+x.name+' angelegt');render();return true}xItemModal(v);render();return true}
+    case 'd-tab':designTab=v==='shop'?'shop':'std';if(designTab==='shop'&&!WAL)plusLoad().then(render);render();return true;
+    case 'x-inv':{const x=xParse(v);if(!x||!ownedX(v))return true;T[x.key]=v;saveTheme();applyTheme();sfx('pop');render();return true}
+    case 'x-try':{const x=xParse(v);if(!x)return true;clearTimeout(peekT);PEEK={k:x.key,v,label:x.name};applyTheme();
+      const own=ownedX(v),inShop=SHOP&&[...(SHOP.featured||[]),...(SHOP.daily||[])].some(i=>i.id===v);
+      openModal('<h2 style="margin:0 0 8px">👀 '+esc(x.name)+'</h2><div class="xstage"><div class="table"><div class="pile">'+cardHtml(28)+'<div class="card back"></div><div class="card back"></div></div><div class="dice dpv">'+[6,5,3].map(n=>dieHtml(n,'','')).join('')+'</div></div></div>'+
+        '<p class="note" style="text-align:center;margin:8px 0">So sähe es mit diesem '+x.kind+' aus.</p>'+
+        (own?'<button data-a="x-equip" data-v="'+v+'">Anlegen</button>':inShop?'<button data-a="x-buy" data-v="'+v+'" '+(WAL&&WAL.chips>=x.price?'':'disabled')+'>Kaufen für 🪙 '+x.price.toLocaleString('de-DE')+'</button>':'')+
+        '<button class="ghost" data-a="modal-x" style="margin-top:8px">Schließen</button>');xTry=true;return true}
     case 'coach-x':{const e=document.getElementById('coach');if(e)e.classList.remove('on','open');return true}
     case 'coach-open':{const e=document.getElementById('coach');if(!e)return true;e.classList.toggle('open');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on','open'),e.classList.contains('open')?12000:4000);return true}
     case 'coach-off':coachOn=false;ls.set('al_coach','0');{const e=document.getElementById('coach');if(e)e.classList.remove('on')}toast('Coach-Tipps aus – in den Einstellungen wieder einschaltbar.');return true;
@@ -5527,6 +5542,18 @@ function plusAct(a,v,el){
   return false;
 }
 var myNameOverride=null;
+
+// Design-Seite: Inventar der im Shop gekauften Designs – Antippen legt sofort an
+function shopInvHtml(){
+  if(!me)return '<div class="panel"><p class="note" style="margin:0">Shop-Designs gibt es nur mit Konto.</p></div>';
+  if(!WAL)return '<div class="panel"><p class="note" style="margin:0">Lade …</p></div>';
+  const own=(WAL.owned||[]).map(xParse).filter(Boolean);
+  if(!own.length)return '<div class="panel"><p style="margin-top:0">Du hast noch keine Designs aus dem Shop.</p><button data-a="go" data-v="shop">🛒 Zum Shop</button></div>';
+  return ['bk','sf','dc','bg'].map(k=>{const l=own.filter(x=>x.k===k).sort((p,q)=>q.tier-p.tier);if(!l.length)return '';
+    return '<div class="panel"><h3>'+XKIND[k][0]+'</h3><div class="xgrid">'+l.map(x=>{const tc=XTIER[x.tier],on=T[x.key]===x.id;
+      return '<button class="xcard t'+x.tier+' own'+(on?' on':'')+'" data-a="x-inv" data-v="'+x.id+'" style="--tc:'+tc[1]+'">'+xPrev(x)+'<span class="xn"><small>'+tc[0]+'</small><b>'+esc(x.name)+'</b></span><span class="xp">'+(on?'✓ angelegt':'Anlegen')+'</span></button>'}).join('')+'</div></div>'}).join('')+
+    '<p class="note">'+own.length+' von 368 Designs gesammelt · Standard-Designs findest du im anderen Reiter.</p>';
+}
 </script>
 </body>
 </html>
