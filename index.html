@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Cs/B4gzgWsHqZWc+zsWvAfJTyY8HX6cL8WH9C9U/roc=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-BBBoNwhMwnd+Ed9f08A2gmo8n8VrSbOGD+xpBeToUA8=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1360,6 +1360,31 @@ body.tv #chatui,body.tv .chatfab,body.tv .hbtns,body.tv .mebar,body.tv .hand,bod
 .xcard.on{outline:3px solid #fff;outline-offset:-1px}
 .xstage .table{min-height:170px;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px}
 .xstage .pile{display:flex;gap:6px;justify-content:center}
+/* Reaktionen auf Nachrichten */
+.cm[data-a="re-open"]{cursor:pointer}
+.rechips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.rechip{font-size:12.5px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);line-height:1.4;cursor:pointer}
+.rechip.on{background:rgba(255,210,63,.22);border-color:var(--gold)}
+.repick{display:flex;gap:2px;margin-top:6px;padding:4px;border-radius:999px;background:rgba(10,10,14,.92);box-shadow:0 6px 18px rgba(0,0,0,.45);width:max-content;max-width:100%;animation:rowIn .3s var(--e-spring)}
+.repick button{width:34px;height:34px;padding:0;margin:0;border-radius:50%;background:transparent;font-size:19px;line-height:1}
+.repick button.on{background:rgba(255,210,63,.3)}
+/* Sprachchat-Leiste */
+#vcbar{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:55;display:flex;align-items:center;gap:6px}
+#vcbar .vcjoin{width:auto;height:40px;margin:0;padding:0 14px;border-radius:999px;font-size:14px;background:rgba(22,24,36,.92);color:#fff;border:1px solid rgba(120,200,255,.35);box-shadow:0 6px 18px rgba(0,0,0,.4);display:flex;align-items:center;gap:6px}
+#vcbar .vcn{background:#2fb6ff;color:#002033;font-weight:800;font-size:11px;border-radius:999px;padding:1px 7px}
+#vcbar.on{background:rgba(22,24,36,.94);border:1px solid rgba(120,200,255,.4);border-radius:999px;padding:5px 6px 5px 8px;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+#vcbar .vcppl{display:flex;gap:4px}
+#vcbar .vcu{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:#3a4a6a;color:#fff;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s}
+#vcbar .vcu.talk{box-shadow:0 0 0 3px #4be38f,0 0 12px rgba(75,227,143,.7)}
+#vcbar .vcu.wait{opacity:.45}
+#vcbar .vcb{width:36px;height:36px;margin:0;padding:0;border-radius:50%;font-size:16px;background:rgba(255,255,255,.1);color:#fff}
+#vcbar .vcb.off{background:rgba(255,90,90,.3)}
+#vcbar .vcb.leave{background:#e5484d}
+.vcaudio{display:none}
+body.tv #vcbar{display:none}
+.top .tb .iconbtn.vcm{background:rgba(75,227,143,.18);border-color:rgba(75,227,143,.45)}
+.top .tb .iconbtn.vcm.off{background:rgba(255,90,90,.18);border-color:rgba(255,90,90,.4)}
+.chead .iconbtn.vch{margin-right:4px}.chead .iconbtn.vch.on{background:#e5484d;color:#fff}
 </style>
 </head>
 <body>
@@ -3013,7 +3038,7 @@ async function sbStore(){
   S.commit=(c,d)=>rpc('commit_game',{p_code:c,p_data:d});
   S.recordRound=c=>rpc('record_round',{p_code:c}).catch(()=>{});
   S.sendChat=(c,kind,body)=>rpc('send_chat',{p_code:c,p_kind:kind,p_body:body});
-  S.chatHistory=c=>rpc('chat_history',{p_code:c});
+  S.chatHistory=c=>rpc('chat_history2',{p_code:c});
   S.subGame=(c,cb,onM,onChat)=>{
     let cur=null,srv=0,state='',last=0,stopped=false,mk='';
     // force: Stand vom Server nach einem Fehler – gilt auch, wenn die eigene (nicht gespeicherte) Version hoeher war
@@ -3030,6 +3055,8 @@ async function sbStore(){
       .on('broadcast',{event:'state'},m=>deliver(m.payload&&m.payload.d))
       .on('broadcast',{event:'members'},()=>fm())
       .on('broadcast',{event:'chat'},m=>{if(!stopped&&onChat&&m.payload)onChat(m.payload)})
+      .on('broadcast',{event:'react'},m=>{if(!stopped&&m.payload)onReact('room',m.payload)})
+      .on('broadcast',{event:'vc'},m=>{if(!stopped&&m.payload)vcOnRoom(c,m.payload)})
       .subscribe(st=>{state=st;if(st==='SUBSCRIBED'){both();ch.track({at:Date.now()}).catch(()=>{})}});
     both();
     const iv=setInterval(()=>{if(document.hidden)return;if(state!=='SUBSCRIBED'||Date.now()-last>20000)both()},3000);
@@ -3041,7 +3068,7 @@ async function sbStore(){
   S.kick=(c,u)=>rpc('kick_member',{p_code:c,p_uid:u});
   S.hide=c=>rpc('hide_game',{p_code:c});
   S.listenUser=(onInv,onFr,onD)=>{sb.channel('user:'+S.uid,{config:{private:true}})
-    .on('broadcast',{event:'invite'},m=>onInv(m.payload)).on('broadcast',{event:'friends'},()=>onFr()).on('broadcast',{event:'dm'},m=>onD&&onD(m.payload)).subscribe()};
+    .on('broadcast',{event:'invite'},m=>onInv(m.payload)).on('broadcast',{event:'friends'},()=>onFr()).on('broadcast',{event:'dm'},m=>onD&&onD(m.payload)).on('broadcast',{event:'dmreact'},m=>m.payload&&onReact('dm',m.payload)).on('broadcast',{event:'vcsig'},m=>m.payload&&vcOnSignal(m.payload)).subscribe()};
   S.register=async(u,pw)=>{
     if(!await rpc('username_free',{p_name:u}))throw new Error('taken');
     let r=await sb.auth.updateUser({email:mail(u),password:pw});
@@ -3431,13 +3458,14 @@ function enter(c,st){
   code=c;G=null;lobby=[];sel.clear();wishSel=[];seen={};stale=false;endHold=0;busy=false;commitTok++;
   chat=[];chatOpen=false;chatUnread=0;wheelOpen=false;
   sub=RS().subGame(c,onGame,l=>{lobby=l.filter(p=>!/^📺/.test(p.name||''));if(G&&G.phase==='lobby')render()},onChat);
-  if(!rstore&&store.chatHistory)store.chatHistory(c).then(l=>{if(code!==c||!l)return;chat=l.map(x=>({uid:x.uid,name:x.name,kind:x.kind,body:x.body,at:x.created_at}));renderChat()}).catch(()=>{});
+  if(!rstore&&store.chatHistory)store.chatHistory(c).then(l=>{if(code!==c||!l)return;chat=l.map(x=>({id:x.id,uid:x.uid,name:x.name,kind:x.kind,body:x.body,at:x.created_at,re:x.re||{}}));renderChat()}).catch(()=>{});
   loadFriends();
   clearTimeout(loadTimer);loadTimer=setTimeout(()=>{if(!G){stale=true;render()}},10000);
   render();
 }
 function leave(){
   if(tvMode){tvMode=false;tvApply()}
+  if(vc.on)vcLeave();vc.list={};
   if(REC)micStop(true);
   if(sub)sub.stop();sub=null;clearTimeout(botTimer);botTimer=null;clearTimeout(loadTimer);
   busy=false;commitTok++;const wasLocal=!!rstore;rstore=null;code=null;G=null;lobby=[];sel.clear();hashCode='';drafts.code='';view='home';chat=[];chatOpen=false;wheelOpen=false;$('#chatui').innerHTML='';$('#chatui')._shell=null;
@@ -3684,9 +3712,10 @@ function renderChat(){
     const tabs=(inRoom?'<button class="ctab'+(chatTab==='room'?' on':'')+'" data-a="ctab" data-v="room">Tisch</button>':'')+
       '<button class="ctab'+(chatTab==='dm'?' on':'')+'" data-a="ctab" data-v="dm">Freunde'+(dmN?' <span class="badge">'+dmN+'</span>':'')+'</button>';
     h+='<div class="chat" style="left:'+g.sx+'px;top:'+g.sy+'px;width:'+g.w+'px;height:'+g.h+'px"><div class="chead" title="Zum Verschieben ziehen"><span class="grip">⠿</span><div class="ctabs">'+tabs+'</div>'+
+      (inRoom?'<button class="iconbtn vch'+(vc.on?' on':'')+'" data-a="'+(vc.on?'vc-leave':'vc-join')+'" title="'+(vc.on?'Sprachchat verlassen':'Sprachchat beitreten')+'">'+(vc.on?'📞':'🎧')+'</button>':'')+
       '<button class="iconbtn" data-a="chat" title="Schließen (Esc)">✕</button></div>';
     if(chatTab==='room'){
-      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg'+(vPlaying===m.body?' on':'')+'" data-a="vplay" data-v="'+esc(m.body)+'">'+(vPlaying===m.body?'⏹':'▶')+' 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
+      h+='<div class="clist" id="clist">'+(chat.length?chat.map(m=>'<div class="cm'+(m.uid===myId?' mine':'')+'"'+(m.id?' data-a="re-open" data-v="room:'+m.id+'"':'')+'><span>'+esc(m.uid===myId?'Du':m.name)+'</span>'+(m.kind==='voice'?'<button class="vmsg'+(vPlaying===m.body?' on':'')+'" data-a="vplay" data-v="'+esc(m.body)+'">'+(vPlaying===m.body?'⏹':'▶')+' 🎤 '+fmtS(vSecs(m.body))+'</button>':esc(m.body))+reHtml('room',m)+'</div>').join(''):'<p class="note" style="text-align:center">Noch keine Nachrichten. Schreib was! 👋</p>')+typRoomHtml()+
         '</div>'+(REC?'<div class="row cin rec"><span class="recdot"></span><b id="rect">'+fmtS((Date.now()-REC.t0)/1000)+'</b><span class="note" style="flex:1">Aufnahme … (max. 30 s)</span><button class="ghost" style="flex:0 0 auto;width:auto" data-a="micx">✕</button><button style="flex:0 0 auto;width:auto" data-a="micok">Senden</button></div>':
         '<div class="row cin"><input id="cmsg" data-k="cmsg" maxlength="200" placeholder="Nachricht an den Tisch …" autocomplete="off" value="'+esc(drafts.cmsg||'')+'"><button class="mic" data-a="mic" title="Sprachnachricht">🎤</button><button style="flex:0 0 auto;width:auto" data-a="csend">Senden</button></div>');
     }else if(!me){
@@ -3698,7 +3727,7 @@ function renderChat(){
     }else{
       const f=friends.find(x=>x.uid===dmWith),nmF=f?f.display:'Freund';
       h+='<div class="dmh"><button class="small ghost" data-a="dm-back">‹</button><b>'+esc(nmF)+'</b>'+(f&&f.online?'<span class="note">online</span>':'')+'</div>'+
-        '<div class="clist" id="clist">'+(dmMsgs==null?'<p class="note" style="text-align:center">Lade …</p>':dmMsgs.length?dmMsgs.map(m=>'<div class="cm'+(m.mine?' mine':'')+(m.fail?' fail':'')+'">'+esc(m.body)+'</div>').join(''):'<p class="note" style="text-align:center">Schreib '+esc(nmF)+' die erste Nachricht. 👋</p>')+(typing(typDm[dmWith])?'<div class="typing"><i></i><i></i><i></i><span>'+esc(nmF)+' schreibt gerade …</span></div>':'')+
+        '<div class="clist" id="clist">'+(dmMsgs==null?'<p class="note" style="text-align:center">Lade …</p>':dmMsgs.length?dmMsgs.map(m=>'<div class="cm'+(m.mine?' mine':'')+(m.fail?' fail':'')+'"'+(m.id?' data-a="re-open" data-v="dm:'+m.id+'"':'')+'>'+esc(m.body)+reHtml('dm',m)+'</div>').join(''):'<p class="note" style="text-align:center">Schreib '+esc(nmF)+' die erste Nachricht. 👋</p>')+(typing(typDm[dmWith])?'<div class="typing"><i></i><i></i><i></i><span>'+esc(nmF)+' schreibt gerade …</span></div>':'')+
         '</div><div class="row cin"><input id="cmsg" data-k="dmsg" maxlength="300" placeholder="Nachricht an '+esc(nmF)+' …" autocomplete="off" value="'+esc(drafts.dmsg||'')+'"><button style="flex:0 0 auto;width:auto" data-a="dsend">Senden</button></div>';
     }
     h+='<span class="cresize" title="Größe ändern"></span></div>';
@@ -3733,18 +3762,18 @@ const dmTotal=()=>Object.values(dmUnread).reduce((a,x)=>a+(x||0),0);
 async function loadDmUnread(){if(!me)return;try{const l=await store.rpc('dm_unread')||[];const o={};l.forEach(x=>{o[x.uid]=x.n});
   const ch=JSON.stringify(o)!==JSON.stringify(dmUnread);dmUnread=o;if(ch){render();renderChat()}}catch(e){}}
 async function dmOpen(uid){dmWith=uid;dmMsgs=null;chatTab='dm';chatOpen=true;renderChat();
-  try{const l=await store.rpc('dm_history',{p_with:uid})||[];if(dmWith!==uid)return;dmMsgs=l;delete dmUnread[uid];render()}catch(e){if(dmWith===uid)dmMsgs=[]}
+  try{const l=await store.rpc('dm_history2',{p_with:uid})||[];if(dmWith!==uid)return;dmMsgs=l;delete dmUnread[uid];render()}catch(e){if(dmWith===uid)dmMsgs=[]}
   renderChat();focusChat()}
 function onDm(p){if(!p||typeof p!=='object'||typeof p.from!=='string')return;
   if(p.typing===true){typDm[p.from]=Date.now();typTick();return}
   delete typDm[p.from];
   if(chatOpen&&chatTab==='dm'&&dmWith===p.from&&!document.hidden){
-    (dmMsgs=dmMsgs||[]).push({id:p.id,mine:false,body:S2(p.body)});store.rpc('dm_history',{p_with:p.from}).catch(()=>{});sfx('msg');renderChat();return}
+    (dmMsgs=dmMsgs||[]).push({id:p.id,mine:false,body:S2(p.body)});store.rpc('dm_history2',{p_with:p.from}).catch(()=>{});sfx('msg');renderChat();return}
   dmUnread[p.from]=(dmUnread[p.from]||0)+1;sfx('msg');toast('💬 '+S2(p.name)+': '+S2(p.body).slice(0,80));render();renderChat()}
 const S2=x=>typeof x==='string'?x:'';
 async function dmSend(){const t=(drafts.dmsg||'').trim(),to=dmWith;if(!t||!to)return;typSent=0;drafts.dmsg='';const i=$('#cmsg');if(i)i.value='';
   const m={mine:true,body:t.slice(0,300)};(dmMsgs=dmMsgs||[]).push(m);renderChat();
-  try{await store.rpc('send_dm',{p_to:to,p_body:m.body})}catch(e){m.fail=1;toast('Nachricht konnte nicht gesendet werden.');renderChat()}}
+  try{const r=await store.rpc('send_dm',{p_to:to,p_body:m.body});if(r&&r.id){m.id=r.id;m.re={}}}catch(e){m.fail=1;toast('Nachricht konnte nicht gesendet werden.');renderChat()}}
 function focusChat(){if('ontouchstart' in window)return;setTimeout(()=>{const i=$('#cmsg');i&&i.focus()},30)}
 // ----- Chatfenster: Position, Verschieben, Größe -----
 let chatG=null;try{chatG=JSON.parse(ls.get('al_chatwin')||'null')}catch(e){}
@@ -4370,7 +4399,7 @@ function topBar(){
   const s=mySeat(),on=RS().online,canPause=running()&&s>=0&&on&&!G.paused;
   return '<div class="top"><span class="rinfo">'+(G&&GAMES[gameOf(G)]?GAMES[gameOf(G)].icon+' ':'')+'<b>'+esc(G&&G.local?'Tisch':code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
     (on?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat (T)" style="position:relative">💬'+(chatUnread+dmTotal()?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+(chatUnread+dmTotal())+'</span>':'')+'</button>':'')+
-    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+'<button class="iconbtn lv" data-a="leave" title="Verlassen" aria-label="Verlassen">🚪</button></span></div>'+
+    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+(vc.on?'<button class="iconbtn vcm'+(vc.muted?' off':'')+'" data-a="vc-mute" title="Mikrofon im Sprachchat">'+(vc.muted?'🔇':'🎙️')+'</button>':'')+'<button class="iconbtn lv" data-a="leave" title="Verlassen" aria-label="Verlassen">🚪</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
@@ -5511,6 +5540,7 @@ function plusOnState(g,prev){
   if(g.evening&&prev.evening&&g.evening.done&&!prev.evening.done){sfx('win');try{boom('👑 Champion des Abends: '+(Object.values(g.evening.pts).sort((a,b)=>b.p-a.p)[0]||{n:'?'}).n)}catch(e){}}
 }
 function plusAct(a,v,el){
+  if(reAct(a,v)||vcAct(a))return true;
   switch(a){
     case 'x-tab':shopTab=v;render();return true;
     case 'x-daily':store.rpc('claim_daily',{}).then(w=>{WAL=w;sfx('win');toast('+50 Chips 🪙');render()}).catch(()=>toast('Geht gerade nicht.'));return true;
@@ -5554,6 +5584,91 @@ function shopInvHtml(){
       return '<button class="xcard t'+x.tier+' own'+(on?' on':'')+'" data-a="x-inv" data-v="'+x.id+'" style="--tc:'+tc[1]+'">'+xPrev(x)+'<span class="xn"><small>'+tc[0]+'</small><b>'+esc(x.name)+'</b></span><span class="xp">'+(on?'✓ angelegt':'Anlegen')+'</span></button>'}).join('')+'</div></div>'}).join('')+
     '<p class="note">'+own.length+' von 368 Designs gesammelt · Standard-Designs findest du im anderen Reiter.</p>';
 }
+
+// ===================== Reaktionen auf Nachrichten =====================
+const REMO=['👍','❤️','😂','😮','😢','🔥'];
+var reOpen=null;
+function reHtml(kind,m){if(!m||!m.id)return '';const re=m.re||{},cnt={};Object.values(re).forEach(e=>{cnt[e]=(cnt[e]||0)+1});
+  const chips=Object.keys(cnt).length?'<div class="rechips">'+REMO.filter(e=>cnt[e]).map(e=>'<span class="rechip'+(re[myId]===e?' on':'')+'" data-a="re" data-v="'+kind+':'+m.id+':'+e+'">'+e+(cnt[e]>1?' '+cnt[e]:'')+'</span>').join('')+'</div>':'';
+  const pick=reOpen===kind+':'+m.id?'<div class="repick">'+REMO.map(e=>'<button class="'+(re[myId]===e?'on':'')+'" data-a="re" data-v="'+kind+':'+m.id+':'+e+'">'+e+'</button>').join('')+'</div>':'';
+  return chips+pick}
+function reFind(kind,id){return kind==='room'?chat.find(x=>x.id===id):(dmMsgs||[]).find(x=>x.id===id)}
+function onReact(kind,p){const id=+p.id;if(!id||typeof p.uid!=='string')return;const m=reFind(kind,id);if(!m)return;m.re=m.re||{};
+  if(p.emoji&&REMO.includes(p.emoji))m.re[p.uid]=p.emoji;else delete m.re[p.uid];
+  if(kind==='room'&&!chatOpen&&p.uid!==myId&&p.emoji){const who=(lobby.find(x=>x.id===p.uid)||{}).name;if(who)bubble(p.uid,p.emoji)}
+  renderChat()}
+function reAct(a,v){
+  if(a==='re-open'){reOpen=reOpen===v?null:v;sfx('pop');renderChat();return true}
+  if(a==='re'){const [kind,ids,e]=String(v).split(':'),id=+ids,m=reFind(kind,id);if(!m||!REMO.includes(e))return true;m.re=m.re||{};
+    if(m.re[myId]===e)delete m.re[myId];else m.re[myId]=e;reOpen=null;sfx('pop');renderChat();
+    store.rpc('react',{p_kind:kind,p_id:id,p_emoji:e}).catch(()=>toast('Reaktion ging nicht raus.'));return true}
+  return false}
+
+// ===================== Sprachchat (wie ein Discord-Kanal) =====================
+// Verbindung direkt zwischen den Handys (WebRTC); der Server vermittelt nur den Verbindungsaufbau.
+var vc={on:false,code:null,stream:null,peers:{},muted:false,list:{},joining:false},vcLevelT=null;
+const VC_ICE=[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun.cloudflare.com:3478']}];
+const vcSig=(to,d)=>store.rpc('vc_signal',{p_code:vc.code,p_to:to,p_data:d}).catch(()=>{});
+const vcAnnounce=t=>store.rpc('vc_room',{p_code:vc.code||code,p_t:t}).catch(()=>{});
+async function vcJoin(){
+  if(vc.on||vc.joining||!code||!RS().online)return;
+  if(!navigator.mediaDevices||!window.RTCPeerConnection){toast('Dein Browser unterstützt keinen Sprachchat.');return}
+  vc.joining=true;vcRender();
+  try{vc.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}
+  catch(e){vc.joining=false;vcRender();toast('Ohne Mikrofon-Erlaubnis geht der Sprachchat nicht.');return}
+  vc.on=true;vc.joining=false;vc.code=code;vc.muted=false;vc.peers={};vc.list[myId]=myName||'Du';
+  try{duckAll(true)}catch(e){}
+  sfx('pop');vcAnnounce('join');vcRender();vcLevels(true);render();renderChat();toast('🎧 Du bist im Sprachchat');
+}
+function vcLeave(silent){if(!vc.on)return;Object.keys(vc.peers).forEach(vcDrop);
+  try{vc.stream&&vc.stream.getTracks().forEach(t=>t.stop())}catch(e){}
+  if(!silent)vcAnnounce('leave');delete vc.list[myId];vc.on=false;vc.stream=null;try{duckAll(false)}catch(e){}vcLevels(false);vcRender();if(code){render();renderChat()}}
+function vcDrop(uid){const p=vc.peers[uid];if(!p)return;try{p.pc.close()}catch(e){}if(p.audio){p.audio.srcObject=null;p.audio.remove()}delete vc.peers[uid];vcRender()}
+function vcPeer(uid,name){if(vc.peers[uid])return vc.peers[uid];
+  const pc=new RTCPeerConnection({iceServers:VC_ICE}),p={pc,name:name||'Spieler',q:[],audio:null,state:'new'};vc.peers[uid]=p;
+  vc.stream.getTracks().forEach(t=>pc.addTrack(t,vc.stream));
+  pc.onicecandidate=e=>{if(e.candidate)vcSig(uid,{t:'ice',c:e.candidate.toJSON()})};
+  pc.ontrack=e=>{if(!p.audio){p.audio=document.createElement('audio');p.audio.autoplay=true;p.audio.setAttribute('playsinline','');p.audio.className='vcaudio';document.body.appendChild(p.audio)}
+    p.audio.srcObject=e.streams[0];p.stream=e.streams[0];p.audio.play().catch(()=>{});vcRender()};
+  pc.onconnectionstatechange=()=>{p.state=pc.connectionState;if(pc.connectionState==='failed'){toast('Sprachverbindung zu '+p.name+' klappt nicht.');vcDrop(uid)}else if(pc.connectionState==='closed')vcDrop(uid);vcRender()};
+  vcRender();return p}
+async function vcOffer(uid,name){const p=vcPeer(uid,name);try{const o=await p.pc.createOffer();await p.pc.setLocalDescription(o);vcSig(uid,{t:'offer',sdp:o.sdp,name:myName})}catch(e){vcDrop(uid)}}
+function vcOnRoom(c,p){if(c!==code||typeof p.from!=='string'||p.from===myId)return;const nm=String(p.name||'Spieler').slice(0,20);
+  if(p.t==='leave'){delete vc.list[p.from];if(vc.on)vcDrop(p.from);vcRender();return}
+  vc.list[p.from]=nm;
+  if(vc.on&&!vc.peers[p.from]){if(p.t==='join')vcAnnounce('here');if(myId<p.from)vcOffer(p.from,nm)}
+  vcRender()}
+async function vcOnSignal(m){if(!vc.on||m.code!==vc.code||typeof m.from!=='string'||!m.d)return;const d=m.d,uid=m.from;
+  try{
+    if(d.t==='offer'){const p=vcPeer(uid,d.name||vc.list[uid]);await p.pc.setRemoteDescription({type:'offer',sdp:String(d.sdp)});
+      const a=await p.pc.createAnswer();await p.pc.setLocalDescription(a);vcSig(uid,{t:'answer',sdp:a.sdp});p.q.splice(0).forEach(c=>p.pc.addIceCandidate(c).catch(()=>{}))}
+    else if(d.t==='answer'){const p=vc.peers[uid];if(p){await p.pc.setRemoteDescription({type:'answer',sdp:String(d.sdp)});p.q.splice(0).forEach(c=>p.pc.addIceCandidate(c).catch(()=>{}))}}
+    else if(d.t==='ice'){const p=vc.peers[uid];if(!p)return;if(p.pc.remoteDescription)p.pc.addIceCandidate(d.c).catch(()=>{});else p.q.push(d.c)}
+  }catch(e){console.warn('vc',e)}}
+function vcMute(){if(!vc.on)return;vc.muted=!vc.muted;vc.stream.getAudioTracks().forEach(t=>{t.enabled=!vc.muted});sfx('pop');vcRender();render();renderChat()}
+// Wer spricht gerade? (leuchtender Rand)
+var vcAn={},vcCtx=null;
+function vcLevels(on){clearInterval(vcLevelT);vcAn={};if(!on)return;
+  vcLevelT=setInterval(()=>{if(!vc.on)return;if(!vcCtx)try{vcCtx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
+    const meter=(key,stream)=>{if(!stream)return 0;try{let a=vcAn[key];if(!a||a.s!==stream){const ctx=vcCtx;const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();an.fftSize=256;src.connect(an);a=vcAn[key]={s:stream,an,buf:new Uint8Array(128)}}
+      a.an.getByteTimeDomainData(a.buf);let mx=0;for(const v of a.buf)mx=Math.max(mx,Math.abs(v-128));return mx}catch(e){return 0}};
+    const set=(key,lv)=>{const el=document.querySelector('#vcbar [data-vu="'+key+'"]');if(el)el.classList.toggle('talk',lv>10)};
+    set(myId,vc.muted?0:meter(myId,vc.stream));Object.entries(vc.peers).forEach(([u,p])=>set(u,meter(u,p.stream)))},160)}
+function vcRender(){
+  let el=document.getElementById('vcbar');const playing=!!(G&&G.phase&&!['lobby','over','end','rend','closed'].includes(G.phase));
+  const show=!!(code&&G&&RS().online&&!tvMode&&!playing); // im laufenden Spiel: Mikrofon-Knopf oben in der Leiste statt schwebender Leiste
+  if(!show){if(vc.on&&!code)vcLeave(true);if(el)el.remove();return}
+  if(!el){el=document.createElement('div');el.id='vcbar';document.body.appendChild(el)}
+  const others=Object.keys(vc.list).filter(u=>u!==myId).length;
+  // nur neu zeichnen, wenn sich etwas geändert hat (sonst flackert die Leiste und Antippen geht daneben)
+  const put=(cls,h)=>{if(el.className!==cls)el.className=cls;if(el._h!==h){el.innerHTML=h;el._h=h}};
+  if(!vc.on)return put('','<button class="vcjoin" data-a="vc-join">'+(vc.joining?'⏳ Verbinde …':'🎧 Sprachchat'+(others?'<span class="vcn">'+others+'</span>':''))+'</button>');
+  const ppl=[[myId,'Du',true]].concat(Object.entries(vc.peers).map(([u,p])=>[u,p.name,p.state==='connected']));
+  put('on','<div class="vcppl">'+ppl.map(([u,n,ok])=>'<span class="vcu'+(ok?'':' wait')+'" data-vu="'+esc(u)+'" title="'+esc(n)+'">'+esc((n||'?').slice(0,1).toUpperCase())+'</span>').join('')+'</div>'+
+    '<button class="vcb'+(vc.muted?' off':'')+'" data-a="vc-mute" title="Mikrofon">'+(vc.muted?'🔇':'🎙️')+'</button><button class="vcb leave" data-a="vc-leave" title="Sprachchat verlassen">📞</button>')}
+function vcAct(a){if(a==='vc-join'){vcJoin();return true}if(a==='vc-leave'){vcLeave();sfx('pop');return true}if(a==='vc-mute'){vcMute();return true}return false}
+addEventListener('pagehide',()=>{if(vc.on)vcLeave()});
+setInterval(()=>{if(code||document.getElementById('vcbar'))vcRender()},2000);
 </script>
 </body>
 </html>
