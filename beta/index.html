@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-BBBoNwhMwnd+Ed9f08A2gmo8n8VrSbOGD+xpBeToUA8=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-87wNl/3DiR+roI6RDWFOcrWX5JMWIRvQCsnwZmA+xfo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -1385,6 +1385,14 @@ body.tv #vcbar{display:none}
 .top .tb .iconbtn.vcm{background:rgba(75,227,143,.18);border-color:rgba(75,227,143,.45)}
 .top .tb .iconbtn.vcm.off{background:rgba(255,90,90,.18);border-color:rgba(255,90,90,.4)}
 .chead .iconbtn.vch{margin-right:4px}.chead .iconbtn.vch.on{background:#e5484d;color:#fff}
+.top .tb .iconbtn.vcm.live{background:rgba(75,227,143,.22);border-color:rgba(75,227,143,.55)}
+.vclist{display:flex;flex-direction:column;gap:6px}
+.vcrow{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:12px;background:rgba(255,255,255,.05)}.vcrow.wait{opacity:.55}
+.vcrow small{color:var(--mute);margin-left:auto}
+.vcrow .vcu{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;background:#3a4a6a;color:#fff;transition:box-shadow .15s}
+.vcrow .vcu.talk{box-shadow:0 0 0 3px #4be38f,0 0 12px rgba(75,227,143,.7)}
+.vcleavebtn{background:#e5484d;color:#fff}
+@media (max-width:360px){.top .tb{gap:3px}.top .tb .iconbtn{width:28px;height:28px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -4070,7 +4078,7 @@ document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset)return;const k=e.target.dataset.k;
   if(k==='cmsg')act('csend');else if(k==='dmsg')act('dsend');else if(k==='code')joinRoom();else if(k==='fr')act('fr-add');else if(k==='pw'||k==='pw2')acctSubmit(acctTab)});
 function openModal(h,sticky){modalOpen=true;dsOpen=false;const m=$('#modal');clearTimeout(modalT);m.classList.remove('out');m.innerHTML='<div class="box">'+h+'</div>';m.dataset.sticky=sticky?'1':'';m.classList.add('on')}
-let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;dsOpen=false;if(xTry){xTry=false;PEEK=null;applyTheme()}soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
+let modalT;function closeModal(){if(!modalOpen)return;modalOpen=false;dsOpen=false;vcMenuOpen=false;if(xTry){xTry=false;PEEK=null;applyTheme()}soundOpen=false;invOpen=false;const m=$('#modal');m.classList.add('out');clearTimeout(modalT);modalT=setTimeout(()=>m.classList.remove('on','out'),220);setTimeout(showNextInvite,300)}
 
 /* ---------- Anzeige ---------- */
 const SPEC_UI={100:['🃏','Joker'],101:['🃏','Joker'],110:['🔄','Revolution'],120:['⏭️','Aussetzer'],130:['🔁','Wechsel']};
@@ -4399,7 +4407,7 @@ function topBar(){
   const s=mySeat(),on=RS().online,canPause=running()&&s>=0&&on&&!G.paused;
   return '<div class="top"><span class="rinfo">'+(G&&GAMES[gameOf(G)]?GAMES[gameOf(G)].icon+' ':'')+'<b>'+esc(G&&G.local?'Tisch':code)+'</b>'+(G&&G.round?' · R'+G.round:'')+'</span><span class="tb">'+
     (on?'<button class="iconbtn" data-a="wheel" title="Emotes">😀</button><button class="iconbtn" data-a="chat" title="Chat (T)" style="position:relative">💬'+(chatUnread+dmTotal()?'<span class="badge" style="position:absolute;top:-7px;right:-9px;margin:0">'+(chatUnread+dmTotal())+'</span>':'')+'</button>':'')+
-    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+(vc.on?'<button class="iconbtn vcm'+(vc.muted?' off':'')+'" data-a="vc-mute" title="Mikrofon im Sprachchat">'+(vc.muted?'🔇':'🎙️')+'</button>':'')+'<button class="iconbtn lv" data-a="leave" title="Verlassen" aria-label="Verlassen">🚪</button></span></div>'+
+    (on&&G&&G.phase!=='lobby'?'<button class="iconbtn" data-a="inv-open" title="Einladen">👥</button>':'')+'<button class="iconbtn" data-a="dsq" title="Design">🎨</button><button class="iconbtn" data-a="snd" title="Sound & Radio">🎵</button>'+(canPause?'<button class="iconbtn" data-a="pause" title="Pause">⏸</button>':'')+(RS().online&&!G.local?'<button class="iconbtn vcm'+(vc.on?' live':'')+(vc.on&&vc.muted?' off':'')+'" data-a="vc-menu" title="Sprachchat">'+(vc.on?(vc.muted?'🔇':'🎙️'):'🎧')+'</button>':'')+'<button class="iconbtn lv" data-a="leave" title="Verlassen" aria-label="Verlassen">🚪</button></span></div>'+
     (navigator.onLine===false?'<div class="conn">Keine Internetverbindung – verbinde neu …</div>':'');
 }
 function pointsTable(g,compact){
@@ -5652,7 +5660,7 @@ function vcLevels(on){clearInterval(vcLevelT);vcAn={};if(!on)return;
   vcLevelT=setInterval(()=>{if(!vc.on)return;if(!vcCtx)try{vcCtx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
     const meter=(key,stream)=>{if(!stream)return 0;try{let a=vcAn[key];if(!a||a.s!==stream){const ctx=vcCtx;const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();an.fftSize=256;src.connect(an);a=vcAn[key]={s:stream,an,buf:new Uint8Array(128)}}
       a.an.getByteTimeDomainData(a.buf);let mx=0;for(const v of a.buf)mx=Math.max(mx,Math.abs(v-128));return mx}catch(e){return 0}};
-    const set=(key,lv)=>{const el=document.querySelector('#vcbar [data-vu="'+key+'"]');if(el)el.classList.toggle('talk',lv>10)};
+    const set=(key,lv)=>{document.querySelectorAll('[data-vu="'+key+'"]').forEach(el=>el.classList.toggle('talk',lv>10))};
     set(myId,vc.muted?0:meter(myId,vc.stream));Object.entries(vc.peers).forEach(([u,p])=>set(u,meter(u,p.stream)))},160)}
 function vcRender(){
   let el=document.getElementById('vcbar');const playing=!!(G&&G.phase&&!['lobby','over','end','rend','closed'].includes(G.phase));
@@ -5666,7 +5674,17 @@ function vcRender(){
   const ppl=[[myId,'Du',true]].concat(Object.entries(vc.peers).map(([u,p])=>[u,p.name,p.state==='connected']));
   put('on','<div class="vcppl">'+ppl.map(([u,n,ok])=>'<span class="vcu'+(ok?'':' wait')+'" data-vu="'+esc(u)+'" title="'+esc(n)+'">'+esc((n||'?').slice(0,1).toUpperCase())+'</span>').join('')+'</div>'+
     '<button class="vcb'+(vc.muted?' off':'')+'" data-a="vc-mute" title="Mikrofon">'+(vc.muted?'🔇':'🎙️')+'</button><button class="vcb leave" data-a="vc-leave" title="Sprachchat verlassen">📞</button>')}
-function vcAct(a){if(a==='vc-join'){vcJoin();return true}if(a==='vc-leave'){vcLeave();sfx('pop');return true}if(a==='vc-mute'){vcMute();return true}return false}
+// Sprachchat-Fenster (im laufenden Spiel über 🎧 oben in der Leiste)
+function vcMenu(){const others=Object.entries(vc.list).filter(([u])=>u!==myId);
+  const ppl=vc.on?[[myId,'Du',true]].concat(Object.entries(vc.peers).map(([u,p])=>[u,p.name,p.state==='connected'])):others.map(([u,n])=>[u,n,true]);
+  openModal('<h2 style="margin-top:0">🎧 Sprachchat</h2><p class="note" style="margin-top:0">'+(vc.on?'Du bist drin'+(vc.muted?' – stummgeschaltet':'')+'.':others.length?others.length+(others.length===1?' Person ist':' Personen sind')+' gerade im Sprachchat.':'Noch niemand im Sprachchat – starte ihn!')+'</p>'+
+    (ppl.length?'<div class="vclist">'+ppl.map(([u,n,ok])=>'<div class="vcrow'+(ok?'':' wait')+'"><span class="vcu" data-vu="'+esc(u)+'">'+esc((n||'?').slice(0,1).toUpperCase())+'</span><b>'+esc(n)+'</b>'+(ok?'':'<small>verbindet …</small>')+'</div>').join('')+'</div>':'')+
+    (vc.on?'<div class="tdbtns" style="margin-top:12px"><button class="'+(vc.muted?'':'ghost')+'" data-a="vc-mute"><b>'+(vc.muted?'🎙️ Mikro an':'🔇 Stumm')+'</b></button><button class="vcleavebtn" data-a="vc-leave"><b>📞 Verlassen</b></button></div>'
+      :'<button data-a="vc-join" style="margin-top:12px">'+(vc.joining?'⏳ Verbinde …':'🎧 Beitreten')+'</button>')+
+    '<button class="ghost" data-a="modal-x" style="margin-top:8px">Schließen</button>');vcMenuOpen=true}
+var vcMenuOpen=false;
+function vcAct(a){if(a==='vc-menu'){vcMenu();return true}
+  if(a==='vc-join'){vcJoin().then(()=>{if(vcMenuOpen&&modalOpen)vcMenu()});return true}if(a==='vc-leave'){vcLeave();sfx('pop');if(vcMenuOpen&&modalOpen)vcMenu();return true}if(a==='vc-mute'){vcMute();if(vcMenuOpen&&modalOpen)vcMenu();return true}return false}
 addEventListener('pagehide',()=>{if(vc.on)vcLeave()});
 setInterval(()=>{if(code||document.getElementById('vcbar'))vcRender()},2000);
 </script>
