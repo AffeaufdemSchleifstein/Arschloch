@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-87wNl/3DiR+roI6RDWFOcrWX5JMWIRvQCsnwZmA+xfo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-zevPRYQmWG7kwZ/8s5ZI3cLzSPBiesF7ReZ6pwzkJZo=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' https: blob:; connect-src 'self' https://xatfnfirvkvoxnitysmj.supabase.co wss://xatfnfirvkvoxnitysmj.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Spieleabend</title>
 <meta name="theme-color" content="#2a170c">
@@ -3359,7 +3359,7 @@ function applyTheme(){
   const cb=BACKS.find(z=>z[0]===T.back);b.dataset.back=cb&&unlockedReq(cb[2])?T.back:'red';
   r.setProperty('--f1',f[1]);r.setProperty('--f2',f[2]);r.setProperty('--f3',f[3]);r.setProperty('--gold',a[1]);r.setProperty('--onGold',a[2]);
   if(PEEK)b.dataset[PEEK.k==='cards'?'cards':PEEK.k]=PEEK.v; // kurze Vorschau eines gesperrten Designs
-  plusTheme();
+  try{plusTheme()}catch(e){console.warn('theme',e)}
 }
 // ----- Vorschau gesperrter Designs (wird nie gespeichert) -----
 var PEEK=null,peekT=0,peekEnd=0;
@@ -4558,7 +4558,11 @@ function drawGame(app){
   tick();
 }
 window.addEventListener('hashchange',()=>{const h=(location.hash||'').slice(1).toUpperCase();if(ready&&store.online&&/^[A-Z]{4}$/.test(h)&&h!==code){if(myName){if(code)leave();joinRoom(h)}else{drafts.code=h;render()}}});
-init();
+// Start erst, wenn das ganze Skript (inkl. Spiele- und Shop-Teil) geladen ist – sonst bleibt der Bildschirm bei gekauften Designs leer
+function bootFail(e){console.error(e);const a=document.getElementById('app');if(!a||a.childElementCount)return;
+  a.innerHTML='<div style="max-width:340px;margin:30vh auto 0;padding:20px;text-align:center;color:#fff;font:16px system-ui"><h2 style="margin:0 0 8px">Ups, da hakt was 😕</h2><p style="opacity:.8;margin:0 0 16px">Die App konnte nicht starten.</p><button id="bootre" style="padding:12px 18px;border-radius:12px;border:0;font:inherit;font-weight:700">Neu laden</button></div>';
+  document.getElementById('bootre').addEventListener('click',()=>location.reload())}
+Promise.resolve().then(init).catch(bootFail);
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 /* ===================== Spieleabend: Spielauswahl, Wizard, Kniffel ===================== */
